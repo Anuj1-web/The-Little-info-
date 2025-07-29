@@ -80,5 +80,14 @@
   <footer>
     &copy; 2025 The Little Info. All rights reserved. Contact: thelittleinfo01@gmail.com
   </footer>
-</body>
+</body><!-- Load shared header -->
+<div id="header"></div>
+
+<script>
+  fetch("header.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("header").innerHTML = data;
+    });
+</script>
 </html>
