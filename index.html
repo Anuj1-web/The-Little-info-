@@ -5,32 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Little Info</title>
 
-  <!-- Favicon using original file name (with %20 for spaces) -->
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="Green%20and%20White%20Modern%20Computer%20Service%20Repair%20Logo_20250710_113545_0000.png" />
 
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(to right, #0f4c5c, #0b0b2c);
       color: white;
     }
+
     header {
       display: flex;
       align-items: center;
-      padding: 20px;
-      background-color: #121212;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      justify-content: space-between;
+      padding: 10px 20px;
+      background-color: #101010;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
-    header img {
-      height: 60px;
-      margin-right: 20px;
+
+    .logo {
+      display: flex;
+      align-items: center;
     }
-    header h1 {
+
+    .logo img {
+      height: 50px;
+      margin-right: 15px;
+    }
+
+    .logo-title {
       font-size: 24px;
-      margin: 0;
+      font-weight: bold;
     }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #00ffff;
+    }
+
     main {
       padding: 40px;
       text-align: center;
@@ -39,15 +60,25 @@
 </head>
 <body>
   <header>
-    <!-- Logo image with proper space encoding -->
-    <img src="Green%20and%20White%20Modern%20Computer%20Service%20Repair%20Logo_20250710_113545_0000.png" alt="The Little Info Logo" />
-    <h1>The Little Info</h1>
+    <div class="logo">
+      <!-- Logo Image -->
+      <img src="Green%20and%20White%20Modern%20Computer%20Service%20Repair%20Logo_20250710_113545_0000.png" alt="The Little Info Logo" />
+      <div class="logo-title">The Little Info</div>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html">Contact</a>
+      <a href="admin.html">Admin</a>
+    </nav>
   </header>
 
   <main>
-    <h2>Welcome to The Little Info</h2>
-    <p>This is your tech blog or service site powered by GitHub Pages.</p>
-    <p>Stay tuned for tutorials, tips, and guides!</p>
+    <h1>Welcome to The Little Info</h1>
+    <p>Your trusted source for tech tips, guides, and service support.</p>
   </main>
 </body>
 </html>
