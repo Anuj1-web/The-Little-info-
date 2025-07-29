@@ -2,91 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Little Info - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Little Info</title>
+
+  <!-- Favicon using original file name (with %20 for spaces) -->
+  <link rel="icon" type="image/png" href="Green%20and%20White%20Modern%20Computer%20Service%20Repair%20Logo_20250710_113545_0000.png" />
+
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #f4fefc;
-      color: #222;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #0f4c5c, #0b0b2c);
+      color: white;
     }
     header {
-      background-color: #004d40;
-      color: white;
-      padding: 1rem 2rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      padding: 20px;
+      background-color: #121212;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
-    .logo-section {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
+    header img {
+      height: 60px;
+      margin-right: 20px;
     }
-    .logo {
-      width: 40px;
-      height: 40px;
-    }
-    nav a {
-      color: white;
-      margin-left: 1rem;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    nav a:hover {
-      text-decoration: underline;
+    header h1 {
+      font-size: 24px;
+      margin: 0;
     }
     main {
-      padding: 2rem;
-    }
-    h1 {
-      color: #00796b;
-    }
-    .card {
-      background-color: white;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      margin-top: 1rem;
-    }
-    footer {
-      background-color: #004d40;
-      color: white;
+      padding: 40px;
       text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="logo-section">
-      <img src="1000135048.png" alt="Logo" class="logo" />
-      <h2>The Little Info</h2>
-    </div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-      <a href="admin.html">Admin</a>
-    </nav>
+    <!-- Logo image with proper space encoding -->
+    <img src="Green%20and%20White%20Modern%20Computer%20Service%20Repair%20Logo_20250710_113545_0000.png" alt="The Little Info Logo" />
+    <h1>The Little Info</h1>
   </header>
 
   <main>
-    <h1>Welcome to The Little Info</h1>
-    <div class="card">
-      <p>
-        A social media-style educational platform where knowledge is shared creatively! Explore curated videos, images, and educational texts — all in one place.
-      </p>
-      <p>
-        Sign up or log in to access our growing library of knowledge. Only verified admin can upload new content.
-      </p>
-    </div>
+    <h2>Welcome to The Little Info</h2>
+    <p>This is your tech blog or service site powered by GitHub Pages.</p>
+    <p>Stay tuned for tutorials, tips, and guides!</p>
   </main>
-
-  <footer>
-    &copy; 2025 The Little Info | All Rights Reserved
-  </footer>
 </body>
 </html>
