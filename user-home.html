@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Home - The Little Info</title>
+  <script type="module" src="firebase.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    h1 { color: #3498db; }
+    button { padding: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Welcome to The Little Info</h1>
+  <p>You are logged in as a user.</p>
+
+  <button onclick="signOut()">Logout</button>
+
+  <script type="module">
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert("You are not logged in!");
+        window.location.href = "login.html";
+      }
+    });
+
+    function signOut() {
+      window.signOut().then(() => {
+        window.location.href = "login.html";
+      });
+    }
+  </script>
+</body>
+</html>
