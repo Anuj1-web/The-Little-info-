@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard - The Little Info</title>
+  <script type="module" src="firebase.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    h1 { color: #2c3e50; }
+    button { padding: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Welcome Admin</h1>
+  <p>This is your dashboard. You can manage users and content here.</p>
+
+  <button onclick="signOut()">Logout</button>
+
+  <script type="module">
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user || user.email !== "thelittleinfo01@gmail.com") {
+        alert("Unauthorized access. Redirecting...");
+        window.location.href = "login.html";
+      }
+    });
+
+    function signOut() {
+      window.signOut().then(() => {
+        window.location.href = "login.html";
+      });
+    }
+  </script>
+</body>
+</html>
