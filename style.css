@@ -1,60 +1,113 @@
-.site-header {
-  background: linear-gradient(to right, #0f3c47, #0d1022);
-  color: white;
+/* Updated style.css for The Little Info */
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #222;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  background-color: #d5f5e3; /* greenish tone */
   padding: 10px 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+header img.logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+header h1 {
+  font-size: 24px;
+  color: #145a32;
+}
+
+nav {
+  margin-left: auto;
+}
+
+nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #145a32;
+  font-weight: bold;
+}
+
+.hero-logo {
+  display: block;
+  margin: 40px auto;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 
 .container {
   display: flex;
+  justify-content: center;
+  gap: 30px;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
+  margin: 40px auto;
+  max-width: 900px;
 }
 
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.box {
+  flex: 1 1 300px;
+  padding: 20px;
+  background-color: #e8f8f5;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  text-align: center;
 }
 
-.logo {
-  height: 40px;
+.box h2 {
+  color: #117a65;
+  font-size: 22px;
+  margin-bottom: 10px;
 }
 
-.site-title {
-  font-size: 1.5rem;
-  margin: 0;
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #d5f5e3;
+  color: #145a32;
+}
+
+input, button {
+  padding: 10px;
+  margin: 8px 0;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  background-color: #2ecc71;
   color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-.nav-links a {
-  color: white;
-  text-decoration: none;
-  margin: 0 12px;
-  font-weight: 500;
+button:hover {
+  background-color: #27ae60;
 }
 
-.nav-links a:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 600px) {
-  .container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .nav-links {
-    margin-top: 10px;
-  }
-}
-.logo-container {
-  display: flex;
-  align-items: center;
-}
-
-.logo {
-  height: 40px;
-  margin-right: 10px;
+form {
+  max-width: 400px;
+  margin: 30px auto;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
