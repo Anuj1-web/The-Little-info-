@@ -49,3 +49,12 @@
     margin-top: 10px;
   }
 }
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 10px;
+}
