@@ -1,23 +1,28 @@
 // signup.js
 import { auth } from './firebaseInit.js';
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
-document.getElementById("signup-form").addEventListener("submit", async (e) => {
+const signupForm = document.getElementById("signupForm");
+const message = document.getElementById("signupMessage");
+
+signupForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value.trim();
-
-  if (!email || !password) {
-    alert("Please enter both email and password.");
-    return;
-  }
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value.trim();
 
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    alert("Signup successful! Please login.");
-    window.location.href = "login.html";
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // ✅ Send email verification
+    await sendEmailVerification(user);
+    message.textContent = "Signup successful! Please check your email to verify your account.";
+    signupForm.reset();
   } catch (error) {
-    alert("Signup failed: " + error.message);
+    message.textContent = "Signup failed: " + error.message;
   }
 });
