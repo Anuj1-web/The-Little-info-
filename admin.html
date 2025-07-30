@@ -2,42 +2,97 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
     <img src="logo.png" alt="Logo" class="logo" />
-    <h1>The Little Info - Admin Dashboard</h1>
+    <h1>Admin Dashboard</h1>
     <nav>
       <a href="index.html">Home</a>
       <a href="#" onclick="logout()">Logout</a>
     </nav>
   </header>
 
-  <main class="admin-panel">
-    <h2>Welcome, Admin!</h2>
-    <p>Here you can manage uploaded content, approve users, and monitor the platform.</p>
+  <main>
+    <h2>Upload Educational Content</h2>
+    <form id="uploadForm">
+      <input type="text" id="title" placeholder="Title" required />
+      <textarea id="description" placeholder="Description" required></textarea>
+      <input type="file" id="file" accept="image/*,video/*" required />
+      
+      <div>
+        <label><input type="radio" name="category" value="trending" required /> Trending</label>
+        <label><input type="radio" name="category" value="traditional" required /> Traditional</label>
+      </div>
 
-    <!-- Upload Form -->
-    <section class="upload-section">
-      <h3>Upload Content</h3>
-      <form id="uploadForm">
-        <input type="text" id="title" placeholder="Enter Title" required><br>
-        <textarea id="description" placeholder="Enter Description" required></textarea><br>
-        <input type="file" id="file" accept="image/*,video/*" required><br>
-        <button type="submit">Upload</button>
-      </form>
-      <p id="uploadStatus"></p>
-    </section>
+      <button type="submit">Upload</button>
+    </form>
+
+    <p id="uploadStatus"></p>
   </main>
 
-  <script src="firebase.js"></script>
-  <script src="upload.js"></script>
-  <script>
+  <footer>
+    <p>© 2025 The Little Info. All rights reserved.</p>
+  </footer>
+
+  <!-- Firebase Upload Script -->
+  <script type="module">
+    import { storage, db } from './firebaseInit.js';
+    import {
+      ref,
+      uploadBytes,
+      getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
+    import {
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+    const uploadForm = document.getElementById("uploadForm");
+    const uploadStatus = document.getElementById("uploadStatus");
+
+    uploadForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const file = document.getElementById("file").files[0];
+      const category = document.querySelector('input[name="category"]:checked')?.value;
+
+      if (!file || !category) {
+        uploadStatus.textContent = "Please fill out all fields and select a file/category.";
+        return;
+      }
+
+      try {
+        uploadStatus.textContent = "Uploading...";
+
+        const fileRef = ref(storage, `uploads/${Date.now()}_${file.name}`);
+        await uploadBytes(fileRef, file);
+        const downloadURL = await getDownloadURL(fileRef);
+
+        await addDoc(collection(db, "content"), {
+          title,
+          description,
+          url: downloadURL,
+          type: file.type.startsWith("video") ? "video" : "image",
+          category,
+          timestamp: serverTimestamp()
+        });
+
+        uploadStatus.textContent = "Upload successful!";
+        uploadForm.reset();
+      } catch (err) {
+        uploadStatus.textContent = "Upload failed: " + err.message;
+      }
+    });
+
     function logout() {
-      window.location.href = 'login.html';
+      window.location.href = "login.html";
     }
   </script>
 </body>
