@@ -1,37 +1,58 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { firebaseConfig } from "./firebase.js";
+import { db, auth } from "./firebaseInit.js";
+import {
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  doc,
+  setDoc,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import "./interactions.js"; // Ensure interaction logic loads
 
-const trendingContainer = document.getElementById("trending-content");
-const traditionalContainer = document.getElementById("traditional-content");
+const trendingDiv = document.getElementById("trending-content");
+const traditionalDiv = document.getElementById("traditional-content");
 
-// Fetch and display content
-async function fetchContent() {
+async function loadContent() {
   const q = query(collection(db, "content"), orderBy("timestamp", "desc"));
   const querySnapshot = await getDocs(q);
 
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    const contentBox = document.createElement("div");
-    contentBox.className = "content-card";
-    contentBox.innerHTML = `
-      <h4>${data.title}</h4>
+  querySnapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    const card = document.createElement("div");
+    card.classList.add("content-card");
+
+    card.innerHTML = `
+      <h3>${data.title}</h3>
       <p>${data.description}</p>
-      ${data.type === "video"
-        ? `<video controls width="100%"><source src="${data.url}" type="video/mp4"></video>`
-        : `<img src="${data.url}" alt="${data.title}" style="width:100%;border-radius:12px;">`}
+      <video width="100%" controls>
+        <source src="${data.videoURL}" type="video/mp4" />
+      </video>
+      <div class="interactions">
+        <button onclick="likePost('${docSnap.id}')">👍 Like</button>
+        <button onclick="bookmarkPost('${docSnap.id}')">🔖 Bookmark</button>
+      </div>
+      <div class="comments">
+        <input type="text" id="comment-${docSnap.id}" placeholder="Add a comment"/>
+        <button onclick="postComment('${docSnap.id}')">Post</button>
+      </div>
     `;
 
     if (data.category === "Trending") {
-      trendingContainer.appendChild(contentBox);
-    } else if (data.category === "Traditional") {
-      traditionalContainer.appendChild(contentBox);
+      trendingDiv.appendChild(card);
+    } else {
+      traditionalDiv.appendChild(card);
     }
   });
 }
 
-fetchContent();
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loadContent();
+  } else {
+    loadContent(); // Allow viewing without interaction
+  }
+});
