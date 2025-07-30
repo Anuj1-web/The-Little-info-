@@ -13,83 +13,57 @@
       <h1>The Little Info</h1>
     </div>
     <nav>
-      <a href="login.html">Login</a>
-      <a href="signup.html">Signup</a>
-      <a href="contact.html">Contact</a>
-      <a href="about.html">About</a>
+      <a href="login.html" id="login-link">Login</a>
+      <a href="signup.html" id="signup-link">Signup</a>
+      <a href="#" id="logout-link" style="display: none;">Logout</a>
     </nav>
   </header>
 
-  <main>
-    <section class="home-logo-center">
-      <img src="logo.png" alt="Center Logo" class="center-logo" />
-    </section>
+  <!-- Hero Section -->
+  <img src="logo.png" alt="Logo" class="hero-logo" />
 
-    <section class="content-section">
-      <div class="content-box">
-        <h2>Trending Topics</h2>
-        <div id="trending-content" class="content-list"></div>
-      </div>
+  <!-- Content Sections -->
+  <div class="container">
+    <div class="box" id="trending-box">
+      <h2>Trending Topics</h2>
+      <div id="trending-content">Loading...</div>
+    </div>
+    <div class="box" id="traditional-box">
+      <h2>Traditional Topics</h2>
+      <div id="traditional-content">Loading...</div>
+    </div>
+  </div>
 
-      <div class="content-box">
-        <h2>Traditional Topics</h2>
-        <div id="traditional-content" class="content-list"></div>
-      </div>
-    </section>
-  </main>
+  <footer>
+    <p>© 2025 The Little Info. All rights reserved.</p>
+  </footer>
 
-  <!-- Firebase logic -->
+  <!-- Firebase CDN -->
   <script type="module">
-    import { db } from './firebaseInit.js';
-    import {
-      collection,
-      query,
-      where,
-      orderBy,
-      getDocs
-    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { auth } from "./firebaseInit.js";
 
-    const trendingBox = document.getElementById("trending-content");
-    const traditionalBox = document.getElementById("traditional-content");
+    const loginLink = document.getElementById("login-link");
+    const signupLink = document.getElementById("signup-link");
+    const logoutLink = document.getElementById("logout-link");
 
-    async function loadContent(category, container) {
-      const q = query(
-        collection(db, "content"),
-        where("category", "==", category),
-        orderBy("timestamp", "desc")
-      );
-
-      const querySnapshot = await getDocs(q);
-      if (querySnapshot.empty) {
-        container.innerHTML = "<p>No content available.</p>";
-        return;
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loginLink.style.display = "none";
+        signupLink.style.display = "none";
+        logoutLink.style.display = "inline-block";
+      } else {
+        loginLink.style.display = "inline-block";
+        signupLink.style.display = "inline-block";
+        logoutLink.style.display = "none";
       }
+    });
 
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const card = document.createElement("div");
-        card.classList.add("content-card");
-
-        if (data.type === "video") {
-          card.innerHTML = `
-            <h3>${data.title}</h3>
-            <video src="${data.url}" controls width="100%"></video>
-            <p>${data.description}</p>
-          `;
-        } else {
-          card.innerHTML = `
-            <h3>${data.title}</h3>
-            <img src="${data.url}" alt="${data.title}" width="100%" />
-            <p>${data.description}</p>
-          `;
-        }
-
-        container.appendChild(card);
-      });
-    }
-
-    loadContent("trending", trendingBox);
-    loadContent("traditional", traditionalBox);
+    logoutLink?.addEventListener("click", async (e) => {
+      e.preventDefault();
+      await signOut(auth);
+      window.location.href = "login.html";
+    });
   </script>
 </body>
 </html>
