@@ -2,40 +2,114 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Little Info - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f7f7f7;
+      text-align: center;
+    }
+
+    /* Top-left logo */
+    .top-left-logo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* Center logo */
+    .center-logo {
+      margin-top: 80px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .sections {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      margin-top: 60px;
+      padding: 0 10px 80px;
+    }
+
+    .content-box {
+      background-color: #fff;
+      width: 90%;
+      max-width: 500px;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+
+    .content-box h2 {
+      margin-top: 0;
+    }
+
+    .content-item {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+
+    .content-item:last-child {
+      border-bottom: none;
+    }
+
+    .content-item h3 {
+      margin: 0 0 5px;
+    }
+
+    .content-item p {
+      margin: 0;
+      color: #555;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <img src="logo.png" alt="The Little Info Logo" class="logo" />
-    <h1>The Little Info</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-      <a href="login.html">Login</a>
-      <a href="signup.html">Sign Up</a>
-    </nav>
-  </header>
 
-  <main>
-    <img src="logo.png" alt="Main Logo" class="hero-logo" />
+  <!-- Top Left Logo -->
+  <img src="logo.png" alt="Logo" class="top-left-logo" />
 
-    <div class="container">
-      <div class="box">
-        <h2>Trending Topics</h2>
-        <p>Explore the most discussed educational topics, technologies, and current events.</p>
-      </div>
-      <div class="box">
-        <h2>Traditional Topics</h2>
-        <p>Learn about classical subjects, ancient knowledge, and educational foundations.</p>
-      </div>
+  <!-- Center Logo -->
+  <img src="logo.png" alt="The Little Info Logo" class="center-logo" />
+
+  <!-- Content Sections -->
+  <div class="sections">
+
+    <!-- Trending Section -->
+    <div id="trending-content" class="content-box">
+      <h2>Trending Topics</h2>
+      <!-- Dynamic content goes here -->
     </div>
-  </main>
 
-  <footer>
-    <p>&copy; 2025 The Little Info. All rights reserved.</p>
-  </footer>
+    <!-- Traditional Section -->
+    <div id="traditional-content" class="content-box">
+      <h2>Traditional Topics</h2>
+      <!-- Dynamic content goes here -->
+    </div>
+
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+
+  <!-- Firebase Config -->
+  <script src="firebase.js"></script>
+
+  <!-- Content Display Logic -->
+  <script src="displayContent.js"></script>
+
 </body>
 </html>
