@@ -1,56 +1,47 @@
-import { db } from "./firebase.js";
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js";
+import { db } from './firebase.js';
 
-document.getElementById("addQuestionBtn").addEventListener("click", () => {
-  const container = document.getElementById("questionContainer");
-  const qIndex = container.children.length + 1;
+const form = document.getElementById('quizForm');
+const questionsArea = document.getElementById('questionsArea');
+const addQuestionBtn = document.getElementById('addQuestion');
 
-  const qDiv = document.createElement("div");
-  qDiv.classList.add("question-block");
-  qDiv.innerHTML = `
-    <input type="text" placeholder="Question ${qIndex}" class="question" required />
-    <input type="text" placeholder="Option A" class="optionA" required />
-    <input type="text" placeholder="Option B" class="optionB" required />
-    <input type="text" placeholder="Option C" class="optionC" required />
-    <input type="text" placeholder="Option D" class="optionD" required />
-    <select class="correctAnswer">
-      <option value="">Correct Option</option>
-      <option value="A">A</option>
-      <option value="B">B</option>
-      <option value="C">C</option>
-      <option value="D">D</option>
-    </select>
+let questionCount = 0;
+
+addQuestionBtn.addEventListener('click', () => {
+  const div = document.createElement('div');
+  div.innerHTML = `
+    <input type="text" placeholder="Question" class="question" required /><br/>
+    <input type="text" placeholder="Option 1" class="opt" required />
+    <input type="text" placeholder="Option 2" class="opt" required />
+    <input type="text" placeholder="Option 3" class="opt" required />
+    <input type="text" placeholder="Option 4" class="opt" required /><br/>
+    <input type="number" min="0" max="3" placeholder="Correct Option Index (0-3)" class="correct" required /><br/><br/>
   `;
-  container.appendChild(qDiv);
+  questionsArea.appendChild(div);
+  questionCount++;
 });
 
-document.getElementById("saveQuizBtn").addEventListener("click", async () => {
-  const title = document.getElementById("quizTitle").value;
-  const description = document.getElementById("quizDescription").value;
-  const tags = document.getElementById("quizTags").value.split(',').map(t => t.trim());
-
-  const questionBlocks = document.querySelectorAll(".question-block");
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const title = document.getElementById('quizTitle').value.trim();
+  const questionDivs = questionsArea.querySelectorAll('div');
   const questions = [];
 
-  questionBlocks.forEach(block => {
-    const q = block.querySelector(".question").value;
-    const A = block.querySelector(".optionA").value;
-    const B = block.querySelector(".optionB").value;
-    const C = block.querySelector(".optionC").value;
-    const D = block.querySelector(".optionD").value;
-    const correct = block.querySelector(".correctAnswer").value;
-
-    questions.push({ q, options: { A, B, C, D }, correct });
+  questionDivs.forEach(div => {
+    const question = div.querySelector('.question').value;
+    const options = Array.from(div.querySelectorAll('.opt')).map(input => input.value);
+    const correctIndex = parseInt(div.querySelector('.correct').value);
+    questions.push({ question, options, correctIndex });
   });
 
-  await addDoc(collection(db, "quizzes"), {
-    title,
-    description,
-    tags,
-    questions,
-    createdAt: serverTimestamp()
-  });
-
-  alert("Quiz saved successfully!");
-  location.reload();
+  db.collection("quizzes").add({ title, questions })
+    .then(() => {
+      alert("Quiz saved successfully!");
+      form.reset();
+      questionsArea.innerHTML = '';
+    })
+    .catch(error => {
+      console.error("Error saving quiz:", error);
+      alert("Failed to save quiz.");
+    });
 });
+
