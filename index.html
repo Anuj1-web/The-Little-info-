@@ -8,62 +8,42 @@
 </head>
 <body>
   <header>
-    <div class="logo-container">
-      <img src="logo.png" alt="Logo" class="logo" />
-      <h1>The Little Info</h1>
-    </div>
+    <img src="logo.png" alt="Logo" class="logo" />
+    <h1>The Little Info</h1>
     <nav>
-      <a href="login.html" id="login-link">Login</a>
-      <a href="signup.html" id="signup-link">Signup</a>
-      <a href="#" id="logout-link" style="display: none;">Logout</a>
+      <a href="login.html">Login</a>
+      <a href="signup.html">Signup</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
   </header>
 
-  <!-- Hero Section -->
-  <img src="logo.png" alt="Logo" class="hero-logo" />
+  <main>
+    <img src="logo.png" alt="Main Logo" class="hero-logo" />
 
-  <!-- Content Sections -->
-  <div class="container">
-    <div class="box" id="trending-box">
-      <h2>Trending Topics</h2>
-      <div id="trending-content">Loading...</div>
+    <div class="container">
+      <div class="box">
+        <h2>Trending Topics</h2>
+        <div id="trending-content">
+          <!-- Trending content will be dynamically inserted here -->
+        </div>
+      </div>
+
+      <div class="box">
+        <h2>Traditional Topics</h2>
+        <div id="traditional-content">
+          <!-- Traditional content will be dynamically inserted here -->
+        </div>
+      </div>
     </div>
-    <div class="box" id="traditional-box">
-      <h2>Traditional Topics</h2>
-      <div id="traditional-content">Loading...</div>
-    </div>
-  </div>
+  </main>
 
   <footer>
-    <p>© 2025 The Little Info. All rights reserved.</p>
+    &copy; 2025 The Little Info. All rights reserved.
   </footer>
 
-  <!-- Firebase CDN -->
-  <script type="module">
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-    import { auth } from "./firebaseInit.js";
-
-    const loginLink = document.getElementById("login-link");
-    const signupLink = document.getElementById("signup-link");
-    const logoutLink = document.getElementById("logout-link");
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loginLink.style.display = "none";
-        signupLink.style.display = "none";
-        logoutLink.style.display = "inline-block";
-      } else {
-        loginLink.style.display = "inline-block";
-        signupLink.style.display = "inline-block";
-        logoutLink.style.display = "none";
-      }
-    });
-
-    logoutLink?.addEventListener("click", async (e) => {
-      e.preventDefault();
-      await signOut(auth);
-      window.location.href = "login.html";
-    });
-  </script>
+  <!-- Firebase and Scripts -->
+  <script type="module" src="firebaseInit.js"></script>
+  <script type="module" src="publicContent.js"></script>
 </body>
 </html>
