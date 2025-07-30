@@ -1,25 +1,24 @@
 // login.js
-import { auth } from './firebaseInit.js';
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import { auth } from './firebase.js';
+import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-document.getElementById("login-form").addEventListener("submit", async (e) => {
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
 
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    if (user.emailVerified) {
-      alert("Login successful!");
-      window.location.href = "profile.html"; // ✅ Redirect to user profile
+    // Optional: Admin check (if using custom claims in future)
+    if (user.email === "thelittleinfo01@gmail.com") {
+      window.location.href = 'admin.html';
     } else {
-      alert("Please verify your email before logging in.");
+      window.location.href = 'index.html';
     }
   } catch (error) {
-    console.error("Login error:", error.message);
-    alert("Invalid email or password. Please try again.");
+    alert("Login failed: " + error.message);
   }
 });
