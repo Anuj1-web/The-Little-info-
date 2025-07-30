@@ -1,45 +1,54 @@
-import { db } from "./firebase.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js";
+import { db } from './firebase.js';
 
-const container = document.getElementById("quizContainer");
-const quizId = new URLSearchParams(window.location.search).get("id");
+const quizList = document.getElementById('quizList');
+const quizContainer = document.getElementById('quizContainer');
+const questionsContainer = document.getElementById('questionsContainer');
+const quizTitle = document.getElementById('quizTitle');
+const quizResult = document.getElementById('quizResult');
 
-async function loadQuiz() {
-  const quizDoc = await getDoc(doc(db, "quizzes", quizId));
-  if (!quizDoc.exists()) {
-    container.innerHTML = "<p>Quiz not found.</p>";
-    return;
-  }
+let currentQuiz = null;
 
-  const quiz = quizDoc.data();
-  container.innerHTML = `<h2>${quiz.title}</h2><p>${quiz.description}</p>`;
-
-  quiz.questions.forEach((q, index) => {
-    const qDiv = document.createElement("div");
-    qDiv.classList.add("quiz-question");
-    qDiv.innerHTML = `
-      <p><strong>Q${index + 1}: ${q.q}</strong></p>
-      <label><input type="radio" name="q${index}" value="A" /> A. ${q.options.A}</label><br />
-      <label><input type="radio" name="q${index}" value="B" /> B. ${q.options.B}</label><br />
-      <label><input type="radio" name="q${index}" value="C" /> C. ${q.options.C}</label><br />
-      <label><input type="radio" name="q${index}" value="D" /> D. ${q.options.D}</label>
-    `;
-    container.appendChild(qDiv);
-  });
-
-  const submitBtn = document.createElement("button");
-  submitBtn.textContent = "Submit Quiz";
-  submitBtn.onclick = () => {
-    let score = 0;
-    quiz.questions.forEach((q, index) => {
-      const selected = document.querySelector(`input[name="q${index}"]:checked`);
-      if (selected && selected.value === q.correct) {
-        score++;
-      }
+function loadQuizzes() {
+  db.collection("quizzes").get().then(snapshot => {
+    quizList.innerHTML = "<h2>Select a Quiz</h2>";
+    snapshot.forEach(doc => {
+      const quiz = doc.data();
+      const button = document.createElement('button');
+      button.textContent = quiz.title;
+      button.onclick = () => showQuiz(doc.id, quiz);
+      quizList.appendChild(button);
     });
-    container.innerHTML = `<h2>Your Score: ${score}/${quiz.questions.length}</h2>`;
-  };
-  container.appendChild(submitBtn);
+  });
 }
 
-loadQuiz();
+function showQuiz(id, quiz) {
+  currentQuiz = quiz;
+  quizTitle.textContent = quiz.title;
+  questionsContainer.innerHTML = '';
+  quiz.questions.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <p><strong>${q.question}</strong></p>
+      ${q.options.map((opt, i) => `
+        <label>
+          <input type="radio" name="q${idx}" value="${i}" />
+          ${opt}
+        </label><br/>
+      `).join('')}
+    `;
+    questionsContainer.appendChild(div);
+  });
+  quizList.style.display = 'none';
+  quizContainer.style.display = 'block';
+}
+
+document.getElementById('submitQuiz').addEventListener('click', () => {
+  let score = 0;
+  currentQuiz.questions.forEach((q, idx) => {
+    const answer = document.querySelector(`input[name="q${idx}"]:checked`);
+    if (answer && parseInt(answer.value) === q.correctIndex) score++;
+  });
+  quizResult.textContent = `Your Score: ${score}/${currentQuiz.questions.length}`;
+});
+  
+loadQuizzes();
