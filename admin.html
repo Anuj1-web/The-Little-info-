@@ -3,105 +3,106 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard - The Little Info</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Admin Panel - The Little Info</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <img src="logo.png" alt="Logo" class="logo" />
-    <h1>Admin Portal - The Little Info</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="#" onclick="logout()">Logout</a>
-    </nav>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#" id="logoutBtn" class="btn">Logout</a>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <h2>Upload New Content</h2>
-    <form id="uploadForm">
-      <input type="text" id="title" placeholder="Title" required />
-      <textarea id="description" placeholder="Description" required></textarea>
-      <input type="file" id="file" accept="image/*,video/*" required />
+  <!-- Admin Upload Section -->
+  <main class="section-container">
+    <h1>Upload New Content</h1>
+    <form id="uploadForm" class="content-form">
+      <label for="title">Title:</label>
+      <input type="text" id="title" required />
 
-      <div class="category-options">
-        <label><input type="radio" name="category" value="trending" required /> Trending</label>
-        <label><input type="radio" name="category" value="traditional" required /> Traditional</label>
-      </div>
+      <label for="description">Description:</label>
+      <textarea id="description" rows="4" required></textarea>
 
-      <button type="submit">Upload</button>
-      <p id="uploadStatus" class="status-msg"></p>
+      <label for="category">Category:</label>
+      <select id="category" required>
+        <option value="">Select category</option>
+        <option value="trending">Trending</option>
+        <option value="traditional">Traditional</option>
+      </select>
+
+      <label for="file">Upload File (Image or Video):</label>
+      <input type="file" id="file" accept="image/*,video/*" />
+
+      <button type="submit" class="btn">Upload</button>
     </form>
+
+    <div id="previewContainer" style="margin-top: 2rem;"></div>
   </main>
 
+  <!-- Firebase Auth + Upload Script -->
   <script type="module">
-    import { auth, db, storage } from './firebaseInit.js';
-    import {
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-    import {
-      ref,
-      uploadBytes,
-      getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
-    import {
-      collection,
-      addDoc,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+    import { auth } from './firebase.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-    const uploadForm = document.getElementById("uploadForm");
-    const uploadStatus = document.getElementById("uploadStatus");
-
-    // 🔒 Admin-only access check
+    // Access protection
     onAuthStateChanged(auth, (user) => {
-      if (!user || user.email !== "thelittleinfo01@gmail.com") {
-        alert("Access denied. Admins only.");
-        window.location.href = "login.html";
+      if (!user || !user.emailVerified) {
+        alert('Only verified users can access the admin panel.');
+        signOut(auth).then(() => {
+          window.location.href = 'login.html';
+        });
       }
     });
 
-    uploadForm.addEventListener("submit", async (e) => {
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      alert('Logged out.');
+      window.location.href = 'login.html';
+    });
+
+    // Handle upload form
+    document.getElementById('uploadForm').addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const title = document.getElementById("title").value.trim();
-      const description = document.getElementById("description").value.trim();
-      const file = document.getElementById("file").files[0];
-      const category = document.querySelector('input[name="category"]:checked')?.value;
+      const title = document.getElementById('title').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const category = document.getElementById('category').value;
+      const file = document.getElementById('file').files[0];
+      const preview = document.getElementById('previewContainer');
 
-      if (!file || !category) {
-        uploadStatus.textContent = "Please fill out all fields and select a file/category.";
+      if (!title || !description || !category) {
+        alert('Please fill in all required fields.');
         return;
       }
 
-      try {
-        uploadStatus.textContent = "Uploading...";
+      let filePreview = '';
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        const type = file.type;
 
-        const fileRef = ref(storage, `uploads/${Date.now()}_${file.name}`);
-        await uploadBytes(fileRef, file);
-        const downloadURL = await getDownloadURL(fileRef);
-
-        await addDoc(collection(db, "content"), {
-          title,
-          description,
-          url: downloadURL,
-          type: file.type.startsWith("video") ? "video" : "image",
-          category,
-          timestamp: serverTimestamp()
-        });
-
-        uploadStatus.textContent = "✅ Upload successful!";
-        uploadForm.reset();
-      } catch (err) {
-        uploadStatus.textContent = "❌ Upload failed: " + err.message;
+        if (type.startsWith('image/')) {
+          filePreview = `<img src="${fileURL}" alt="Uploaded Image" style="max-width: 300px; margin-top: 1rem;" />`;
+        } else if (type.startsWith('video/')) {
+          filePreview = `<video src="${fileURL}" controls style="max-width: 300px; margin-top: 1rem;"></video>`;
+        } else {
+          filePreview = `<p>Unsupported file type: ${type}</p>`;
+        }
       }
-    });
 
-    function logout() {
-      signOut(auth).then(() => {
-        window.location.href = "login.html";
-      });
-    }
+      preview.innerHTML = `
+        <h3>Content Preview</h3>
+        <p><strong>Title:</strong> ${title}</p>
+        <p><strong>Description:</strong> ${description}</p>
+        <p><strong>Category:</strong> ${category.charAt(0).toUpperCase() + category.slice(1)}</p>
+        ${filePreview}
+        <p style="color: green;">✔ Content captured! (ready to save to database or storage)</p>
+      `;
+    });
   </script>
 </body>
 </html>
