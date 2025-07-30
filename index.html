@@ -8,77 +8,88 @@
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo" class="logo">
-    <h1>The Little Info</h1>
+    <div class="logo-container">
+      <img src="logo.png" alt="Logo" class="logo" />
+      <h1>The Little Info</h1>
+    </div>
     <nav>
-      <a href="index.html">Home</a>
       <a href="login.html">Login</a>
       <a href="signup.html">Signup</a>
+      <a href="contact.html">Contact</a>
+      <a href="about.html">About</a>
     </nav>
   </header>
 
   <main>
-    <!-- Central Hero Logo -->
-    <img src="logo.png" alt="Hero Logo" class="hero-logo">
+    <section class="home-logo-center">
+      <img src="logo.png" alt="Center Logo" class="center-logo" />
+    </section>
 
-    <!-- Trending & Traditional Section -->
-    <div class="container">
-      <div class="box" id="trending-box">
+    <section class="content-section">
+      <div class="content-box">
         <h2>Trending Topics</h2>
-        <div id="trending-content"></div>
+        <div id="trending-content" class="content-list"></div>
       </div>
 
-      <div class="box" id="traditional-box">
+      <div class="content-box">
         <h2>Traditional Topics</h2>
-        <div id="traditional-content"></div>
+        <div id="traditional-content" class="content-list"></div>
       </div>
-    </div>
+    </section>
   </main>
 
-  <footer>
-    <p>© 2025 The Little Info. All rights reserved.</p>
-  </footer>
-
-  <!-- Load Firestore and fetch content -->
+  <!-- Firebase logic -->
   <script type="module">
     import { db } from './firebaseInit.js';
     import {
       collection,
       query,
+      where,
       orderBy,
       getDocs
     } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-    const trendingContainer = document.getElementById("trending-content");
-    const traditionalContainer = document.getElementById("traditional-content");
+    const trendingBox = document.getElementById("trending-content");
+    const traditionalBox = document.getElementById("traditional-content");
 
-    async function loadContent() {
-      const contentQuery = query(collection(db, "content"), orderBy("timestamp", "desc"));
-      const snapshot = await getDocs(contentQuery);
+    async function loadContent(category, container) {
+      const q = query(
+        collection(db, "content"),
+        where("category", "==", category),
+        orderBy("timestamp", "desc")
+      );
 
-      snapshot.forEach((doc) => {
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot.empty) {
+        container.innerHTML = "<p>No content available.</p>";
+        return;
+      }
+
+      querySnapshot.forEach((doc) => {
         const data = doc.data();
         const card = document.createElement("div");
-        card.innerHTML = `
-          <h3>${data.title}</h3>
-          <p>${data.description}</p>
-          ${data.type === 'video' ? `
-            <video src="${data.url}" controls width="100%"></video>
-          ` : `
-            <img src="${data.url}" alt="${data.title}" style="max-width:100%; border-radius:8px;" />
-          `}
-          <hr>
-        `;
+        card.classList.add("content-card");
 
-        if (data.category === "trending") {
-          trendingContainer.appendChild(card);
-        } else if (data.category === "traditional") {
-          traditionalContainer.appendChild(card);
+        if (data.type === "video") {
+          card.innerHTML = `
+            <h3>${data.title}</h3>
+            <video src="${data.url}" controls width="100%"></video>
+            <p>${data.description}</p>
+          `;
+        } else {
+          card.innerHTML = `
+            <h3>${data.title}</h3>
+            <img src="${data.url}" alt="${data.title}" width="100%" />
+            <p>${data.description}</p>
+          `;
         }
+
+        container.appendChild(card);
       });
     }
 
-    loadContent();
+    loadContent("trending", trendingBox);
+    loadContent("traditional", traditionalBox);
   </script>
 </body>
 </html>
