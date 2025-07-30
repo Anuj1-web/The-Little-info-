@@ -1,172 +1,189 @@
-// Fully Updated script.js with Step 1–8 features
-
 import {
-  getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, query, where, orderBy, onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, query, where, orderBy, addDoc, doc, updateDoc, deleteDoc, onSnapshot, limit, getDoc
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import {
   getAuth, onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-import { app, auth, db } from './firebase.js';
+const firebaseConfig = {
+  apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
+  authDomain: "the-little-info.firebaseapp.com",
+  projectId: "the-little-info",
+  storageBucket: "the-little-info.appspot.com",
+  messagingSenderId: "165711417682",
+  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
+};
 
-// Global vars
-let currentUser = null;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth();
 
-// Track Auth
-onAuthStateChanged(auth, async (user) => {
+let currentUser;
+
+// ======================= Auth Listener =======================
+onAuthStateChanged(auth, user => {
+  currentUser = user;
   if (user) {
-    currentUser = user;
-    document.getElementById("user-email")?.textContent = user.email;
-    fetchAndDisplayBookmarks(user.uid);
-    fetchAndDisplayPlaylists(user.uid);
-    listenToNotifications(user.uid);
+    loadNotifications(user.uid);
   }
 });
 
-// =============================
-// 🔖 Bookmark Functions
-// =============================
-async function toggleBookmark(contentId, contentData) {
-  const userId = currentUser.uid;
-  const bookmarkRef = doc(db, "bookmarks", `${userId}_${contentId}`);
-  const docSnap = await getDoc(bookmarkRef);
+// =================== Content Display ===================
+async function loadContent() {
+  const trendingQuery = query(collection(db, "content"), where("type", "==", "trending"), orderBy("timestamp", "desc"));
+  const traditionalQuery = query(collection(db, "content"), where("type", "==", "traditional"), orderBy("timestamp", "desc"));
 
-  if (docSnap.exists()) {
-    await deleteDoc(bookmarkRef);
-  } else {
-    await setDoc(bookmarkRef, {
-      userId,
+  const trendingSnap = await getDocs(trendingQuery);
+  const traditionalSnap = await getDocs(traditionalQuery);
+
+  displayContent(trendingSnap.docs, "trending-content");
+  displayContent(traditionalSnap.docs, "traditional-content");
+}
+
+function displayContent(docs, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  docs.forEach(docSnap => {
+    const data = docSnap.data();
+    const card = document.createElement("div");
+    card.className = "content-card";
+    card.innerHTML = `
+      <video src="${data.videoUrl}" controls></video>
+      <h3>${data.title}</h3>
+      <p>${data.description}</p>
+      <p><strong>Tag:</strong> ${data.tag || 'General'}</p>
+      <button class="bookmark-btn" data-id="${docSnap.id}">🔖</button>
+      <button class="comment-btn" data-id="${docSnap.id}">💬</button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// =================== Bookmark Function ===================
+document.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("bookmark-btn")) {
+    if (!currentUser) return alert("Login required");
+
+    const contentId = e.target.dataset.id;
+    await addDoc(collection(db, "bookmarks"), {
+      uid: currentUser.uid,
+      contentId
+    });
+    alert("Bookmarked!");
+  }
+});
+
+// =================== Comment System ===================
+document.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("comment-btn")) {
+    const comment = prompt("Enter your comment:");
+    if (!comment || !currentUser) return;
+
+    const contentId = e.target.dataset.id;
+    await addDoc(collection(db, "comments"), {
+      uid: currentUser.uid,
       contentId,
-      ...contentData,
-      timestamp: new Date(),
+      text: comment,
+      timestamp: new Date()
     });
+    alert("Comment added!");
   }
-  fetchAndDisplayBookmarks(userId);
+});
+
+// =================== Tag Filter & Sorting ===================
+document.getElementById("tag-filter").addEventListener("change", updateFilteredContent);
+document.getElementById("sort-by").addEventListener("change", updateFilteredContent);
+
+async function updateFilteredContent() {
+  const tag = document.getElementById("tag-filter").value;
+  const sort = document.getElementById("sort-by").value;
+
+  let q = collection(db, "content");
+
+  if (tag !== "all") q = query(q, where("tag", "==", tag));
+  if (sort === "most_recent") q = query(q, orderBy("timestamp", "desc"));
+  else if (sort === "most_liked") q = query(q, orderBy("likes", "desc"));
+
+  const docsSnap = await getDocs(q);
+  displayContent(docsSnap.docs, "trending-content");
 }
 
-async function fetchAndDisplayBookmarks(userId) {
-  const q = query(collection(db, "bookmarks"), where("userId", "==", userId));
-  const snapshot = await getDocs(q);
-  const container = document.getElementById("bookmark-container");
-  if (!container) return;
-  container.innerHTML = "";
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <h4>${data.title}</h4>
-      <video controls src="${data.videoUrl}" width="100%"></video>
-      <button onclick="removeBookmark('${doc.id}')">Remove</button>
-    `;
-    container.appendChild(div);
-  });
-}
-
-window.removeBookmark = async function (bookmarkId) {
-  await deleteDoc(doc(db, "bookmarks", bookmarkId));
-  fetchAndDisplayBookmarks(currentUser.uid);
-}
-
-// =============================
-// 🎥 Playlist Functions
-// =============================
-window.addToPlaylist = async function (contentId, contentData) {
-  const name = prompt("Enter playlist name:");
-  if (!name) return;
-  const playlistId = `${currentUser.uid}_${name}`;
-  const ref = doc(db, "playlists", playlistId);
-  const docSnap = await getDoc(ref);
-  let videos = [];
-
-  if (docSnap.exists()) {
-    videos = docSnap.data().videos || [];
-  }
-
-  videos.push({ contentId, ...contentData });
-  const publicStatus = confirm("Make playlist public?");
-
-  await setDoc(ref, {
-    userId: currentUser.uid,
+// =================== Playlist Management ===================
+async function createPlaylist(name, isPublic = false) {
+  const docRef = await addDoc(collection(db, "playlists"), {
+    uid: currentUser.uid,
     name,
-    videos,
-    public: publicStatus,
-    updatedAt: new Date()
+    isPublic,
+    videos: [],
+    timestamp: new Date()
   });
 
-  if (publicStatus) {
-    await setDoc(doc(db, "public_playlists", playlistId), {
-      ...videos,
-      name,
-      userId: currentUser.uid,
-      updatedAt: new Date(),
-      videos,
+  if (isPublic) {
+    await setDoc(doc(db, "public_playlists", docRef.id), {
+      ...docRef.data(),
+      publicId: docRef.id
     });
   }
-};
 
-async function fetchAndDisplayPlaylists(userId) {
-  const q = query(collection(db, "playlists"), where("userId", "==", userId));
-  const snapshot = await getDocs(q);
-  const container = document.getElementById("playlist-container");
-  if (!container) return;
-  container.innerHTML = "";
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <h4>${data.name}</h4>
-      <p>${data.videos.length} videos</p>
-      <a href="playlist.html?id=${doc.id}">View</a>
-    `;
-    container.appendChild(div);
-  });
+  alert("Playlist created");
 }
 
-window.removeFromPlaylist = async function (playlistId, contentId) {
-  const ref = doc(db, "playlists", playlistId);
-  const snap = await getDoc(ref);
-  const data = snap.data();
-  const updated = data.videos.filter(v => v.contentId !== contentId);
-  await updateDoc(ref, { videos: updated });
+// =================== Notifications ===================
+const notifContainer = document.getElementById("notif-dropdown");
+const notifCounter = document.getElementById("notif-counter");
+const clearNotifBtn = document.getElementById("clear-notif");
 
-  if (data.public) {
-    await updateDoc(doc(db, "public_playlists", playlistId), { videos: updated });
-  }
-  location.reload();
-}
+function loadNotifications(uid) {
+  const notifRef = query(
+    collection(db, "notifications"),
+    where("uid", "==", uid),
+    orderBy("timestamp", "desc"),
+    limit(10)
+  );
 
-// =============================
-// 🔔 Notifications
-// =============================
-function listenToNotifications(userId) {
-  const dropdown = document.getElementById('notification-dropdown');
-  const countBadge = document.getElementById('notification-count');
-
-  const q = query(collection(db, "notifications"), where("recipientId", "==", userId), orderBy("timestamp", "desc"));
-
-  onSnapshot(q, (snapshot) => {
-    dropdown.innerHTML = '';
-    let count = 0;
+  onSnapshot(notifRef, (snapshot) => {
+    notifContainer.innerHTML = "";
+    notifCounter.innerText = snapshot.size;
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      const item = document.createElement("div");
-      item.className = "notification-item";
-      item.innerHTML = `
-        <strong>${data.title}</strong><br>
-        <span>${data.message}</span>
+      const div = document.createElement("div");
+      div.className = "notif-item";
+      div.innerHTML = `
+        ${data.type === "like" ? "❤️" : "💬"} ${data.message}
+        <button data-id="${doc.id}" class="delete-notif">🗑️</button>
       `;
-      dropdown.appendChild(item);
-      count++;
+      notifContainer.appendChild(div);
     });
-
-    countBadge.textContent = count > 0 ? count : '';
   });
 }
 
-// =============================
-// Export functions globally
-// =============================
-window.toggleBookmark = toggleBookmark;
-window.addToPlaylist = addToPlaylist;
+notifContainer.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("delete-notif")) {
+    const id = e.target.dataset.id;
+    await deleteDoc(doc(db, "notifications", id));
+  }
+});
+
+clearNotifBtn.addEventListener("click", async () => {
+  const q = query(collection(db, "notifications"), where("uid", "==", currentUser.uid));
+  const snap = await getDocs(q);
+  snap.forEach(doc => deleteDoc(doc.ref));
+});
+
+// =================== Video Speed Control ===================
+document.addEventListener("change", (e) => {
+  if (e.target.classList.contains("speed-control")) {
+    const video = e.target.closest(".content-card").querySelector("video");
+    video.playbackRate = parseFloat(e.target.value);
+  }
+});
+
+// =================== On Load ===================
+window.onload = () => {
+  loadContent();
+};
