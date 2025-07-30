@@ -3,183 +3,155 @@ import {
   collection,
   query,
   orderBy,
-  onSnapshot,
+  getDocs,
   addDoc,
   deleteDoc,
   doc,
-  serverTimestamp
-} from "firebase/firestore";
+  where
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-lite.js";
 
-let allTrending = [];
-let allTraditional = [];
+let allContent = [];
 
-const searchInput = document.getElementById('search-input');
-const filterSelect = document.getElementById('filter-select');
-const tagSelect = document.getElementById('tag-select');
-const sortSelect = document.getElementById('sort-select');
+const trendingContainer = document.getElementById("trending-content");
+const traditionalContainer = document.getElementById("traditional-content");
 
-searchInput.addEventListener("input", renderFilteredContent);
-filterSelect.addEventListener("change", renderFilteredContent);
-tagSelect.addEventListener("change", renderFilteredContent);
-sortSelect.addEventListener("change", renderFilteredContent);
+const searchInput = document.getElementById("search-input");
+const filterSelect = document.getElementById("filter-select");
+const tagSelect = document.getElementById("tag-select");
+const sortSelect = document.getElementById("sort-select");
 
-loadSection("trending");
-loadSection("traditional");
+async function fetchContent() {
+  const colRef = collection(db, "content");
+  const q = query(colRef, orderBy("timestamp", "desc"));
+  const snapshot = await getDocs(q);
 
-function loadSection(collectionName) {
-  const ref = collection(db, collectionName);
-  const q = query(ref, orderBy("timestamp", "desc"));
+  allContent = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
 
-  onSnapshot(q, (snapshot) => {
-    const results = [];
-    snapshot.forEach((docSnap) => {
-      results.push({ id: docSnap.id, data: docSnap.data() });
-    });
-
-    if (collectionName === "trending") allTrending = results;
-    else allTraditional = results;
-
-    renderFilteredContent();
-  });
+  renderContent();
 }
 
-function renderFilteredContent() {
-  const keyword = searchInput.value.toLowerCase();
-  const tag = tagSelect.value;
-  const filter = filterSelect.value;
-  const sort = sortSelect.value;
-
-  const trendingContainer = document.getElementById("trending-content");
-  const traditionalContainer = document.getElementById("traditional-content");
+function renderContent() {
   trendingContainer.innerHTML = "";
   traditionalContainer.innerHTML = "";
 
-  let renderList = [];
+  const searchQuery = searchInput.value.toLowerCase();
+  const selectedFilter = filterSelect.value;
+  const selectedTag = tagSelect.value;
+  const sortType = sortSelect.value;
 
-  if (filter === "all" || filter === "trending") {
-    renderList = renderList.concat(allTrending.map(item => ({ ...item, type: "trending" })));
-  }
-
-  if (filter === "all" || filter === "traditional") {
-    renderList = renderList.concat(allTraditional.map(item => ({ ...item, type: "traditional" })));
-  }
-
-  // Filter by search + tag
-  renderList = renderList.filter(({ data }) => {
-    const matchesText =
-      data.title.toLowerCase().includes(keyword) ||
-      data.description.toLowerCase().includes(keyword);
-
-    const matchesTag =
-      tag === "all" || (data.tags && data.tags.includes(tag));
-
-    return matchesText && matchesTag;
+  let filtered = allContent.filter(item => {
+    const matchSearch =
+      item.title.toLowerCase().includes(searchQuery) ||
+      item.description.toLowerCase().includes(searchQuery);
+    const matchFilter =
+      selectedFilter === "all" || item.category === selectedFilter;
+    const matchTag = selectedTag === "all" || item.tags?.includes(selectedTag);
+    return matchSearch && matchFilter && matchTag;
   });
 
-  // Sort
-  if (sort === "recent") {
-    renderList.sort((a, b) => b.data.timestamp?.seconds - a.data.timestamp?.seconds);
-  }
+  // Sorting
+  filtered.sort((a, b) => {
+    if (sortType === "likes") return (b.likes || 0) - (a.likes || 0);
+    else return b.timestamp - a.timestamp;
+  });
 
-  // Future: sort === "liked" (based on likeCount)
-  if (sort === "liked") {
-    renderList.sort((a, b) => (b.data.likeCount || 0) - (a.data.likeCount || 0));
-  }
-
-  renderList.forEach(({ id, data, type }) => {
-    renderCard(type, id, data);
+  filtered.forEach(item => {
+    const card = createContentCard(item);
+    if (item.category === "trending") {
+      trendingContainer.appendChild(card);
+    } else if (item.category === "traditional") {
+      traditionalContainer.appendChild(card);
+    }
   });
 }
 
-function renderCard(collectionName, docId, data) {
-  const containerId = collectionName === "trending" ? "trending-content" : "traditional-content";
-  const container = document.getElementById(containerId);
-
+function createContentCard(data) {
   const card = document.createElement("div");
-  card.classList.add("content-card");
-  card.dataset.id = docId;
-
-  const tagsDisplay = data.tags ? data.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ') : '';
+  card.className = "content-card";
 
   card.innerHTML = `
     <h3>${data.title}</h3>
     <p>${data.description}</p>
-    <video src="${data.videoURL}" controls></video>
-    <div class="tags">${tagsDisplay}</div>
-    <button class="bookmark-btn" data-id="${docId}">🔖 Bookmark</button>
+    <video src="${data.videoUrl}" controls></video>
+    <button class="bookmark-btn" data-id="${data.id}">Bookmark</button>
 
     <div class="comment-section">
-      <input type="text" class="comment-input" placeholder="Add a comment" />
-      <button class="comment-btn">Post</button>
-      <div class="comments-list"></div>
+      <input class="comment-input" placeholder="Write a comment..." />
+      <button class="comment-btn" data-id="${data.id}">Post</button>
+      <div class="comments-list" id="comments-${data.id}"></div>
     </div>
   `;
 
-  container.appendChild(card);
-
-  // Comments
-  const commentBtn = card.querySelector(".comment-btn");
-  commentBtn.addEventListener("click", () => {
-    addComment(collectionName, docId, card);
+  // Bookmark functionality
+  card.querySelector(".bookmark-btn").addEventListener("click", async () => {
+    const user = auth.currentUser;
+    if (user) {
+      const bookmarkRef = collection(db, "users", user.uid, "bookmarks");
+      await addDoc(bookmarkRef, {
+        contentId: data.id,
+        timestamp: Date.now()
+      });
+      alert("Bookmarked!");
+    } else {
+      alert("Please login to bookmark");
+    }
   });
 
-  loadComments(collectionName, docId, card);
-}
-
-// Comments remain unchanged...
-function addComment(collectionName, contentId, cardElement) {
-  const input = cardElement.querySelector(".comment-input");
-  const text = input.value.trim();
-
-  if (!text) return;
-
-  const currentUser = auth.currentUser;
-  if (!currentUser) {
-    alert("Login required to comment.");
-    return;
-  }
-
-  const commentsRef = collection(db, `${collectionName}/${contentId}/comments`);
-  addDoc(commentsRef, {
-    text,
-    userId: currentUser.uid,
-    userEmail: currentUser.email,
-    timestamp: serverTimestamp()
-  }).then(() => {
-    input.value = "";
+  // Post Comment
+  card.querySelector(".comment-btn").addEventListener("click", async () => {
+    const commentInput = card.querySelector(".comment-input");
+    const text = commentInput.value.trim();
+    const user = auth.currentUser;
+    if (text && user) {
+      const commentRef = collection(db, "content", data.id, "comments");
+      await addDoc(commentRef, {
+        text,
+        userId: user.uid,
+        timestamp: Date.now()
+      });
+      commentInput.value = "";
+      loadComments(data.id);
+    }
   });
+
+  loadComments(data.id, card.querySelector(`#comments-${data.id}`));
+
+  return card;
 }
 
-function loadComments(collectionName, contentId, cardElement) {
-  const commentsList = cardElement.querySelector(".comments-list");
-  const commentsRef = collection(db, `${collectionName}/${contentId}/comments`);
-  const q = query(commentsRef, orderBy("timestamp", "desc"));
+async function loadComments(contentId, container = null) {
+  const commentRef = collection(db, "content", contentId, "comments");
+  const snapshot = await getDocs(query(commentRef, orderBy("timestamp", "desc")));
+  const list = container || document.getElementById(`comments-${contentId}`);
+  list.innerHTML = "";
 
-  onSnapshot(q, (snapshot) => {
-    commentsList.innerHTML = "";
-    snapshot.forEach((docSnap) => {
-      const comment = docSnap.data();
-      const div = document.createElement("div");
-      div.classList.add("comment");
-      div.innerHTML = `
-        <p><strong>${comment.userEmail}</strong>: ${comment.text}</p>
-        ${
-          auth.currentUser && auth.currentUser.uid === comment.userId
-            ? `<button class="delete-comment" data-id="${docSnap.id}" data-content-id="${contentId}" data-type="${collectionName}">Delete</button>`
-            : ""
-        }
-      `;
-      commentsList.appendChild(div);
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const commentEl = document.createElement("div");
+    commentEl.className = "comment";
+    commentEl.innerHTML = `
+      <p>${data.text}</p>
+      <button class="delete-comment" data-id="${docSnap.id}" data-content="${contentId}">Delete</button>
+    `;
+    // Delete comment (admin or user who posted)
+    commentEl.querySelector(".delete-comment").addEventListener("click", async () => {
+      const user = auth.currentUser;
+      if (!user) return alert("Login required");
+      await deleteDoc(doc(db, "content", contentId, "comments", docSnap.id));
+      loadComments(contentId);
     });
+
+    list.appendChild(commentEl);
   });
 }
 
-document.addEventListener("click", async (e) => {
-  if (e.target.classList.contains("delete-comment")) {
-    const commentId = e.target.dataset.id;
-    const contentId = e.target.dataset.contentId;
-    const type = e.target.dataset.type;
+// Listeners
+searchInput.addEventListener("input", renderContent);
+filterSelect.addEventListener("change", renderContent);
+tagSelect.addEventListener("change", renderContent);
+sortSelect.addEventListener("change", renderContent);
 
-    await deleteDoc(doc(db, `${type}/${contentId}/comments/${commentId}`));
-  }
-});
+fetchContent();
