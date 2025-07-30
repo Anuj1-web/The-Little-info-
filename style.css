@@ -1,131 +1,196 @@
-/* General Reset */
-* {
+/* Global Styles */
+body {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f7f9fc;
+  color: #333;
 }
 
-/* Body Styling */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f3f4f6;
-  color: #333;
-  line-height: 1.6;
-  padding: 0 10px;
+a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2 {
+  color: #2c3e50;
 }
 
 /* Header */
 header {
-  background-color: #003366;
-  color: #fff;
-  padding: 20px 10px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 header .logo {
-  width: 80px;
-  height: 80px;
+  height: 50px;
+  width: 50px;
   border-radius: 50%;
-  margin-bottom: 10px;
 }
 
-header h1 {
-  margin-bottom: 10px;
+nav a {
+  margin-left: 20px;
+  font-weight: 500;
 }
 
-header nav {
-  margin-top: 10px;
-}
-
-header nav a {
-  color: #fff;
-  text-decoration: none;
-  margin: 0 10px;
-  font-weight: bold;
-}
-
-header nav a:hover {
-  text-decoration: underline;
-}
-
-/* Main Content */
-main {
-  max-width: 600px;
-  margin: 30px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-main h2 {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-/* Form Styling */
-form input[type="text"],
-form textarea,
-form input[type="file"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 16px;
-}
-
-form textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.category-options {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  font-size: 16px;
-}
-
-form button {
+/* Hero Logo */
+.hero-logo {
   display: block;
-  width: 100%;
-  padding: 12px;
-  background-color: #003366;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 18px;
+  margin: 20px auto;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+
+/* Main Container */
+.container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+/* Content Boxes */
+.box {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  padding: 20px;
+  margin: 20px;
+  width: 45%;
+  min-width: 300px;
+}
+
+.box h2 {
+  margin-top: 0;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #eaeaea;
+  margin-top: 40px;
+}
+
+/* Sidebar & Menu Icon (User Profile Dashboard) */
+.menu-icon {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 30px;
   cursor: pointer;
 }
 
-form button:hover {
-  background-color: #00509e;
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background-color: #f0f0f0;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: left 0.3s ease;
+  z-index: 1000;
 }
 
-/* Upload Status */
-.status-msg {
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+}
+
+/* Content Cards (for Video/Article Display) */
+.content-card {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.content-card h3 {
+  margin: 0 0 10px;
+}
+
+/* Interaction Section (Like, Bookmark, Comment) */
+.interactions {
   margin-top: 10px;
-  font-weight: bold;
-  color: green;
-  text-align: center;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  header, main {
-    padding: 15px;
-  }
+.interactions button {
+  margin-right: 10px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
 
-  .category-options {
+.interactions button:hover {
+  background-color: #0056b3;
+}
+
+/* Comment Section */
+.comments {
+  margin-top: 10px;
+}
+
+.comments input {
+  padding: 8px;
+  width: 70%;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.comments button {
+  padding: 8px 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.comments button:hover {
+  background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
     flex-direction: column;
-    gap: 8px;
+    align-items: center;
   }
 
-  form button {
-    font-size: 16px;
+  .box {
+    width: 90%;
+  }
+
+  .menu-icon {
+    top: 10px;
+    left: 10px;
   }
 }
