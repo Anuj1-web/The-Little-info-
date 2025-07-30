@@ -2,140 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Profile - The Little Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Little Info</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .menu-icon {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 30px;
-      cursor: pointer;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -250px;
-      width: 250px;
-      height: 100%;
-      background-color: #f0f0f0;
-      padding: 20px;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-      transition: left 0.3s ease;
-    }
-
-    .sidebar.active {
-      left: 0;
-    }
-
-    .sidebar h2 {
-      margin-top: 0;
-    }
-
-    .bookmark-btn {
-      display: inline-block;
-      margin-top: 10px;
-      background-color: #007bff;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
 </head>
 <body>
-  <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+  <!-- Top Navigation with Logo -->
+  <header style="display: flex; align-items: center; padding: 10px;">
+    <img src="Green and White Modern Computer Service Repair Logo_20250710_113545_0000.png" alt="Logo" style="height: 60px; width: 60px; border-radius: 50%;" />
+    <h1 style="margin-left: 10px;">The Little Info</h1>
+  </header>
 
-  <div class="sidebar" id="sidebar">
-    <h2>User Dashboard</h2>
-    <ul>
-      <li><a href="profile.html">Profile</a></li>
-      <li><a href="bookmarks.html">Bookmarks</a></li>
-      <li><a href="settings.html">Settings</a></li>
-      <li><a href="#" onclick="logout()">Logout</a></li>
-    </ul>
-  </div>
+  <!-- Main Content -->
+  <main style="padding: 20px;">
+    <!-- Trending Section -->
+    <section>
+      <h2>🔥 Trending Topics</h2>
+      <div id="trending-content" class="content-grid"></div>
+    </section>
 
-  <main>
-    <h1>Welcome to Your Profile</h1>
-    <p>This is your personal dashboard.</p>
-    <div id="content-list"></div>
+    <!-- Traditional Section (to be expanded later) -->
+    <section style="margin-top: 40px;">
+      <h2>📜 Traditional Topics</h2>
+      <div id="traditional-content" class="content-grid"></div>
+    </section>
   </main>
 
-  <script type="module">
-    import { auth, db } from './firebaseInit.js';
-    import {
-      onAuthStateChanged,
-      signOut
-    } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js';
-    import {
-      collection,
-      doc,
-      setDoc
-    } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
-
-    const contentList = document.getElementById("content-list");
-
-    const sampleContent = [
-      {
-        id: "content1",
-        title: "Ancient Tamil Inscriptions",
-        description: "A glimpse into early Tamil culture.",
-        link: "https://example.com/video1"
-      },
-      {
-        id: "content2",
-        title: "Keeladi Excavation",
-        description: "Discoveries from the excavation site.",
-        link: "https://example.com/video2"
-      }
-    ];
-
-    function renderContent(user) {
-      sampleContent.forEach(content => {
-        const card = document.createElement("div");
-        card.className = "bookmark-card";
-        card.innerHTML = `
-          <h3>${content.title}</h3>
-          <p>${content.description}</p>
-          <a href="${content.link}" target="_blank">Watch</a>
-          <div class="bookmark-btn" onclick="bookmarkContent('${user.uid}', '${content.id}', '${content.title}', '${content.description}', '${content.link}')">Bookmark</div>
-        `;
-        contentList.appendChild(card);
-      });
-    }
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        alert("You must be logged in to view this page.");
-        window.location.href = "login.html";
-      } else {
-        renderContent(user);
-        window.bookmarkContent = async function (uid, contentId, title, description, link) {
-          const bookmarkRef = doc(db, `users/${uid}/bookmarks/${contentId}`);
-          await setDoc(bookmarkRef, {
-            title,
-            description,
-            link
-          });
-          alert("Bookmarked successfully!");
-        };
-      }
-    });
-
-    window.logout = function () {
-      signOut(auth).then(() => {
-        window.location.href = "login.html";
-      });
-    };
-  </script>
-
-  <script>
-    function toggleSidebar() {
-      document.getElementById("sidebar").classList.toggle("active");
-    }
-  </script>
+  <!-- Firebase & Script -->
+  <script type="module" src="./script.js"></script>
 </body>
 </html>
