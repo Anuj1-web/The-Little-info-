@@ -1,24 +1,39 @@
 // login.js
 import { auth } from './firebaseInit.js';
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+import {
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
-document.getElementById("login-form").addEventListener("submit", async (e) => {
+const loginForm = document.getElementById("loginForm");
+const message = document.getElementById("loginMessage");
+
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
 
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Redirect based on email
-    if (user.email === "thelittleinfo01@gmail.com") {
-      window.location.href = "admin.html"; // Admin dashboard
+    // ✅ Check if email is verified
+    if (user.emailVerified) {
+      message.textContent = "Login successful!";
+      // Redirect based on admin or user
+      if (user.email === "thelittleinfo01@gmail.com") {
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "index.html";
+      }
     } else {
-      window.location.href = "user-home.html"; // User homepage
+      await signOut(auth); // Sign user out immediately
+      message.textContent = "Please verify your email before logging in.";
     }
+
   } catch (error) {
-    alert("Login failed: " + error.message);
+    message.textContent = "Login failed: " + error.message;
   }
 });
