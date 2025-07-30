@@ -1,12 +1,28 @@
 <header>
   <div class="logo-container">
-    <img src="logo.png" alt="Logo" class="logo" />
-    <h1>The Little Info</h1>
+    <a href="index.html">
+      <img src="Green and White Modern Computer Service Repair Logo_20250710_113545_0000.png" alt="The Little Info Logo" class="logo">
+    </a>
   </div>
+
   <nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
-    <a href="admin.html">Admin</a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="bookmarks.html">Bookmarks</a></li>
+      <li><a href="playlists.html">Playlists</a></li>
+      <li><a href="quizzes.html">Quizzes</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
   </nav>
+
+  <div class="notification-container">
+    <div class="notification-bell" id="notificationBell">
+      🔔
+      <span id="notificationCount" class="badge hidden">0</span>
+    </div>
+    <div id="notificationDropdown" class="dropdown hidden">
+      <!-- Notifications will appear here -->
+    </div>
+  </div>
 </header>
