@@ -1,157 +1,157 @@
-import { db, auth } from "./firebase.js";
+import { db, auth } from './firebase.js';
 import {
   collection,
-  query,
-  orderBy,
   getDocs,
-  addDoc,
-  deleteDoc,
-  doc,
-  where
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-lite.js";
+  query
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-let allContent = [];
-
-const trendingContainer = document.getElementById("trending-content");
-const traditionalContainer = document.getElementById("traditional-content");
-
-const searchInput = document.getElementById("search-input");
-const filterSelect = document.getElementById("filter-select");
-const tagSelect = document.getElementById("tag-select");
-const sortSelect = document.getElementById("sort-select");
+const trendingSection = document.getElementById("trending-content");
+const traditionalSection = document.getElementById("traditional-content");
+const searchInput = document.getElementById("searchInput");
+const tagFilter = document.getElementById("tagFilter");
+const sortOption = document.getElementById("sortOption");
 
 async function fetchContent() {
-  const colRef = collection(db, "content");
-  const q = query(colRef, orderBy("timestamp", "desc"));
-  const snapshot = await getDocs(q);
+  const q = query(collection(db, "content"));
+  const querySnapshot = await getDocs(q);
+  let contentArray = [];
 
-  allContent = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
+  querySnapshot.forEach((doc) => {
+    contentArray.push({ id: doc.id, ...doc.data() });
+  });
 
-  renderContent();
+  renderContent(contentArray);
 }
 
-function renderContent() {
-  trendingContainer.innerHTML = "";
-  traditionalContainer.innerHTML = "";
+function renderContent(data) {
+  trendingSection.innerHTML = "";
+  traditionalSection.innerHTML = "";
 
-  const searchQuery = searchInput.value.toLowerCase();
-  const selectedFilter = filterSelect.value;
-  const selectedTag = tagSelect.value;
-  const sortType = sortSelect.value;
+  let filteredData = data.filter(item => {
+    const keywordMatch =
+      item.title.toLowerCase().includes(searchInput.value.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchInput.value.toLowerCase());
 
-  let filtered = allContent.filter(item => {
-    const matchSearch =
-      item.title.toLowerCase().includes(searchQuery) ||
-      item.description.toLowerCase().includes(searchQuery);
-    const matchFilter =
-      selectedFilter === "all" || item.category === selectedFilter;
-    const matchTag = selectedTag === "all" || item.tags?.includes(selectedTag);
-    return matchSearch && matchFilter && matchTag;
+    const tagMatch =
+      tagFilter.value === "All" || item.tags?.includes(tagFilter.value);
+
+    return keywordMatch && tagMatch;
   });
 
-  // Sorting
-  filtered.sort((a, b) => {
-    if (sortType === "likes") return (b.likes || 0) - (a.likes || 0);
-    else return b.timestamp - a.timestamp;
-  });
+  if (sortOption.value === "likes") {
+    filteredData.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+  } else {
+    filteredData.sort((a, b) => b.timestamp - a.timestamp);
+  }
 
-  filtered.forEach(item => {
-    const card = createContentCard(item);
-    if (item.category === "trending") {
-      trendingContainer.appendChild(card);
-    } else if (item.category === "traditional") {
-      traditionalContainer.appendChild(card);
-    }
+  filteredData.forEach((item) => {
+    const container = item.category === "Trending" ? trendingSection : traditionalSection;
+    container.appendChild(createContentCard(item));
   });
 }
 
-function createContentCard(data) {
+function createContentCard(item) {
   const card = document.createElement("div");
   card.className = "content-card";
 
+  const defaultQuality = "720p";
+  const currentSrc = item.videoUrls?.[defaultQuality] || Object.values(item.videoUrls || {})[0];
+
+  const subtitleTracks = Object.entries(item.subtitles || {})
+    .map(([lang, url]) =>
+      `<track label="${lang.toUpperCase()}" kind="subtitles" srclang="${lang}" src="${url}">`
+    ).join('');
+
+  const subtitleOptions = Object.keys(item.subtitles || {})
+    .map(lang =>
+      `<option value="${lang}">${lang.toUpperCase()}</option>`
+    ).join('');
+
   card.innerHTML = `
-    <h3>${data.title}</h3>
-    <p>${data.description}</p>
-    <video src="${data.videoUrl}" controls></video>
-    <button class="bookmark-btn" data-id="${data.id}">Bookmark</button>
+    <h3>${item.title}</h3>
+    <div class="video-wrapper">
+      <video controls class="video-player" crossorigin="anonymous">
+        <source src="${currentSrc}" type="video/mp4">
+        ${subtitleTracks}
+      </video>
+    </div>
+
+    <div class="video-controls">
+      <label>Speed:
+        <select class="speed-control">
+          <option value="0.5">0.5x</option>
+          <option value="1" selected>1x</option>
+          <option value="1.5">1.5x</option>
+          <option value="2">2x</option>
+        </select>
+      </label>
+
+      <label>Quality:
+        <select class="quality-control">
+          ${Object.keys(item.videoUrls || {}).map(q => `
+            <option value="${q}" ${q === defaultQuality ? "selected" : ""}>${q}</option>
+          `).join('')}
+        </select>
+      </label>
+
+      ${subtitleOptions ? `
+      <label>Subtitles:
+        <select class="subtitle-control">
+          <option value="">None</option>
+          ${subtitleOptions}
+        </select>
+      </label>` : ""}
+    </div>
+
+    <p>${item.description}</p>
+    <div class="tags">Tags: ${item.tags?.join(", ") || "None"}</div>
+    <button class="bookmark-btn" data-id="${item.id}">🔖 Bookmark</button>
 
     <div class="comment-section">
-      <input class="comment-input" placeholder="Write a comment..." />
-      <button class="comment-btn" data-id="${data.id}">Post</button>
-      <div class="comments-list" id="comments-${data.id}"></div>
+      <textarea placeholder="Add a comment..." data-id="${item.id}" class="comment-input"></textarea>
+      <button class="submit-comment" data-id="${item.id}">Comment</button>
+      <div class="comments" id="comments-${item.id}"></div>
     </div>
   `;
 
-  // Bookmark functionality
-  card.querySelector(".bookmark-btn").addEventListener("click", async () => {
-    const user = auth.currentUser;
-    if (user) {
-      const bookmarkRef = collection(db, "users", user.uid, "bookmarks");
-      await addDoc(bookmarkRef, {
-        contentId: data.id,
-        timestamp: Date.now()
-      });
-      alert("Bookmarked!");
-    } else {
-      alert("Please login to bookmark");
-    }
+  const video = card.querySelector("video");
+
+  // Speed control
+  const speedControl = card.querySelector(".speed-control");
+  speedControl.addEventListener("change", () => {
+    video.playbackRate = parseFloat(speedControl.value);
   });
 
-  // Post Comment
-  card.querySelector(".comment-btn").addEventListener("click", async () => {
-    const commentInput = card.querySelector(".comment-input");
-    const text = commentInput.value.trim();
-    const user = auth.currentUser;
-    if (text && user) {
-      const commentRef = collection(db, "content", data.id, "comments");
-      await addDoc(commentRef, {
-        text,
-        userId: user.uid,
-        timestamp: Date.now()
-      });
-      commentInput.value = "";
-      loadComments(data.id);
-    }
+  // Quality control
+  const qualityControl = card.querySelector(".quality-control");
+  qualityControl.addEventListener("change", () => {
+    const selectedQuality = qualityControl.value;
+    const newSrc = item.videoUrls[selectedQuality];
+    const currentTime = video.currentTime;
+    const isPlaying = !video.paused;
+    video.src = newSrc;
+    video.load();
+    video.currentTime = currentTime;
+    if (isPlaying) video.play();
   });
 
-  loadComments(data.id, card.querySelector(`#comments-${data.id}`));
+  // Subtitle language selector
+  const subtitleSelector = card.querySelector(".subtitle-control");
+  if (subtitleSelector) {
+    subtitleSelector.addEventListener("change", () => {
+      const selectedLang = subtitleSelector.value;
+      Array.from(video.textTracks).forEach(track => {
+        track.mode = track.language === selectedLang ? "showing" : "disabled";
+      });
+    });
+  }
 
   return card;
 }
 
-async function loadComments(contentId, container = null) {
-  const commentRef = collection(db, "content", contentId, "comments");
-  const snapshot = await getDocs(query(commentRef, orderBy("timestamp", "desc")));
-  const list = container || document.getElementById(`comments-${contentId}`);
-  list.innerHTML = "";
-
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const commentEl = document.createElement("div");
-    commentEl.className = "comment";
-    commentEl.innerHTML = `
-      <p>${data.text}</p>
-      <button class="delete-comment" data-id="${docSnap.id}" data-content="${contentId}">Delete</button>
-    `;
-    // Delete comment (admin or user who posted)
-    commentEl.querySelector(".delete-comment").addEventListener("click", async () => {
-      const user = auth.currentUser;
-      if (!user) return alert("Login required");
-      await deleteDoc(doc(db, "content", contentId, "comments", docSnap.id));
-      loadComments(contentId);
-    });
-
-    list.appendChild(commentEl);
-  });
-}
-
-// Listeners
-searchInput.addEventListener("input", renderContent);
-filterSelect.addEventListener("change", renderContent);
-tagSelect.addEventListener("change", renderContent);
-sortSelect.addEventListener("change", renderContent);
+// Filters & Events
+searchInput.addEventListener("input", fetchContent);
+tagFilter.addEventListener("change", fetchContent);
+sortOption.addEventListener("change", fetchContent);
 
 fetchContent();
