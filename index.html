@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Explore trending and traditional educational content on The Little Info.">
   <title>The Little Info - Home</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo" class="logo" />
+    <img src="logo.png" alt="The Little Info Logo" class="logo" />
     <h1>The Little Info</h1>
     <nav>
       <a href="login.html">Login</a>
@@ -19,20 +20,23 @@
   </header>
 
   <main>
+    <!-- Large Centered Logo -->
     <img src="logo.png" alt="Main Logo" class="hero-logo" />
 
     <div class="container">
+      <!-- Trending Section -->
       <div class="box">
         <h2>Trending Topics</h2>
         <div id="trending-content">
-          <!-- Trending content will be dynamically inserted here -->
+          <!-- Dynamic trending content -->
         </div>
       </div>
 
+      <!-- Traditional Section -->
       <div class="box">
         <h2>Traditional Topics</h2>
         <div id="traditional-content">
-          <!-- Traditional content will be dynamically inserted here -->
+          <!-- Dynamic traditional content -->
         </div>
       </div>
     </div>
@@ -42,7 +46,7 @@
     &copy; 2025 The Little Info. All rights reserved.
   </footer>
 
-  <!-- Firebase and Scripts -->
+  <!-- Firebase & Content Loader -->
   <script type="module" src="firebaseInit.js"></script>
   <script type="module" src="publicContent.js"></script>
 </body>
