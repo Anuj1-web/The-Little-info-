@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Analytics | The Little Info</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <img src="Green and White Modern Computer Service Repair Logo_20250710_113545_0000.png" alt="Logo" class="logo" />
+    <h1>Admin Content Analytics</h1>
+  </header>
+
+  <main class="analytics-container">
+    <div id="admin-only-message" class="hidden">You do not have admin access.</div>
+
+    <div id="analytics-dashboard" class="hidden">
+      <div class="analytics-summary">
+        <div class="summary-card" id="totalViews">Total Views: 0</div>
+        <div class="summary-card" id="totalLikes">Total Likes: 0</div>
+        <div class="summary-card" id="totalComments">Total Comments: 0</div>
+        <div class="summary-card" id="totalBookmarks">Total Bookmarks: 0</div>
+      </div>
+
+      <div class="chart-section">
+        <canvas id="viewsChart"></canvas>
+      </div>
+
+      <div class="chart-section">
+        <canvas id="likesChart"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="admin-analytics.js"></script>
+</body>
+</html>
