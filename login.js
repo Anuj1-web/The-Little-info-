@@ -1,24 +1,20 @@
 // login.js
 import { auth } from './firebase.js';
-import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById('loginEmail').value;
+  const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
 
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-
-    // Optional: Admin check (if using custom claims in future)
-    if (user.email === "thelittleinfo01@gmail.com") {
-      window.location.href = 'admin.html';
-    } else {
-      window.location.href = 'index.html';
-    }
+    await signInWithEmailAndPassword(auth, email, password);
+    alert('Login successful!');
+    // Redirect or load next content
+    window.location.href = 'dashboard.html'; // Change this to your landing page
   } catch (error) {
-    alert("Login failed: " + error.message);
+    console.error('Login error:', error);
+    alert(error.message || 'Login failed. Please check your credentials.');
   }
 });
