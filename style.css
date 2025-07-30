@@ -1,254 +1,284 @@
-:root {
-  --primary-color: #00796b;
-  --secondary-color: #004d40;
-  --background-color: #f4f4f4;
-  --card-bg: #ffffff;
-  --content-bg: #f9f9f9;
-  --accent-color: #26a69a;
-  --error-color: #e53935;
-}
-
+/* General Layout */
 body {
-  margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--background-color);
-  color: #333;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
 }
 
 header {
   display: flex;
   align-items: center;
-  background-color: var(--primary-color);
-  color: white;
+  justify-content: space-between;
+  background-color: #1f2d3d;
   padding: 10px 20px;
-}
-
-.logo {
-  height: 50px;
-  width: 50px;
-  border-radius: 50%;
-  margin-right: 15px;
-}
-
-header h1 {
-  font-size: 24px;
-  margin: 0;
-}
-
-footer {
-  text-align: center;
-  padding: 10px;
-  background-color: var(--secondary-color);
   color: white;
-  position: relative;
-  bottom: 0;
-  width: 100%;
-  margin-top: 40px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-/* Main content section */
-main {
-  padding: 20px;
-}
-
-.content-section {
-  margin-bottom: 30px;
-}
-
-h2 {
-  margin-bottom: 10px;
-  color: var(--primary-color);
-}
-
-/* Content Card */
-.content-card, .quiz-card {
-  background-color: var(--card-bg);
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 15px;
-  margin: 15px 0;
-}
-
-.content-card video {
-  width: 100%;
-  max-height: 350px;
-  border-radius: 10px;
-}
-
-.card-actions {
+.logo-container {
   display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.card-actions button {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  cursor: pointer;
-  border-radius: 6px;
-}
-
-.card-actions button:hover {
-  background-color: var(--accent-color);
-}
-
-/* Comment section */
-.comment-section {
-  margin-top: 15px;
-}
-
-.comment-input {
-  display: flex;
-  gap: 10px;
-}
-
-.comment-input input {
-  flex: 1;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.comment-input button {
-  padding: 8px 12px;
-  background-color: var(--accent-color);
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-radius: 6px;
-}
-
-.comment {
-  background-color: var(--content-bg);
-  margin-top: 10px;
-  padding: 8px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-/* Bookmark, Like */
-.icon-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--primary-color);
-  font-size: 16px;
-}
-
-.icon-button:hover {
-  color: var(--accent-color);
-}
-
-/* Video Player Enhancements */
-.video-controls {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-}
-
-.video-controls select,
-.video-controls button {
-  padding: 6px;
-  font-size: 14px;
-}
-
-/* Playlist UI */
-.playlist-card {
-  background-color: var(--card-bg);
-  padding: 10px;
-  border-radius: 10px;
-  margin: 10px 0;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-
-.playlist-header {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
-.playlist-header h3 {
+.logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+/* Navigation */
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  padding: 0;
   margin: 0;
 }
 
-.playlist-header button {
-  background-color: var(--error-color);
+nav ul li a {
   color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease;
 }
 
-/* Filter and Sort */
-.filter-bar {
+nav ul li a:hover {
+  color: #00d1b2;
+}
+
+/* Notification */
+.notification-container {
+  position: relative;
+  margin-left: auto;
+  padding: 10px;
+}
+
+.notification-bell {
+  cursor: pointer;
+  font-size: 24px;
+  position: relative;
+  user-select: none;
+}
+
+.badge {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  position: absolute;
+  top: -5px;
+  right: -10px;
+}
+
+.hidden {
+  display: none;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
+  width: 280px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 999;
+  border-radius: 5px;
+}
+
+.dropdown p {
+  margin: 10px;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+/* Content Cards */
+.content-container {
+  padding: 20px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 20px;
+  justify-content: center;
 }
 
-.filter-bar input,
-.filter-bar select {
-  padding: 6px;
+.content-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  width: 300px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.content-card:hover {
+  transform: scale(1.02);
+}
+
+.content-card h3 {
+  margin-top: 0;
+}
+
+.tag {
+  display: inline-block;
+  background-color: #00d1b2;
+  color: white;
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+/* Filters & Controls */
+.filters-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 10px 0;
+}
+
+select, input[type="text"] {
+  padding: 8px;
   font-size: 14px;
-  border-radius: 6px;
+  border-radius: 5px;
   border: 1px solid #ccc;
 }
 
-/* Quiz Styles */
-.quiz-card button,
-form button {
-  padding: 8px 14px;
-  background-color: var(--primary-color);
+/* Playlist Modal */
+#playlistModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+#playlistModal h3 {
+  margin-top: 0;
+}
+
+.playlist-btn {
+  margin-top: 10px;
+  background-color: #00d1b2;
   border: none;
   color: white;
-  border-radius: 6px;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.playlist-btn:hover {
+  background-color: #00b89c;
+}
+
+/* Video Player Controls */
+.video-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.video-controls select,
+.video-controls input[type="range"] {
+  padding: 5px;
+  font-size: 14px;
+}
+
+/* Comments Section */
+.comments-container {
+  margin-top: 20px;
+}
+
+.comment {
+  background-color: #f1f1f1;
+  padding: 8px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+/* Like & Bookmark */
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.like-btn, .bookmark-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
   cursor: pointer;
 }
 
-.quiz-card button:hover,
-form button:hover {
-  background-color: var(--accent-color);
+.like-btn.liked,
+.bookmark-btn.bookmarked {
+  color: red;
 }
 
-.question-block {
-  border: 1px solid #ccc;
-  padding: 12px;
+/* Admin Quizzes */
+.quiz-card {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  padding: 10px;
   margin-bottom: 15px;
   border-radius: 8px;
-  background-color: var(--content-bg);
 }
 
-.question-block input {
+.quiz-card h4 {
+  margin: 0 0 10px 0;
+}
+
+.quiz-option {
   display: block;
-  width: 100%;
-  padding: 8px;
-  margin-top: 6px;
-  margin-bottom: 6px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  margin-bottom: 5px;
+}
+
+/* Analytics */
+.analytics-container {
+  margin: 20px auto;
+  max-width: 800px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  header h1 {
-    font-size: 18px;
-  }
-
-  .card-actions {
+  .content-container {
     flex-direction: column;
-    gap: 10px;
+    align-items: center;
   }
 
-  .filter-bar {
+  .content-card {
+    width: 90%;
+  }
+
+  .filters-container {
     flex-direction: column;
-  }
-
-  .logo {
-    height: 40px;
-    width: 40px;
+    align-items: center;
   }
 }
