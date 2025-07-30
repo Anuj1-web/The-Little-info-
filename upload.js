@@ -1,8 +1,8 @@
-// upload.js - Handles admin content uploading & content categorization
+// upload.js - Admin content uploader
 
-// Ensure Firebase is initialized before this script runs
-const storage = firebase.storage();
-const db = firebase.firestore();
+import { storage, db } from './firebaseInit.js';
+import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const uploadForm = document.getElementById("uploadForm");
 const uploadStatus = document.getElementById("uploadStatus");
@@ -15,13 +15,14 @@ uploadForm.addEventListener("submit", async (e) => {
   const category = document.querySelector('input[name="category"]:checked')?.value;
   const file = document.getElementById("file").files[0];
 
-  if (!file || !category) {
-    uploadStatus.textContent = "Please select a file and category.";
+  if (!file || !category || !title || !description) {
+    uploadStatus.textContent = "Please fill out all fields.";
     return;
   }
 
-  const storageRef = storage.ref(`uploads/${Date.now()}_${file.name}`);
-  const uploadTask = storageRef.put(file);
+  const storagePath = `uploads/${Date.now()}_${file.name}`;
+  const storageRef = ref(storage, storagePath);
+  const uploadTask = uploadBytesResumable(storageRef, file);
 
   uploadStatus.textContent = "Uploading...";
 
@@ -32,15 +33,17 @@ uploadForm.addEventListener("submit", async (e) => {
       uploadStatus.textContent = `Upload failed: ${error.message}`;
     },
     async () => {
-      const downloadURL = await storageRef.getDownloadURL();
-      await db.collection("content").add({
+      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+
+      await addDoc(collection(db, "content"), {
         title,
         description,
         url: downloadURL,
         type: file.type.startsWith("video") ? "video" : "image",
         category,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        timestamp: serverTimestamp()
       });
+
       uploadStatus.textContent = "Upload successful!";
       uploadForm.reset();
     }
