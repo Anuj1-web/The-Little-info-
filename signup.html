@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Signup - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
-  <script src="firebase.js"></script>
 </head>
 <body>
   <header>
@@ -30,21 +27,27 @@
     <p>Already have an account? <a href="login.html">Login here</a>.</p>
   </main>
 
-  <script>
-    document.getElementById('signup-form').addEventListener('submit', function (e) {
+  <!-- Firebase Signup Script (modular) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+    import { firebaseConfig } from './firebase.js';
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value.trim();
 
-      const email = document.getElementById('signup-email').value;
-      const password = document.getElementById('signup-password').value;
-
-      firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          alert('Signup successful!');
-          window.location.href = 'login.html';
-        })
-        .catch((error) => {
-          alert('Signup failed: ' + error.message);
-        });
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert('Signup successful!');
+        window.location.href = 'login.html';
+      } catch (error) {
+        alert('Signup failed: ' + error.message);
+      }
     });
   </script>
 </body>
