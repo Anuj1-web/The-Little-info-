@@ -1,157 +1,172 @@
-import { db, auth } from './firebase.js';
+// Fully Updated script.js with Step 1–8 features
+
 import {
-  collection,
-  getDocs,
-  query
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, query, where, orderBy, onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const trendingSection = document.getElementById("trending-content");
-const traditionalSection = document.getElementById("traditional-content");
-const searchInput = document.getElementById("searchInput");
-const tagFilter = document.getElementById("tagFilter");
-const sortOption = document.getElementById("sortOption");
+import {
+  getAuth, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-async function fetchContent() {
-  const q = query(collection(db, "content"));
-  const querySnapshot = await getDocs(q);
-  let contentArray = [];
+import { app, auth, db } from './firebase.js';
 
-  querySnapshot.forEach((doc) => {
-    contentArray.push({ id: doc.id, ...doc.data() });
-  });
+// Global vars
+let currentUser = null;
 
-  renderContent(contentArray);
-}
-
-function renderContent(data) {
-  trendingSection.innerHTML = "";
-  traditionalSection.innerHTML = "";
-
-  let filteredData = data.filter(item => {
-    const keywordMatch =
-      item.title.toLowerCase().includes(searchInput.value.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchInput.value.toLowerCase());
-
-    const tagMatch =
-      tagFilter.value === "All" || item.tags?.includes(tagFilter.value);
-
-    return keywordMatch && tagMatch;
-  });
-
-  if (sortOption.value === "likes") {
-    filteredData.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-  } else {
-    filteredData.sort((a, b) => b.timestamp - a.timestamp);
+// Track Auth
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    document.getElementById("user-email")?.textContent = user.email;
+    fetchAndDisplayBookmarks(user.uid);
+    fetchAndDisplayPlaylists(user.uid);
+    listenToNotifications(user.uid);
   }
+});
 
-  filteredData.forEach((item) => {
-    const container = item.category === "Trending" ? trendingSection : traditionalSection;
-    container.appendChild(createContentCard(item));
-  });
-}
+// =============================
+// 🔖 Bookmark Functions
+// =============================
+async function toggleBookmark(contentId, contentData) {
+  const userId = currentUser.uid;
+  const bookmarkRef = doc(db, "bookmarks", `${userId}_${contentId}`);
+  const docSnap = await getDoc(bookmarkRef);
 
-function createContentCard(item) {
-  const card = document.createElement("div");
-  card.className = "content-card";
-
-  const defaultQuality = "720p";
-  const currentSrc = item.videoUrls?.[defaultQuality] || Object.values(item.videoUrls || {})[0];
-
-  const subtitleTracks = Object.entries(item.subtitles || {})
-    .map(([lang, url]) =>
-      `<track label="${lang.toUpperCase()}" kind="subtitles" srclang="${lang}" src="${url}">`
-    ).join('');
-
-  const subtitleOptions = Object.keys(item.subtitles || {})
-    .map(lang =>
-      `<option value="${lang}">${lang.toUpperCase()}</option>`
-    ).join('');
-
-  card.innerHTML = `
-    <h3>${item.title}</h3>
-    <div class="video-wrapper">
-      <video controls class="video-player" crossorigin="anonymous">
-        <source src="${currentSrc}" type="video/mp4">
-        ${subtitleTracks}
-      </video>
-    </div>
-
-    <div class="video-controls">
-      <label>Speed:
-        <select class="speed-control">
-          <option value="0.5">0.5x</option>
-          <option value="1" selected>1x</option>
-          <option value="1.5">1.5x</option>
-          <option value="2">2x</option>
-        </select>
-      </label>
-
-      <label>Quality:
-        <select class="quality-control">
-          ${Object.keys(item.videoUrls || {}).map(q => `
-            <option value="${q}" ${q === defaultQuality ? "selected" : ""}>${q}</option>
-          `).join('')}
-        </select>
-      </label>
-
-      ${subtitleOptions ? `
-      <label>Subtitles:
-        <select class="subtitle-control">
-          <option value="">None</option>
-          ${subtitleOptions}
-        </select>
-      </label>` : ""}
-    </div>
-
-    <p>${item.description}</p>
-    <div class="tags">Tags: ${item.tags?.join(", ") || "None"}</div>
-    <button class="bookmark-btn" data-id="${item.id}">🔖 Bookmark</button>
-
-    <div class="comment-section">
-      <textarea placeholder="Add a comment..." data-id="${item.id}" class="comment-input"></textarea>
-      <button class="submit-comment" data-id="${item.id}">Comment</button>
-      <div class="comments" id="comments-${item.id}"></div>
-    </div>
-  `;
-
-  const video = card.querySelector("video");
-
-  // Speed control
-  const speedControl = card.querySelector(".speed-control");
-  speedControl.addEventListener("change", () => {
-    video.playbackRate = parseFloat(speedControl.value);
-  });
-
-  // Quality control
-  const qualityControl = card.querySelector(".quality-control");
-  qualityControl.addEventListener("change", () => {
-    const selectedQuality = qualityControl.value;
-    const newSrc = item.videoUrls[selectedQuality];
-    const currentTime = video.currentTime;
-    const isPlaying = !video.paused;
-    video.src = newSrc;
-    video.load();
-    video.currentTime = currentTime;
-    if (isPlaying) video.play();
-  });
-
-  // Subtitle language selector
-  const subtitleSelector = card.querySelector(".subtitle-control");
-  if (subtitleSelector) {
-    subtitleSelector.addEventListener("change", () => {
-      const selectedLang = subtitleSelector.value;
-      Array.from(video.textTracks).forEach(track => {
-        track.mode = track.language === selectedLang ? "showing" : "disabled";
-      });
+  if (docSnap.exists()) {
+    await deleteDoc(bookmarkRef);
+  } else {
+    await setDoc(bookmarkRef, {
+      userId,
+      contentId,
+      ...contentData,
+      timestamp: new Date(),
     });
   }
-
-  return card;
+  fetchAndDisplayBookmarks(userId);
 }
 
-// Filters & Events
-searchInput.addEventListener("input", fetchContent);
-tagFilter.addEventListener("change", fetchContent);
-sortOption.addEventListener("change", fetchContent);
+async function fetchAndDisplayBookmarks(userId) {
+  const q = query(collection(db, "bookmarks"), where("userId", "==", userId));
+  const snapshot = await getDocs(q);
+  const container = document.getElementById("bookmark-container");
+  if (!container) return;
+  container.innerHTML = "";
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <h4>${data.title}</h4>
+      <video controls src="${data.videoUrl}" width="100%"></video>
+      <button onclick="removeBookmark('${doc.id}')">Remove</button>
+    `;
+    container.appendChild(div);
+  });
+}
 
-fetchContent();
+window.removeBookmark = async function (bookmarkId) {
+  await deleteDoc(doc(db, "bookmarks", bookmarkId));
+  fetchAndDisplayBookmarks(currentUser.uid);
+}
+
+// =============================
+// 🎥 Playlist Functions
+// =============================
+window.addToPlaylist = async function (contentId, contentData) {
+  const name = prompt("Enter playlist name:");
+  if (!name) return;
+  const playlistId = `${currentUser.uid}_${name}`;
+  const ref = doc(db, "playlists", playlistId);
+  const docSnap = await getDoc(ref);
+  let videos = [];
+
+  if (docSnap.exists()) {
+    videos = docSnap.data().videos || [];
+  }
+
+  videos.push({ contentId, ...contentData });
+  const publicStatus = confirm("Make playlist public?");
+
+  await setDoc(ref, {
+    userId: currentUser.uid,
+    name,
+    videos,
+    public: publicStatus,
+    updatedAt: new Date()
+  });
+
+  if (publicStatus) {
+    await setDoc(doc(db, "public_playlists", playlistId), {
+      ...videos,
+      name,
+      userId: currentUser.uid,
+      updatedAt: new Date(),
+      videos,
+    });
+  }
+};
+
+async function fetchAndDisplayPlaylists(userId) {
+  const q = query(collection(db, "playlists"), where("userId", "==", userId));
+  const snapshot = await getDocs(q);
+  const container = document.getElementById("playlist-container");
+  if (!container) return;
+  container.innerHTML = "";
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <h4>${data.name}</h4>
+      <p>${data.videos.length} videos</p>
+      <a href="playlist.html?id=${doc.id}">View</a>
+    `;
+    container.appendChild(div);
+  });
+}
+
+window.removeFromPlaylist = async function (playlistId, contentId) {
+  const ref = doc(db, "playlists", playlistId);
+  const snap = await getDoc(ref);
+  const data = snap.data();
+  const updated = data.videos.filter(v => v.contentId !== contentId);
+  await updateDoc(ref, { videos: updated });
+
+  if (data.public) {
+    await updateDoc(doc(db, "public_playlists", playlistId), { videos: updated });
+  }
+  location.reload();
+}
+
+// =============================
+// 🔔 Notifications
+// =============================
+function listenToNotifications(userId) {
+  const dropdown = document.getElementById('notification-dropdown');
+  const countBadge = document.getElementById('notification-count');
+
+  const q = query(collection(db, "notifications"), where("recipientId", "==", userId), orderBy("timestamp", "desc"));
+
+  onSnapshot(q, (snapshot) => {
+    dropdown.innerHTML = '';
+    let count = 0;
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const item = document.createElement("div");
+      item.className = "notification-item";
+      item.innerHTML = `
+        <strong>${data.title}</strong><br>
+        <span>${data.message}</span>
+      `;
+      dropdown.appendChild(item);
+      count++;
+    });
+
+    countBadge.textContent = count > 0 ? count : '';
+  });
+}
+
+// =============================
+// Export functions globally
+// =============================
+window.toggleBookmark = toggleBookmark;
+window.addToPlaylist = addToPlaylist;
