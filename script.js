@@ -10,13 +10,16 @@ import {
   serverTimestamp
 } from "firebase/firestore";
 
-// Fetch content (e.g., Trending)
-function loadContent() {
-  const contentRef = collection(db, "trending");
-  const q = query(contentRef, orderBy("timestamp", "desc"));
+// Load both sections
+loadSection("trending", "trending-content");
+loadSection("traditional", "traditional-content");
+
+function loadSection(collectionName, containerId) {
+  const ref = collection(db, collectionName);
+  const q = query(ref, orderBy("timestamp", "desc"));
 
   onSnapshot(q, (snapshot) => {
-    const container = document.getElementById("trending-content");
+    const container = document.getElementById(containerId);
     container.innerHTML = "";
 
     snapshot.forEach((docSnap) => {
@@ -40,20 +43,19 @@ function loadContent() {
 
       container.appendChild(card);
 
-      // Setup comment posting
+      // Comment button
       const commentBtn = card.querySelector(".comment-btn");
       commentBtn.addEventListener("click", () => {
-        addComment(docSnap.id, card);
+        addComment(collectionName, docSnap.id, card);
       });
 
       // Load comments
-      loadComments(docSnap.id, card);
+      loadComments(collectionName, docSnap.id, card);
     });
   });
 }
 
-// Add Comment
-function addComment(contentId, cardElement) {
+function addComment(collectionName, contentId, cardElement) {
   const input = cardElement.querySelector(".comment-input");
   const text = input.value.trim();
 
@@ -65,7 +67,7 @@ function addComment(contentId, cardElement) {
     return;
   }
 
-  const commentsRef = collection(db, `trending/${contentId}/comments`);
+  const commentsRef = collection(db, `${collectionName}/${contentId}/comments`);
   addDoc(commentsRef, {
     text,
     userId: currentUser.uid,
@@ -76,10 +78,9 @@ function addComment(contentId, cardElement) {
   });
 }
 
-// Load Comments
-function loadComments(contentId, cardElement) {
+function loadComments(collectionName, contentId, cardElement) {
   const commentsList = cardElement.querySelector(".comments-list");
-  const commentsRef = collection(db, `trending/${contentId}/comments`);
+  const commentsRef = collection(db, `${collectionName}/${contentId}/comments`);
   const q = query(commentsRef, orderBy("timestamp", "desc"));
 
   onSnapshot(q, (snapshot) => {
@@ -92,7 +93,7 @@ function loadComments(contentId, cardElement) {
         <p><strong>${comment.userEmail}</strong>: ${comment.text}</p>
         ${
           auth.currentUser && auth.currentUser.uid === comment.userId
-            ? `<button class="delete-comment" data-id="${docSnap.id}" data-content-id="${contentId}">Delete</button>`
+            ? `<button class="delete-comment" data-id="${docSnap.id}" data-content-id="${contentId}" data-type="${collectionName}">Delete</button>`
             : ""
         }
       `;
@@ -106,10 +107,8 @@ document.addEventListener("click", async (e) => {
   if (e.target.classList.contains("delete-comment")) {
     const commentId = e.target.dataset.id;
     const contentId = e.target.dataset.contentId;
+    const type = e.target.dataset.type;
 
-    await deleteDoc(doc(db, `trending/${contentId}/comments/${commentId}`));
+    await deleteDoc(doc(db, `${type}/${contentId}/comments/${commentId}`));
   }
 });
-
-// Start
-loadContent();
