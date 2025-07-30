@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - The Little Info</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="#" id="logoutBtn" class="btn">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Dashboard Content -->
+  <main class="section-container">
+    <h1>Welcome to Your Dashboard</h1>
+    <p>You are logged in with a verified email address.</p>
+    <p>This is a protected area only accessible to authenticated and verified users.</p>
+  </main>
+
+  <!-- Firebase Auth Check -->
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user || !user.emailVerified) {
+        alert('Access denied. Please verify your email first.');
+        signOut(auth).then(() => {
+          window.location.href = 'login.html';
+        });
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      alert('You have been logged out.');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
