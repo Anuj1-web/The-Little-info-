@@ -1,60 +1,25 @@
-import { auth } from "./firebaseInit.js";
-import {
-  signInWithEmailAndPassword,
-  sendEmailVerification,
-  sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+// login.js
+import { auth } from './firebaseInit.js';
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
-const loginForm = document.getElementById("loginForm");
-const loginMessage = document.getElementById("loginMessage");
-const resendLink = document.getElementById("resendLink");
-const forgotPasswordLink = document.getElementById("forgotPasswordLink");
-
-let currentEmail = "";
-
-loginForm.addEventListener("submit", async (e) => {
+document.getElementById("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
 
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    if (!user.emailVerified) {
-      loginMessage.textContent = "Please verify your email before logging in.";
-      resendLink.style.display = "inline";
-      currentEmail = email;
-      return;
+    if (user.emailVerified) {
+      alert("Login successful!");
+      window.location.href = "profile.html"; // ✅ Redirect to user profile
+    } else {
+      alert("Please verify your email before logging in.");
     }
-
-    loginMessage.textContent = "Login successful!";
-    window.location.href = user.email === "thelittleinfo01@gmail.com" ? "admin.html" : "index.html";
-
-  } catch (err) {
-    loginMessage.textContent = "Login failed: " + err.message;
-  }
-});
-
-resendLink.addEventListener("click", async () => {
-  if (!currentEmail) return;
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, currentEmail, document.getElementById("loginPassword").value);
-    await sendEmailVerification(userCredential.user);
-    loginMessage.textContent = "Verification email resent. Please check your inbox.";
-  } catch (err) {
-    loginMessage.textContent = "Failed to resend verification email: " + err.message;
-  }
-});
-
-forgotPasswordLink.addEventListener("click", async (e) => {
-  e.preventDefault();
-  const email = prompt("Enter your registered email to reset password:");
-  if (!email) return;
-  try {
-    await sendPasswordResetEmail(auth, email);
-    alert("Password reset email sent. Please check your inbox.");
-  } catch (err) {
-    alert("Error sending reset email: " + err.message);
+  } catch (error) {
+    console.error("Login error:", error.message);
+    alert("Invalid email or password. Please try again.");
   }
 });
