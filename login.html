@@ -7,20 +7,36 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="header"></div>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-  <main class="auth-container">
+  <!-- Login Form -->
+  <main class="section-container">
     <h1>Login</h1>
     <form id="loginForm">
-      <label for="email">Email:</label>
-      <input type="email" id="loginEmail" required />
+      <label for="loginEmail">Email:</label>
+      <input type="email" id="loginEmail" placeholder="Enter your email" required />
 
-      <label for="password">Password:</label>
-      <input type="password" id="loginPassword" required />
+      <label for="loginPassword">Password:</label>
+      <input type="password" id="loginPassword" placeholder="Enter your password" required />
 
-      <button type="submit">Login</button>
+      <button type="submit" class="btn">Login</button>
     </form>
+
+    <p><a href="reset-password.html">Forgot your password?</a></p>
     <p>Don't have an account? <a href="signup.html">Sign up here</a>.</p>
+    <!-- Optional: Placeholder for resend verification -->
+    <p><a href="#" id="resend-verification">Resend verification email</a></p>
   </main>
 
   <script src="firebase.js" type="module"></script>
