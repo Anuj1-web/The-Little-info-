@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Create Quiz - Admin</title>
+  <title>Admin | Create Quizzes</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <a href="index.html"><img src="Green and White Modern Computer Service Repair Logo_20250710_113545_0000.png" class="logo" /></a>
+    <a href="index.html"><img src="Green and White Modern Computer Service Repair Logo_20250710_113545_0000.png" class="logo" alt="Logo" /></a>
     <h1>Create a New Quiz</h1>
   </header>
 
   <main>
-    <section class="quiz-form">
-      <input type="text" id="quizTitle" placeholder="Quiz Title" required />
-      <textarea id="quizDescription" placeholder="Quiz Description"></textarea>
-      <input type="text" id="quizTags" placeholder="Tags (comma-separated)" />
-
-      <div id="questionContainer"></div>
-      <button id="addQuestionBtn">Add Question</button>
-      <button id="saveQuizBtn">Save Quiz</button>
-    </section>
+    <form id="quizForm">
+      <input type="text" id="quizTitle" placeholder="Quiz Title" required /><br><br>
+      <div id="questionsArea"></div>
+      <button type="button" id="addQuestion">Add Question</button><br><br>
+      <button type="submit">Save Quiz</button>
+    </form>
   </main>
+
+  <footer>
+    <p>&copy; 2025 The Little Info</p>
+  </footer>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
