@@ -1,26 +1,59 @@
-/* Reset & Base */
+/* Base Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Light Mode */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f4f4;
   color: #333;
-  padding: 0;
-  margin: 0;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #ddd;
+  }
+
+  header {
+    background-color: #1e1e1e;
+    border-color: #333;
+  }
+
+  .content-card {
+    background-color: #1f1f1f;
+    box-shadow: 0 0 10px rgba(255,255,255,0.05);
+  }
+
+  .comment-section input,
+  .comment-section button,
+  .bookmark-btn {
+    background-color: #333;
+    color: #eee;
+    border: 1px solid #555;
+  }
+
+  .comments-list .comment {
+    background-color: #2a2a2a;
+  }
+
+  .comments-list .delete-comment {
+    background-color: #c0392b;
+  }
 }
 
 /* Header */
 header {
   display: flex;
   align-items: center;
-  background-color: #ffffff;
-  border-bottom: 2px solid #ddd;
+  background-color: #fff;
   padding: 10px 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  border-bottom: 2px solid #ddd;
 }
 
 header img {
@@ -32,14 +65,12 @@ header img {
 header h1 {
   font-size: 1.5rem;
   margin-left: 15px;
-  color: #2c3e50;
 }
 
-/* Section Titles */
+/* Section Title */
 main h2 {
   font-size: 1.4rem;
-  margin-bottom: 15px;
-  color: #34495e;
+  margin: 20px 0 10px;
 }
 
 /* Grid Layout */
@@ -49,13 +80,13 @@ main h2 {
   gap: 20px;
 }
 
-/* Content Card */
+/* Content Cards */
 .content-card {
-  background-color: #ffffff;
+  background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0,0,0,0.08);
   padding: 15px;
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s;
 }
 
 .content-card:hover {
@@ -63,19 +94,17 @@ main h2 {
 }
 
 .content-card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 8px;
-  color: #2c3e50;
+  margin-bottom: 5px;
 }
 
 .content-card p {
-  font-size: 0.95rem;
   margin-bottom: 10px;
-  color: #555;
 }
 
+/* Responsive Video */
 .content-card video {
   width: 100%;
+  height: auto;
   border-radius: 8px;
   margin-bottom: 10px;
 }
@@ -92,14 +121,14 @@ main h2 {
 }
 
 .bookmark-btn:hover {
-  background-color: #219150;
+  background-color: #1e8449;
 }
 
 /* Comment Section */
 .comment-section {
-  border-top: 1px solid #ddd;
-  margin-top: 10px;
+  border-top: 1px solid #ccc;
   padding-top: 10px;
+  margin-top: 10px;
 }
 
 .comment-input {
@@ -123,7 +152,7 @@ main h2 {
   background-color: #1f6391;
 }
 
-/* Comments List */
+/* Comment List */
 .comments-list {
   margin-top: 10px;
 }
