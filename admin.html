@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard - The Little Info</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <header>
     <img src="logo.png" alt="Logo" class="logo" />
-    <h1>Admin Dashboard</h1>
+    <h1>Admin Portal - The Little Info</h1>
     <nav>
       <a href="index.html">Home</a>
       <a href="#" onclick="logout()">Logout</a>
@@ -17,30 +17,29 @@
   </header>
 
   <main>
-    <h2>Upload Educational Content</h2>
+    <h2>Upload New Content</h2>
     <form id="uploadForm">
       <input type="text" id="title" placeholder="Title" required />
       <textarea id="description" placeholder="Description" required></textarea>
       <input type="file" id="file" accept="image/*,video/*" required />
-      
+
       <div>
         <label><input type="radio" name="category" value="trending" required /> Trending</label>
         <label><input type="radio" name="category" value="traditional" required /> Traditional</label>
       </div>
 
       <button type="submit">Upload</button>
+      <p id="uploadStatus"></p>
     </form>
-
-    <p id="uploadStatus"></p>
   </main>
 
-  <footer>
-    <p>© 2025 The Little Info. All rights reserved.</p>
-  </footer>
-
-  <!-- Firebase Upload Script -->
+  <!-- Firebase logic and Admin protection -->
   <script type="module">
-    import { storage, db } from './firebaseInit.js';
+    import { auth, db, storage } from './firebaseInit.js';
+    import {
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
     import {
       ref,
       uploadBytes,
@@ -54,6 +53,14 @@
 
     const uploadForm = document.getElementById("uploadForm");
     const uploadStatus = document.getElementById("uploadStatus");
+
+    // ✅ Restrict to admin only
+    onAuthStateChanged(auth, (user) => {
+      if (!user || user.email !== "thelittleinfo01@gmail.com") {
+        alert("Access denied. Admins only.");
+        window.location.href = "login.html";
+      }
+    });
 
     uploadForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -92,7 +99,9 @@
     });
 
     function logout() {
-      window.location.href = "login.html";
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
     }
   </script>
 </body>
