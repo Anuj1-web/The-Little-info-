@@ -3,107 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Bookmarks - The Little Info</title>
+  <title>Bookmarks - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .bookmarks-container {
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-
-    .bookmark-card {
-      background-color: #fff;
-      padding: 15px;
-      margin: 15px 0;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    }
-
-    .bookmark-card h3 {
-      margin: 0 0 10px;
-      color: #333;
-    }
-
-    .bookmark-card p {
-      margin: 0;
-      color: #666;
-    }
-
-    .bookmark-card a {
-      display: inline-block;
-      margin-top: 10px;
-      color: #007bff;
-      text-decoration: none;
-    }
-
-    .bookmark-card a:hover {
-      text-decoration: underline;
-    }
-  </style>
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo" class="logo" />
-    <h1>The Little Info</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="profile.html">Profile</a>
-      <a href="logout.html">Logout</a>
-    </nav>
+    <h1>Your Bookmarked Content</h1>
+    <a href="index.html">← Back to Home</a>
   </header>
 
-  <main class="bookmarks-container">
-    <h2>Your Bookmarked Content</h2>
-    <div id="bookmarks-list">
-      <!-- Bookmarked content will appear here -->
-    </div>
+  <main id="bookmarks-container">
+    <p>Loading your bookmarks...</p>
   </main>
 
   <script type="module">
-    import { db, auth } from './firebaseInit.js';
-    import {
-      onAuthStateChanged
-    } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js';
-    import {
-      collection,
-      getDocs,
-      doc,
-      getDoc
-    } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
+    import { auth, db } from './firebaseInit.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+    import { collection, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-    const bookmarksList = document.getElementById("bookmarks-list");
+    const container = document.getElementById("bookmarks-container");
 
     onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const uid = user.uid;
-        const bookmarksRef = collection(db, `users/${uid}/bookmarks`);
-        const snapshot = await getDocs(bookmarksRef);
+      if (!user) {
+        alert("You must be logged in to view your bookmarks.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const snapshot = await getDocs(collection(db, `users/${user.uid}/bookmarks`));
 
         if (snapshot.empty) {
-          bookmarksList.innerHTML = "<p>No bookmarks found.</p>";
+          container.innerHTML = "<p>No bookmarks found.</p>";
           return;
         }
 
-        snapshot.forEach(async (docSnap) => {
+        container.innerHTML = "";
+        snapshot.forEach(docSnap => {
           const data = docSnap.data();
-
           const card = document.createElement("div");
-          card.className = "bookmark-card";
-
+          card.className = "content-card";
           card.innerHTML = `
             <h3>${data.title}</h3>
-            <p>${data.description || ''}</p>
-            <a href="${data.link || '#'}" target="_blank">View</a>
+            <p>${data.description}</p>
+            <a href="${data.link}" target="_blank">Watch</a>
+            <button onclick="removeBookmark('${docSnap.id}')">Remove Bookmark</button>
           `;
-
-          bookmarksList.appendChild(card);
+          container.appendChild(card);
         });
-      } else {
-        alert("Please login to view your bookmarks.");
-        window.location.href = "login.html";
+      } catch (err) {
+        console.error("Error loading bookmarks:", err);
+        container.innerHTML = "<p>Error loading bookmarks. Please try again later.</p>";
       }
     });
+
+    window.removeBookmark = async function (id) {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      try {
+        await deleteDoc(doc(db, `users/${user.uid}/bookmarks/${id}`));
+        alert("Bookmark removed.");
+        location.reload(); // Refresh the page to reflect change
+      } catch (err) {
+        console.error("Error removing bookmark:", err);
+        alert("Failed to remove bookmark.");
+      }
+    };
   </script>
 </body>
 </html>
