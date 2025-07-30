@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Bookmarks - The Little Info</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .bookmarks-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .bookmark-card {
+      background-color: #fff;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
+
+    .bookmark-card h3 {
+      margin: 0 0 10px;
+      color: #333;
+    }
+
+    .bookmark-card p {
+      margin: 0;
+      color: #666;
+    }
+
+    .bookmark-card a {
+      display: inline-block;
+      margin-top: 10px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .bookmark-card a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Logo" class="logo" />
+    <h1>The Little Info</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="logout.html">Logout</a>
+    </nav>
+  </header>
+
+  <main class="bookmarks-container">
+    <h2>Your Bookmarked Content</h2>
+    <div id="bookmarks-list">
+      <!-- Bookmarked content will appear here -->
+    </div>
+  </main>
+
+  <script type="module">
+    import { db, auth } from './firebaseInit.js';
+    import {
+      onAuthStateChanged
+    } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js';
+    import {
+      collection,
+      getDocs,
+      doc,
+      getDoc
+    } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
+
+    const bookmarksList = document.getElementById("bookmarks-list");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const bookmarksRef = collection(db, `users/${uid}/bookmarks`);
+        const snapshot = await getDocs(bookmarksRef);
+
+        if (snapshot.empty) {
+          bookmarksList.innerHTML = "<p>No bookmarks found.</p>";
+          return;
+        }
+
+        snapshot.forEach(async (docSnap) => {
+          const data = docSnap.data();
+
+          const card = document.createElement("div");
+          card.className = "bookmark-card";
+
+          card.innerHTML = `
+            <h3>${data.title}</h3>
+            <p>${data.description || ''}</p>
+            <a href="${data.link || '#'}" target="_blank">View</a>
+          `;
+
+          bookmarksList.appendChild(card);
+        });
+      } else {
+        alert("Please login to view your bookmarks.");
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+</body>
+</html>
