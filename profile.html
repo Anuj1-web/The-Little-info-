@@ -5,62 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User Profile - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .menu-icon {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 30px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 250px;
+      height: 100%;
+      background-color: #ffffff;
+      border-right: 1px solid #ccc;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar h2 {
+      margin-top: 0;
+      color: #333;
+      font-size: 1.4em;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin: 15px 0;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #0077cc;
+      font-weight: bold;
+    }
+
+    main {
+      padding: 60px 20px 20px 20px;
+    }
+
+    .user-email {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <img src="logo.png" alt="Logo" class="logo" />
-    <h1>Your Profile - The Little Info</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="#" onclick="logout()">Logout</a>
-    </nav>
-  </header>
+  <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+
+  <div class="sidebar" id="sidebar">
+    <h2>User Dashboard</h2>
+    <div id="userEmail" class="user-email">Loading...</div>
+    <ul>
+      <li><a href="profile.html">Profile</a></li>
+      <li><a href="bookmarks.html">Bookmarks</a></li>
+      <li><a href="settings.html">Settings</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </div>
 
   <main>
-    <div class="profile-container">
-      <h2>Welcome, <span id="username"></span>!</h2>
-      <p><strong>Email:</strong> <span id="useremail"></span></p>
-      <p><strong>UID:</strong> <span id="userid"></span></p>
-
-      <!-- Future section: Update profile, view bookmarks, etc. -->
-    </div>
+    <h1>Welcome to Your Profile</h1>
+    <p>This is your personal dashboard.</p>
   </main>
 
-  <footer>
-    &copy; 2025 The Little Info. All rights reserved.
-  </footer>
-
   <script type="module">
-    import { auth, db } from './firebaseInit.js';
+    import { auth } from './firebaseInit.js';
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-    const usernameEl = document.getElementById('username');
-    const emailEl = document.getElementById('useremail');
-    const uidEl = document.getElementById('userid');
+    const userEmailDiv = document.getElementById("userEmail");
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(userRef);
-        if (docSnap.exists()) {
-          const userData = docSnap.data();
-          usernameEl.textContent = userData.username || "User";
-          emailEl.textContent = user.email;
-          uidEl.textContent = user.uid;
-        } else {
-          alert("No user profile found.");
-        }
-      } else {
-        alert("Please log in to view your profile.");
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert("You must be logged in to view this page.");
         window.location.href = "login.html";
+      } else {
+        userEmailDiv.textContent = user.email;
       }
     });
 
-    function logout() {
+    window.logout = function () {
       signOut(auth).then(() => {
         window.location.href = "login.html";
       });
+    };
+  </script>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("active");
     }
   </script>
 </body>
