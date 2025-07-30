@@ -1,77 +1,81 @@
-/* General Layout */
+/* Base Styling */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f8f9fa;
+  background-color: #f5f5f5;
+  color: #333;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #f1f1f1;
 }
 
 header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  background-color: #1f2d3d;
+  align-items: center;
   padding: 10px 20px;
-  color: white;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 100;
 }
 
-.logo-container {
-  display: flex;
-  align-items: center;
+body.dark-mode header {
+  background-color: #1f1f1f;
+  color: #f1f1f1;
 }
 
 .logo {
-  width: 60px;
-  height: 60px;
+  height: 50px;
   border-radius: 50%;
 }
 
-/* Navigation */
 nav ul {
   list-style: none;
   display: flex;
-  gap: 15px;
+  gap: 20px;
   padding: 0;
   margin: 0;
 }
 
 nav ul li a {
-  color: white;
   text-decoration: none;
-  font-weight: bold;
-  transition: color 0.2s ease;
+  color: #333;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+body.dark-mode nav ul li a {
+  color: #f1f1f1;
 }
 
 nav ul li a:hover {
-  color: #00d1b2;
+  color: #007bff;
 }
 
-/* Notification */
 .notification-container {
   position: relative;
-  margin-left: auto;
-  padding: 10px;
 }
 
 .notification-bell {
-  cursor: pointer;
   font-size: 24px;
+  cursor: pointer;
   position: relative;
-  user-select: none;
 }
 
 .badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
   background-color: red;
   color: white;
-  border-radius: 50%;
   padding: 2px 6px;
+  border-radius: 50%;
   font-size: 12px;
-  position: absolute;
-  top: -5px;
-  right: -10px;
 }
 
 .hidden {
@@ -80,205 +84,88 @@ nav ul li a:hover {
 
 .dropdown {
   position: absolute;
-  right: 0;
   top: 30px;
-  background-color: white;
-  color: black;
-  border: 1px solid #ccc;
-  width: 280px;
-  max-height: 300px;
+  right: 0;
+  width: 300px;
+  max-height: 400px;
   overflow-y: auto;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  z-index: 999;
-  border-radius: 5px;
-}
-
-.dropdown p {
-  margin: 10px;
-  font-size: 14px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-/* Content Cards */
-.content-container {
-  padding: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-.content-card {
   background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 15px;
-  width: 300px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
-}
-
-.content-card:hover {
-  transform: scale(1.02);
-}
-
-.content-card h3 {
-  margin-top: 0;
-}
-
-.tag {
-  display: inline-block;
-  background-color: #00d1b2;
-  color: white;
-  border-radius: 12px;
-  padding: 3px 10px;
-  font-size: 12px;
-  margin-right: 5px;
-}
-
-/* Filters & Controls */
-.filters-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 15px;
-  padding: 10px 0;
-}
-
-select, input[type="text"] {
-  padding: 8px;
-  font-size: 14px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-/* Playlist Modal */
-#playlistModal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1001;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-#playlistModal h3 {
-  margin-top: 0;
-}
-
-.playlist-btn {
-  margin-top: 10px;
-  background-color: #00d1b2;
-  border: none;
-  color: white;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.playlist-btn:hover {
-  background-color: #00b89c;
-}
-
-/* Video Player Controls */
-.video-controls {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.video-controls select,
-.video-controls input[type="range"] {
-  padding: 5px;
-  font-size: 14px;
-}
-
-/* Comments Section */
-.comments-container {
-  margin-top: 20px;
-}
-
-.comment {
-  background-color: #f1f1f1;
-  padding: 8px;
-  margin-bottom: 5px;
-  border-radius: 5px;
-}
-
-/* Like & Bookmark */
-.action-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.like-btn, .bookmark-btn {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.like-btn.liked,
-.bookmark-btn.bookmarked {
-  color: red;
-}
-
-/* Admin Quizzes */
-.quiz-card {
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
   padding: 10px;
-  margin-bottom: 15px;
+  animation: fadeIn 0.3s ease;
+  z-index: 99;
+}
+
+body.dark-mode .dropdown {
+  background-color: #2b2b2b;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown div {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+body.dark-mode .dropdown div {
+  border-bottom: 1px solid #444;
+}
+
+.dropdown div:last-child {
+  border-bottom: none;
+}
+
+/* Admin Dashboard Cards */
+.admin-dashboard .playlist-card {
+  margin: 10px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #ccc;
   border-radius: 8px;
 }
 
-.quiz-card h4 {
-  margin: 0 0 10px 0;
+body.dark-mode .admin-dashboard .playlist-card {
+  background: #1c1c1c;
+  border-color: #444;
 }
 
-.quiz-option {
-  display: block;
-  margin-bottom: 5px;
-}
-
-/* Analytics */
-.analytics-container {
-  margin: 20px auto;
-  max-width: 800px;
+/* Quizzes Page */
+.quiz-card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 10px;
   background-color: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 6px;
 }
 
-/* Responsive */
+body.dark-mode .quiz-card {
+  background-color: #2a2a2a;
+  border-color: #444;
+  color: #f1f1f1;
+}
+
+/* Responsive Video */
+.video-container video {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* Responsive Adjustments */
 @media (max-width: 768px) {
-  .content-container {
+  nav ul {
     flex-direction: column;
-    align-items: center;
+    gap: 10px;
   }
 
-  .content-card {
-    width: 90%;
-  }
-
-  .filters-container {
-    flex-direction: column;
-    align-items: center;
+  .dropdown {
+    right: 10px;
+    width: 90vw;
   }
 }
