@@ -1,11 +1,6 @@
 // login.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { firebaseConfig } from './firebase.js';
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+import { auth } from './firebaseInit.js';
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
 document.getElementById("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -17,7 +12,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Check if logged-in user is admin
+    // Redirect based on email
     if (user.email === "thelittleinfo01@gmail.com") {
       window.location.href = "admin.html"; // Admin dashboard
     } else {
