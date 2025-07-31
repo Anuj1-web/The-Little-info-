@@ -1,31 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Contact - The Little Info</title>
+  <title>Contact Us - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
 </head>
 <body>
-  <div id="header"></div>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle" class="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
+      </nav>
+    </div>
+  </header>
 
-  <main class="container">
-    <h1>Contact Us</h1>
-    <p>If you have questions, suggestions, or feedback, feel free to reach out to us.</p>
-    <form class="contact-form">
-      <label>Name:</label>
-      <input type="text" required />
+  <!-- Contact Section -->
+  <main class="section-container">
+    <div class="content-box">
+      <h2 style="color: var(--primary);">Contact Us</h2>
+      <form id="contactForm" style="margin-top: 1.5rem;">
+        <label for="name" style="color: var(--text);">Name:</label><br/>
+        <input type="text" id="name" name="name" required class="input-field"><br/><br/>
 
-      <label>Email:</label>
-      <input type="email" required />
+        <label for="email" style="color: var(--text);">Email:</label><br/>
+        <input type="email" id="email" name="email" required class="input-field"><br/><br/>
 
-      <label>Message:</label>
-      <textarea rows="5" required></textarea>
+        <label for="message" style="color: var(--text);">Message:</label><br/>
+        <textarea id="message" name="message" rows="5" required class="input-field"></textarea><br/><br/>
 
-      <button type="submit">Send Message</button>
-    </form>
+        <button type="submit" class="explore-btn">Send Message</button>
+      </form>
+    </div>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+    document.getElementById("contactForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("Thank you! Your message has been sent.");
+      this.reset();
+    });
+  </script>
 </body>
 </html>
