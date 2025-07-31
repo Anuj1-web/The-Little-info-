@@ -3,75 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>User Dashboard - The Little Info</title>
+  <title>Dashboard - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="dark-theme">
-
+<body>
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="trending.html">Trending</a>
-        <a href="traditional.html">Traditional</a>
-        <a href="bookmark.html">Bookmarks</a>
-        <a href="profile.html">Profile</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
         <a href="#" id="logoutBtn" class="btn">Logout</a>
+        <!-- Theme toggle -->
+        <label class="theme-switch">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider"></span>
+        </label>
       </nav>
     </div>
   </header>
 
-  <!-- Main Section -->
+  <!-- Dashboard Content -->
   <main class="section-container">
     <h1>Welcome to Your Dashboard</h1>
-    <p>Access your saved content, track your activity, and discover new content below.</p>
+    <p>This is a protected area only accessible to authenticated and verified users.</p>
 
-    <div class="dashboard-cards">
-      <div class="card">
-        <h3>Liked Posts</h3>
-        <p>View content you liked.</p>
-        <a href="liked.html" class="btn-small">Go</a>
-      </div>
-
-      <div class="card">
-        <h3>Bookmarked</h3>
-        <p>Your saved content across topics.</p>
-        <a href="bookmark.html" class="btn-small">Go</a>
-      </div>
-
-      <div class="card">
-        <h3>Comment History</h3>
-        <p>See your recent comments.</p>
-        <a href="comments.html" class="btn-small">Go</a>
-      </div>
-    </div>
+    <!-- My Account Info -->
+    <section class="content-container">
+      <h2>My Account</h2>
+      <ul>
+        <li><strong>Email:</strong> <span id="userEmail">Loading...</span></li>
+        <li><strong>Email Verified:</strong> <span id="emailStatus">Checking...</span></li>
+        <li><strong>User ID:</strong> <span id="userId">Loading...</span></li>
+      </ul>
+    </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <p>© 2025 The Little Info. All rights reserved.</p>
-  </footer>
-
+  <!-- Firebase Auth Check & Logout -->
   <script type="module">
     import { auth } from './firebase.js';
     import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-    const logoutBtn = document.getElementById("logoutBtn");
+    const emailEl = document.getElementById('userEmail');
+    const verifiedEl = document.getElementById('emailStatus');
+    const uidEl = document.getElementById('userId');
 
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      alert("Logged out successfully.");
-      window.location.href = "login.html";
-    });
-
-    // Verify user is signed in
     onAuthStateChanged(auth, (user) => {
       if (!user || !user.emailVerified) {
-        alert("Please login and verify your email.");
-        window.location.href = "login.html";
+        alert('Access denied. Please verify your email first.');
+        signOut(auth).then(() => {
+          window.location.href = 'login.html';
+        });
+      } else {
+        emailEl.textContent = user.email;
+        verifiedEl.textContent = user.emailVerified ? 'Yes' : 'No';
+        uidEl.textContent = user.uid;
       }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      alert('You have been logged out.');
+      window.location.href = 'login.html';
+    });
+  </script>
+
+  <!-- Theme Toggle -->
+  <script>
+    const toggle = document.getElementById('themeToggle');
+    const isDark = localStorage.getItem('theme') === 'dark';
+    if (isDark) document.body.classList.add('dark');
+
+    toggle.checked = isDark;
+
+    toggle.addEventListener('change', () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
     });
   </script>
 </body>
