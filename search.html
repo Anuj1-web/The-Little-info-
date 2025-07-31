@@ -109,4 +109,8 @@
   <script>
     const toggleSwitch = document.getElementById("themeSwitch");
     toggleSwitch.addEventListener("change", () => {
-      document.documentElemen
+      document.documentElement.setAttribute("data-theme", toggleSwitch.checked ? "light" : "dark");
+    });
+  </script>
+</body>
+</html>
