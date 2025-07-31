@@ -45,5 +45,29 @@
       </div>
     </div>
   </footer>
+<script>
+  const toggleBtn = document.getElementById('themeToggle');
+  const htmlEl = document.documentElement;
+
+  // Load theme from localStorage
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') {
+    htmlEl.setAttribute('data-theme', 'light');
+    toggleBtn.textContent = '☀️';
+  } else {
+    htmlEl.setAttribute('data-theme', 'dark');
+    toggleBtn.textContent = '🌙';
+  }
+
+  // Toggle theme on click
+  toggleBtn.addEventListener('click', () => {
+    const currentTheme = htmlEl.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    htmlEl.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    toggleBtn.textContent = newTheme === 'light' ? '☀️' : '🌙';
+  });
+</script>
+
 </body>
 </html>
