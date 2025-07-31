@@ -1,91 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Interactions - The Little Info</title>
+  <title>Your Interactions - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
+  <script type="module" src="interactions.js"></script>
 </head>
-<body class="dark-theme">
+<body>
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="profile.html">Profile</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="#" id="logoutBtn" class="btn">Logout</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle" class="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
       </nav>
     </div>
   </header>
 
   <!-- Main Section -->
   <main class="section-container">
-    <h1>Your Interactions</h1>
-
-    <section class="interaction-box">
-      <h2>❤️ Liked Content</h2>
-      <ul id="likedList">
-        <li>No liked content yet.</li>
-      </ul>
-    </section>
-
-    <section class="interaction-box">
-      <h2>💬 Your Comments</h2>
-      <ul id="commentList">
-        <li>No comments posted yet.</li>
-      </ul>
-    </section>
-
-    <section class="interaction-box">
-      <h2>🔖 Bookmarked Items</h2>
-      <ul id="bookmarkList">
-        <li>No bookmarks saved.</li>
-      </ul>
-    </section>
+    <h2 class="animated-text" style="text-align:center;">💬 Your Interactions</h2>
+    <div id="interactions-list" class="dashboard-grid">
+      <!-- Cards will be dynamically injected here -->
+    </div>
   </main>
 
-  <!-- Scripts -->
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-
-    const likedList = document.getElementById('likedList');
-    const commentList = document.getElementById('commentList');
-    const bookmarkList = document.getElementById('bookmarkList');
-
-    // Placeholder content logic
-    const loadInteractions = (userId) => {
-      likedList.innerHTML = `
-        <li>How to Understand Quantum Physics - <em>Liked</em></li>
-        <li>The History of Ayurveda - <em>Liked</em></li>
-      `;
-
-      commentList.innerHTML = `
-        <li>"Great explanation!" on <strong>Ancient Indian Science</strong></li>
-        <li>"Loved this topic." on <strong>Trending Now: Space Tech</strong></li>
-      `;
-
-      bookmarkList.innerHTML = `
-        <li>Top 10 AI Tools for Students</li>
-        <li>Classical Indian Literature</li>
-      `;
-    };
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loadInteractions(user.uid);
-      } else {
-        alert("Please log in to view interactions.");
-        window.location.href = "login.html";
-      }
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "login.html";
-    });
-  </script>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-chatbot">
+        <button onclick="window.location.href='ai-chatbot.html'" title="Ask the AI">🤖</button>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
