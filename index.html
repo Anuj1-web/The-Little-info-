@@ -2,178 +2,159 @@
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Little Info</title>
-  <link rel="icon" href="logo.png" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="styles.css"/>
+  <script defer src="theme-toggle.js"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: var(--background);
-      color: var(--text);
-      transition: background 0.3s, color 0.3s;
+    :root {
+      --primary-color: #00ffff;
+      --dark-bg: #111;
+      --light-bg: #fff;
+      --dark-text: #fff;
+      --light-text: #111;
     }
 
-    .site-header {
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    [data-theme="dark"] {
+      background-color: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    [data-theme="light"] {
+      background-color: var(--light-bg);
+      color: var(--light-text);
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      text-align: center;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header.site-header {
+      background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
       padding: 10px 20px;
     }
 
     .header-container {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
 
     .site-logo-small {
-      width: 40px;
       height: 40px;
       border-radius: 50%;
     }
 
-    nav a {
-      color: white;
+    nav a, nav button {
       margin-left: 15px;
+      color: #fff;
       text-decoration: none;
       font-weight: 600;
-      transition: color 0.3s;
     }
 
-    nav a:hover {
-      color: cyan;
-    }
-
-    #themeToggle {
-      margin-left: 15px;
-      font-size: 1.2rem;
-      cursor: pointer;
+    nav button {
       background: none;
       border: none;
+      cursor: pointer;
+      font-size: 18px;
     }
 
-    main.hero-section {
-      text-align: center;
-      padding: 60px 20px;
+    .center-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 80px);
+      padding: 20px;
     }
 
-    .center-logo-container {
-      margin: 30px auto;
-    }
-
-    .center-logo {
-      width: 160px;
-      height: 160px;
+    .logo-circle {
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
-      border: 5px solid aqua;
-      transition: transform 0.3s ease;
+      background: radial-gradient(circle at center, #011, #012);
+      border: 3px solid var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px var(--primary-color);
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    .center-logo:hover {
-      transform: rotate(360deg) scale(1.05);
+    .logo-circle:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px var(--primary-color);
     }
 
-    .animated-logo {
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-
-    .welcome-text {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-top: 20px;
+    .logo-circle img {
+      width: 60px;
     }
 
     .typewriter {
-      overflow: hidden;
-      white-space: nowrap;
-      border-right: 2px solid;
-      animation: typing 4s steps(30, end), blink-caret 0.75s step-end infinite;
-    }
-
-    @keyframes typing {
-      from { width: 0 }
-      to { width: 100% }
-    }
-
-    @keyframes blink-caret {
-      from, to { border-color: transparent }
-      50% { border-color: black }
-    }
-
-    .subheading {
-      margin: 10px 0 30px;
-      font-style: italic;
-      opacity: 0.8;
-    }
-
-    .explore-btn {
-      display: inline-block;
-      padding: 10px 24px;
-      background-color: cyan;
-      color: #000;
-      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 1.2rem;
       font-weight: bold;
-      box-shadow: 0 0 10px rgba(0,255,255,0.6);
-      transition: background 0.3s;
-      text-decoration: none;
-    }
-
-    .explore-btn:hover {
-      background-color: #00dddd;
-    }
-
-    .topic-buttons {
-      margin-top: 30px;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .topic-box {
-      padding: 12px 20px;
-      border: 2px solid cyan;
-      border-radius: 10px;
-      font-weight: bold;
-      box-shadow: 0 0 8px rgba(0,255,255,0.4);
-      transition: transform 0.3s ease, box-shadow 0.3s;
-      text-decoration: none;
       color: inherit;
     }
 
-    .topic-box:hover {
+    .buttons {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .buttons a {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 2px solid var(--primary-color);
+      transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    }
+
+    .buttons a.explore-btn {
+      background-color: var(--primary-color);
+      color: black;
+    }
+
+    .buttons a.explore-btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(0,255,255,0.6);
+      background-color: #00e0e0;
     }
 
-    .trending-box {
-      background-color: #fff5f5;
-      color: #ff4d4d;
+    .buttons a.trending-btn {
+      border-color: #ff6b6b;
+      color: #ff6b6b;
     }
 
-    .traditional-box {
-      background-color: #f5f5ff;
-      color: #8855ff;
+    .buttons a.trending-btn:hover {
+      background-color: #ff6b6b;
+      color: white;
     }
 
-    /* Dark mode styles */
-    html[data-theme="dark"] {
-      --background: #121212;
-      --text: #e0e0e0;
+    .buttons a.traditional-btn {
+      border-color: #a86bd6;
+      color: #a86bd6;
     }
 
-    html[data-theme="light"] {
-      --background: #ffffff;
-      --text: #000000;
+    .buttons a.traditional-btn:hover {
+      background-color: #a86bd6;
+      color: white;
+    }
+
+    @media (min-width: 600px) {
+      .buttons {
+        flex-direction: row;
+        justify-content: center;
+      }
     }
   </style>
 </head>
-<body data-theme="light">
+<body>
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -184,26 +165,53 @@
         <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html">Login</a>
         <a href="signup.html">Signup</a>
-        <span id="searchIcon">🔍</span>
         <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <main class="hero-section">
-    <div class="center-logo-container">
-      <img src="logo.png" alt="The Little Info Logo" class="center-logo animated-logo" />
+  <main class="center-section">
+    <div class="logo-circle">
+      <img src="logo.png" alt="The Little Info" />
     </div>
-    <h2 class="welcome-text typewriter">Welcome to <span style="font-style: italic;">The Little Info</span></h2>
-    <p class="subheading">Discover insights, trends, and timeless knowledge.</p>
-    <a href="dashboard.html" class="explore-btn">Explore Now</a>
 
-    <div class="topic-buttons">
-      <a href="trending.html" class="topic-box trending-box">🔥 Trending Topics</a>
-      <a href="traditional.html" class="topic-box traditional-box">🧠 Traditional Topics</a>
+    <div class="typewriter" id="welcomeMessage"></div>
+
+    <div class="buttons">
+      <a href="dashboard.html" class="explore-btn">Explore Now</a>
+      <a href="trending.html" class="trending-btn">🔥 Trending Topics</a>
+      <a href="traditional.html" class="traditional-btn">🧠 Traditional Topics</a>
     </div>
   </main>
 
-  <script src="theme-toggle.js"></script>
+  <script>
+    const messages = [
+      "Welcome to The Little Info",
+      "Discover insights, trends, and timeless topics",
+      "Explore knowledge like never before"
+    ];
+
+    let index = 0;
+    let char = 0;
+    const speed = 60;
+    const target = document.getElementById("welcomeMessage");
+
+    function typeWriter() {
+      if (char < messages[index].length) {
+        target.innerHTML += messages[index].charAt(char);
+        char++;
+        setTimeout(typeWriter, speed);
+      } else {
+        setTimeout(() => {
+          char = 0;
+          index = (index + 1) % messages.length;
+          target.innerHTML = "";
+          setTimeout(typeWriter, 500);
+        }, 2000);
+      }
+    }
+
+    typeWriter();
+  </script>
 </body>
 </html>
