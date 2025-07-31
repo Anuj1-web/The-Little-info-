@@ -10,7 +10,7 @@
 </head>
 <body class="min-h-screen bg-base-100 text-base-content transition-all duration-300">
 
-  <!-- ✅ Exact Compact Site Header -->
+  <!-- ✅ Finalized Compact Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -23,13 +23,12 @@
     </div>
   </header>
 
-  <!-- ✅ Settings Box Styled Like Signup -->
-  <main class="flex items-center justify-center min-h-screen bg-base-100 px-4">
-    <div class="bg-base-200 p-8 rounded-2xl shadow-lg transition-transform hover:scale-[1.02] w-full max-w-md animate-fade-in">
-      <h2 class="text-2xl font-semibold text-center mb-6" style="color: var(--primary)">Account Settings</h2>
+  <!-- ✅ Centered Settings Box (Same as Signup) -->
+  <main class="flex justify-center items-center min-h-screen px-4">
+    <div class="bg-base-100 p-8 rounded-2xl shadow-lg w-full max-w-md transition-transform duration-300 hover:scale-[1.02] animate-fade-in">
+      <h2 class="text-2xl font-semibold mb-6 text-primary text-center">Account Settings</h2>
       
       <form id="settingsForm" class="space-y-4">
-
         <div>
           <label for="username" class="block text-sm font-medium">Username</label>
           <input type="text" id="username" class="input input-bordered w-full mt-1" required />
@@ -81,7 +80,7 @@
   <!-- ✅ Toast Container -->
   <div id="toastContainer" class="fixed top-4 right-4 space-y-2 z-50"></div>
 
-  <!-- ✅ Toast & Animation Styling -->
+  <!-- ✅ Fade Animation -->
   <style>
     .animate-fade-in {
       animation: fadeIn 0.5s ease;
