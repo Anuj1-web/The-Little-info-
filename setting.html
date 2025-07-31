@@ -96,57 +96,6 @@
       border-color: var(--btn-bg);
     }
   </style>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Settings - The Little Info</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="theme-toggle.js"></script>
-</head>
-<body>
-  <!-- Header -->
-  <header class="site-header">
-    <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="profile.html">Profile</a>
-        <a href="ai-chatbot.html">AI Chatbot</a>
-        <a href="login.html" class="btn">Login</a>
-        <a href="signup.html" class="btn">Signup</a>
-        <button id="themeToggle" class="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Settings Content -->
-  <main class="section-container">
-    <div class="profile-box">
-      <h2 style="color: var(--primary);">Account Settings</h2>
-      <form id="settingsForm">
-        <label for="username">Display Name:</label>
-        <input type="text" id="username" placeholder="Enter display name" required />
-
-        <label for="bio">Bio:</label>
-        <textarea id="bio" placeholder="Tell something about yourself..."></textarea>
-
-        <label for="themePreference">Preferred Theme:</label>
-        <select id="themePreference">
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
-
-        <button type="submit" class="explore-btn">Save Settings</button>
-      </form>
-    </div>
-  </main>
-
-  <!-- Script -->
-  <script type="module" src="setting.js"></script>
+<script src="setting.js"></script>
 </body>
 </html>
