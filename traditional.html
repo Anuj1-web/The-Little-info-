@@ -1,70 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Traditional Topics - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="dark-theme">
+<body>
+  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
+        <a href="trending.html">Trending</a>
         <a href="profile.html">Profile</a>
-        <a href="bookmark.html">Bookmarks</a>
-        <a href="login.html" class="btn">Login</a>
+        <label class="theme-switch">
+          <input type="checkbox" id="themeToggle" />
+          <span class="slider"></span>
+        </label>
       </nav>
     </div>
   </header>
 
+  <!-- Hero Section -->
+  <section class="hero">
+    <img src="logo.png" alt="Centered Logo" class="center-logo" />
+    <h1 class="page-title">🌿 Traditional Topics</h1>
+    <p class="tagline">Dive into cultural heritage and timeless knowledge.</p>
+  </section>
+
+  <!-- Traditional Content -->
   <main class="section-container">
-    <h1>📜 Traditional Topics</h1>
-    <div id="traditional-container" class="grid-container">
-      <p>Loading traditional content...</p>
+    <div id="traditionalContent" class="card-grid">
+      <!-- Traditional content will load here -->
     </div>
   </main>
 
+  <!-- Script -->
   <script type="module">
-    import { db } from './firebaseInit.js';
-    import { collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+    // Theme toggle
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    toggle.addEventListener('change', () => {
+      root.setAttribute('data-theme', toggle.checked ? 'light' : 'dark');
+    });
 
-    const container = document.getElementById("traditional-container");
+    // Sample traditional content (replace with real content or API fetch)
+    const traditional = [
+      { title: "Ayurveda Healing", desc: "Ancient Indian medicinal practices.", category: "traditional" },
+      { title: "Folklore Stories", desc: "Legends passed through generations.", category: "traditional" },
+    ];
 
-    const fetchTraditionalContent = async () => {
-      try {
-        const q = query(collection(db, "content"), where("category", "==", "traditional"));
-        const snapshot = await getDocs(q);
-
-        if (snapshot.empty) {
-          container.innerHTML = "<p>No traditional content found.</p>";
-          return;
-        }
-
-        container.innerHTML = "";
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const card = document.createElement("div");
-          card.className = "content-card";
-          card.innerHTML = `
-            <h3>${data.title}</h3>
-            <p>${data.description}</p>
-            ${data.fileURL ? (data.fileType === "video"
-              ? `<video src="${data.fileURL}" controls class="media"></video>`
-              : `<img src="${data.fileURL}" alt="${data.title}" class="media"/>`)
-              : ""
-            }
-          `;
-          container.appendChild(card);
-        });
-      } catch (error) {
-        console.error("Error fetching traditional content:", error);
-        container.innerHTML = "<p>Failed to load content.</p>";
-      }
-    };
-
-    fetchTraditionalContent();
+    const container = document.getElementById('traditionalContent');
+    container.innerHTML = traditional.map(item => `
+      <div class="card">
+        <h3>${item.title}</h3>
+        <p>${item.desc}</p>
+        <span class="badge">${item.category}</span>
+      </div>
+    `).join('');
   </script>
 </body>
 </html>
