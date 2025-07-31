@@ -1,81 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign Up - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
 </head>
-<body class="dark-theme">
+<body>
+  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="login.html">Login</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle">🌙</button>
       </nav>
     </div>
   </header>
 
+  <!-- Signup Section -->
   <main class="section-container">
-    <h1>Create an Account</h1>
-    <form id="signupForm" class="content-form">
-      <input type="email" id="signupEmail" required placeholder="Email" />
-      <input type="password" id="signupPassword" required placeholder="Password" />
-      <button type="submit" class="btn">Sign Up</button>
-    </form>
+    <div class="auth-form-box">
+      <h2 style="color: var(--primary);">Create an Account</h2>
+      <form id="signupForm">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Enter your email" required />
 
-    <button id="resendVerification" class="btn" style="display: none; margin-top: 1rem;">
-      Resend Verification Email
-    </button>
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required />
 
-    <p id="message" style="margin-top: 1rem;"></p>
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" placeholder="Re-enter your password" required />
+
+        <button type="submit" class="btn-primary">Sign Up</button>
+      </form>
+      <p class="auth-redirect">Already have an account? <a href="login.html">Login here</a></p>
+    </div>
   </main>
 
+  <!-- Firebase Signup Logic -->
   <script type="module">
     import { auth } from './firebase.js';
-    import {
-      createUserWithEmailAndPassword,
-      sendEmailVerification,
-      signOut
-    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import { createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
     const signupForm = document.getElementById('signupForm');
-    const messageBox = document.getElementById('message');
-    const resendBtn = document.getElementById('resendVerification');
-
-    let tempUser = null;
 
     signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('signupEmail').value.trim();
-      const password = document.getElementById('signupPassword').value;
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+      }
 
       try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        tempUser = userCredential.user;
-
-        await sendEmailVerification(tempUser);
-        messageBox.textContent = `✅ Verification email sent to ${email}. Please verify your email before logging in.`;
-        resendBtn.style.display = 'block';
-
-        await signOut(auth);
-        signupForm.reset();
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("Signup successful!");
+        window.location.href = "dashboard.html";
       } catch (error) {
-        messageBox.textContent = `❌ ${error.message}`;
-        console.error(error);
-      }
-    });
-
-    resendBtn.addEventListener('click', async () => {
-      if (tempUser) {
-        try {
-          await sendEmailVerification(tempUser);
-          messageBox.textContent = `✅ Verification email resent to ${tempUser.email}.`;
-        } catch (error) {
-          messageBox.textContent = `❌ ${error.message}`;
-          console.error(error);
-        }
+        alert("Signup failed: " + error.message);
       }
     });
   </script>
