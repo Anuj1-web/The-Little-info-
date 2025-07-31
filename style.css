@@ -99,98 +99,121 @@ nav a:hover, nav button:hover {
   filter: blur(3px);
 }
 
-..center-logo-container {
+/* Circular logo */
+.center-logo-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 50px;
+  margin-top: 3rem;
 }
 
-.glowing-circle {
-  width: 180px;
-  height: 180px;
+.floating-logo-circle {
+  width: 220px;
+  height: 220px;
+  background: linear-gradient(135deg, #023d4d, #000218);
   border-radius: 50%;
-  background: radial-gradient(circle at center, #0ff, #03f);
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: glowPulse 3s ease-in-out infinite;
-  box-shadow: 0 0 30px #0ff, 0 0 60px #03f;
-  transition: transform 0.4s ease;
+  transition: transform 0.3s ease;
+  box-shadow: 0 0 20px rgba(0,255,255,0.3);
 }
 
-.glowing-circle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 40px #0ff, 0 0 80px #03f;
+.floating-logo-circle:hover {
+  transform: scale(1.05) rotate(3deg);
 }
 
-.center-logo-img {
-  width: 140px;
-  height: 140px;
+.floating-logo {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
   border-radius: 50%;
-  object-fit: cover;
-  background-color: #111;
-  padding: 8px;
 }
 
-@keyframes glowPulse {
-  0%, 100% {
-    box-shadow: 0 0 30px #0ff, 0 0 60px #03f;
-  }
-  50% {
-    box-shadow: 0 0 50px #0ff, 0 0 100px #03f;
-  }
-}
-
-
-.animated-text {
-  font-size: 2.4rem;
-  font-weight: bold;
-  color: var(--primary);
-  letter-spacing: 1px;
-}
-
-.animated-subtext {
-  font-size: 1.1rem;
-  max-width: 600px;
-  color: var(--text);
-  min-height: 30px;
+/* Welcome animations */
+.welcome-messages {
+  text-align: center;
+  color: var(--text-color);
+  margin-top: 1.5rem;
 }
 
 .typewriter {
-  display: inline-block;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  font-style: italic;
-  white-space: nowrap;
+  font-size: 2rem;
+  font-family: monospace;
   overflow: hidden;
-  border-right: 2px solid var(--primary);
-  animation: blink 0.8s infinite;
+  white-space: nowrap;
+  border-right: 3px solid;
+  width: 0;
+  animation: typing 3s steps(30, end) forwards;
 }
 
-@keyframes blink {
-  50% { border-color: transparent; }
+.fadein-message {
+  font-size: 1.2rem;
+  opacity: 0;
+  animation: fadein 2s ease 3s forwards;
 }
 
-.explore-btn {
-  background: var(--btn-bg);
-  color: var(--btn-text);
-  padding: 12px 24px;
-  border: none;
-  border-radius: 25px;
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes fadein {
+  to { opacity: 1 }
+}
+
+/* Buttons */
+.home-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.7rem 1.2rem;
+  margin: 0.5rem;
+  border-radius: 12px;
   font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 0 10px var(--btn-bg);
-  transition: background 0.3s ease;
-  margin-top: 10px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
 }
 
-.explore-btn:hover {
-  background: var(--primary);
-  color: var(--text);
+.btn-explore {
+  background-color: cyan;
+  color: black;
 }
 
+.btn-explore:hover {
+  background-color: #00d0d0;
+}
+
+.topic-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-trending {
+  background-color: #ff5722;
+  color: white;
+  border: 1px solid #ff8a65;
+}
+
+.btn-trending:hover {
+  background-color: #ff784e;
+}
+
+.btn-traditional {
+  background-color: #6a1b9a;
+  color: white;
+  border: 1px solid #ab47bc;
+}
+
+.btn-traditional:hover {
+  background-color: #8e24aa;
+}
 /* Responsive Design */
 @media (max-width: 768px) {
   .animated-text {
