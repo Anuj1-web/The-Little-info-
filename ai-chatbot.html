@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Chatbot & Video Summary - The Little Info</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dark-theme">
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="profile.html">Profile</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#" id="logoutBtn" class="btn">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="section-container">
+    <h1>🤖 AI Help & Video Summary</h1>
+
+    <section class="chat-section">
+      <div class="chat-box" id="chatBox">
+        <div class="bot-message">Hi! I'm your AI Assistant. Ask me anything or upload a video to summarize.</div>
+      </div>
+      <form id="chatForm">
+        <input type="text" id="chatInput" placeholder="Ask a question..." required />
+        <button type="submit" class="btn">Send</button>
+      </form>
+    </section>
+
+    <section class="video-summary-section">
+      <h2>📹 Video Summary</h2>
+      <form id="videoForm">
+        <label for="videoUpload">Upload a video file:</label>
+        <input type="file" id="videoUpload" accept="video/*" required />
+        <button type="submit" class="btn">Generate Summary</button>
+      </form>
+      <div id="summaryOutput" class="summary-box"></div>
+    </section>
+  </main>
+
+  <!-- Chat + Summary Script -->
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+
+    const chatForm = document.getElementById('chatForm');
+    const chatBox = document.getElementById('chatBox');
+    const chatInput = document.getElementById('chatInput');
+    const videoForm = document.getElementById('videoForm');
+    const videoUpload = document.getElementById('videoUpload');
+    const summaryOutput = document.getElementById('summaryOutput');
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert('Login required to access the chatbot.');
+        window.location.href = 'login.html';
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "login.html";
+    });
+
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const userMsg = chatInput.value.trim();
+      if (!userMsg) return;
+
+      const userDiv = document.createElement('div');
+      userDiv.className = 'user-message';
+      userDiv.textContent = userMsg;
+      chatBox.appendChild(userDiv);
+
+      const botDiv = document.createElement('div');
+      botDiv.className = 'bot-message';
+      botDiv.textContent = "🤔 Thinking...";
+      chatBox.appendChild(botDiv);
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      setTimeout(() => {
+        botDiv.textContent = `You asked: "${userMsg}" — I'm still learning to answer that!`;
+      }, 1000);
+
+      chatInput.value = '';
+    });
+
+    videoForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const file = videoUpload.files[0];
+      if (!file) {
+        alert("Please upload a video file.");
+        return;
+      }
+
+      summaryOutput.innerHTML = `<p>📄 Generating summary for: <strong>${file.name}</strong>...</p>`;
+      setTimeout(() => {
+        summaryOutput.innerHTML = `
+          <h3>AI Summary:</h3>
+          <p>This is a placeholder summary. Connect to an AI backend to generate real summaries from uploaded videos.</p>
+        `;
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
