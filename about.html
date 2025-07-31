@@ -1,84 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>About Us - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="logo.png" />
+  <script defer src="theme-toggle.js"></script>
 </head>
-<body class="dark-theme">
+<body>
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="search.html">Search</a>
         <a href="dashboard.html">Dashboard</a>
         <a href="profile.html">Profile</a>
-        <a href="about.html" class="active">About</a>
-        <div class="theme-toggle">
-          <label class="switch">
-            <input type="checkbox" id="themeSwitch" />
-            <span class="slider"></span>
-          </label>
-        </div>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle" class="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
       </nav>
     </div>
   </header>
 
-  <!-- Main About Section -->
-  <main class="section-container animated fadeIn">
-    <div class="center-logo">
-      <img src="logo.png" alt="Centered Logo" class="logo-large pulse" />
-    </div>
-
-    <h1 class="section-title">About The Little Info</h1>
-    <p class="about-text">
-      <strong>The Little Info</strong> is a dynamic content platform that delivers curated videos, trending insights, traditional knowledge, and AI-powered summaries for every curious mind. 
-      Built with modern web technology and a seamless user experience in mind, this site offers:
-    </p>
-
-    <ul class="feature-list">
-      <li>🌐 Smart search with trending & filter options</li>
-      <li>🎥 HD video playback with speed, language, and quality controls</li>
-      <li>💬 Like, comment, and bookmark interactions</li>
-      <li>📊 Admin analytics and content dashboard</li>
-      <li>🤖 Integrated AI chatbot & video summarizer</li>
-      <li>📧 Email verification and notification features</li>
-      <li>🎨 Responsive UI with dark/light mode toggle</li>
-    </ul>
-
-    <p class="about-text">
-      Whether you're here to learn something new, explore traditions, or share your thoughts, we're glad to have you on board. Thank you for being part of our journey!
-    </p>
-
-    <div class="cta-buttons">
-      <a href="contact.html" class="btn">Contact Us</a>
-      <a href="signup.html" class="btn outline">Join the Community</a>
+  <!-- About Section -->
+  <main class="section-container">
+    <div class="content-box">
+      <h2 style="color: var(--primary);">About The Little Info</h2>
+      <p style="color: var(--text); margin-top: 1rem; line-height: 1.6;">
+        The Little Info is your personalized knowledge hub, combining modern technology with user-friendly design to help you save, interact, and explore content in a smarter way.
+        Whether you're bookmarking trends, engaging with community insights, or asking our AI chatbot questions — we've designed the experience to be seamless, fast, and enjoyable.
+      </p>
+      <p style="margin-top: 1rem; color: var(--text); line-height: 1.6;">
+        Our mission is to empower users with curated information, dynamic tools, and personalized features — all while maintaining a clean, elegant, and responsive design.
+      </p>
     </div>
   </main>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <p>&copy; 2025 The Little Info. All rights reserved.</p>
-  </footer>
-
-  <!-- Theme Toggle Script -->
-  <script>
-    const switchToggle = document.getElementById('themeSwitch');
-    const isDark = localStorage.getItem('theme') === 'dark';
-
-    if (isDark) {
-      document.body.classList.add('dark-theme');
-      switchToggle.checked = true;
-    }
-
-    switchToggle.addEventListener('change', () => {
-      document.body.classList.toggle('dark-theme');
-      localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
-    });
-  </script>
 </body>
 </html>
