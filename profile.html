@@ -6,60 +6,84 @@
   <title>User Profile - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="dark-theme">
-  <!-- Sidebar Toggle -->
-  <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+<body class="dark-mode">
+  <!-- Toggle Button -->
+  <button class="theme-toggle" id="themeToggle" title="Toggle Light/Dark Mode">🌓</button>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="bookmarks.html">Bookmarks</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="#" onclick="logout()" class="btn">Logout</a>
+      </nav>
+    </div>
+  </header>
 
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <h2>User Dashboard</h2>
-    <p id="userEmail" class="user-email">Email: </p>
+    <div id="userEmail" class="user-email">Loading...</div>
     <ul>
-      <li><a href="index.html">🏠 Home</a></li>
-      <li><a href="bookmark.html">🔖 Bookmarks</a></li>
-      <li><a href="liked.html">❤️ Liked Videos</a></li>
-      <li><a href="history.html">📜 Watch History</a></li>
-      <li><a href="#" id="logoutBtn">🚪 Logout</a></li>
+      <li><a href="profile.html">Profile</a></li>
+      <li><a href="bookmarks.html">Bookmarks</a></li>
+      <li><a href="settings.html">Settings</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
     </ul>
   </div>
+  <div class="menu-icon" onclick="toggleSidebar()">☰</div>
 
-  <!-- Main -->
+  <!-- Main Content -->
   <main class="section-container">
     <h1>Welcome to Your Profile</h1>
-    <p class="subtitle">Manage your activity and preferences</p>
-    <div class="card">
-      <h3>Your Preferences</h3>
-      <ul>
-        <li>✔ Liked videos</li>
-        <li>✔ Bookmarked content</li>
-        <li>✔ Language: English</li>
-      </ul>
-    </div>
+    <p>This is your personal dashboard. You can manage your account, view saved content, and interact with the system.</p>
   </main>
 
+  <!-- Firebase & Sidebar Logic -->
   <script type="module">
     import { auth } from './firebase.js';
-    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-    const sidebar = document.getElementById("sidebar");
-
-    window.toggleSidebar = () => {
-      sidebar.classList.toggle("active");
-    };
-
-    const userEmailEl = document.getElementById("userEmail");
+    const userEmailDiv = document.getElementById("userEmail");
 
     onAuthStateChanged(auth, (user) => {
       if (!user) {
+        alert("You must be logged in to view this page.");
         window.location.href = "login.html";
       } else {
-        userEmailEl.textContent = `Email: ${user.email}`;
+        userEmailDiv.textContent = user.email;
       }
     });
 
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "login.html";
+    window.logout = function () {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    };
+  </script>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById("themeToggle");
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      document.body.classList.toggle("light-mode");
+      localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "light") {
+        document.body.classList.remove("dark-mode");
+        document.body.classList.add("light-mode");
+      }
     });
   </script>
 </body>
