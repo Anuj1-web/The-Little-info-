@@ -224,3 +224,33 @@ nav a:hover, nav button:hover {
   color: #0b0b1a;
   transform: scale(1.1);
 }
+
+/* Dashboard Cards - Theme Adaptive Text */
+.dashboard-card h3,
+.dashboard-card p {
+  color: var(--text);
+  transition: color 0.3s ease;
+}
+
+.dashboard-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 20px rgba(0, 201, 167, 0.3);
+}
+
+/* Responsive Grid for Dashboard */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+}
