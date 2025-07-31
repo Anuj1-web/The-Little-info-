@@ -8,7 +8,6 @@
   <script defer src="theme-toggle.js"></script>
 </head>
 <body>
-
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
@@ -17,76 +16,37 @@
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
         <a href="profile.html">Profile</a>
-        <a href="#" id="logoutBtn" class="btn">Logout</a>
-        <button id="themeToggle">🌓</button>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle" class="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
       </nav>
     </div>
   </header>
 
-  <!-- Settings Section -->
+  <!-- Settings Content -->
   <main class="section-container">
-    <div class="settings-box">
-      <h2 style="color: var(--primary); margin-bottom: 1rem;">User Settings</h2>
+    <div class="profile-box">
+      <h2 style="color: var(--primary);">Account Settings</h2>
+      <form id="settingsForm">
+        <label for="username">Display Name:</label>
+        <input type="text" id="username" placeholder="Enter display name" required />
 
-      <div class="settings-option">
-        <label for="username">Change Username:</label>
-        <input type="text" id="username" placeholder="Enter new username" />
-      </div>
+        <label for="bio">Bio:</label>
+        <textarea id="bio" placeholder="Tell something about yourself..."></textarea>
 
-      <div class="settings-option">
-        <label for="email">Update Email:</label>
-        <input type="email" id="email" placeholder="Enter new email" />
-      </div>
+        <label for="themePreference">Preferred Theme:</label>
+        <select id="themePreference">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
 
-      <div class="settings-option">
-        <label for="password">Change Password:</label>
-        <input type="password" id="password" placeholder="Enter new password" />
-      </div>
-
-      <button class="explore-btn" id="saveSettings">Save Changes</button>
+        <button type="submit" class="explore-btn">Save Settings</button>
+      </form>
     </div>
   </main>
 
+  <!-- Script -->
   <script type="module" src="setting.js"></script>
-  <script type="module">
-    import { auth, updateProfile, updateEmail, updatePassword } from './firebase.js';
-    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-
-    const usernameInput = document.getElementById('username');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const saveBtn = document.getElementById('saveSettings');
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        alert("You must be logged in to access settings.");
-        window.location.href = 'login.html';
-      }
-
-      saveBtn.addEventListener('click', async () => {
-        try {
-          if (usernameInput.value) {
-            await updateProfile(user, { displayName: usernameInput.value });
-          }
-          if (emailInput.value) {
-            await updateEmail(user, emailInput.value);
-          }
-          if (passwordInput.value) {
-            await updatePassword(user, passwordInput.value);
-          }
-          alert("Settings updated successfully!");
-        } catch (error) {
-          alert("Error: " + error.message);
-        }
-      });
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      const { signOut } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js');
-      await signOut(auth);
-      window.location.href = 'login.html';
-    });
-  </script>
-
 </body>
 </html>
