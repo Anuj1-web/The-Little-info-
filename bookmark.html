@@ -1,106 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bookmarks - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
 </head>
 <body>
+  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
         <a href="profile.html">Profile</a>
-        <a href="login.html" class="btn">Logout</a>
-        <label class="theme-switch">
-          <input type="checkbox" id="theme-toggle" />
-          <span class="slider"></span>
-        </label>
+        <a href="bookmark.html">Bookmarks</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
+  <!-- Bookmarks Section -->
   <main class="section-container">
-    <h1>Your Bookmarked Content</h1>
-    <div id="bookmarks-container" class="content-grid">
-      <p>Loading your bookmarks...</p>
+    <div class="profile-box">
+      <h2 style="color: var(--primary);">📌 Your Bookmarks</h2>
+      <p style="color: var(--text); margin-bottom: 1.5rem;">Saved articles, videos, and learning content</p>
+
+      <div class="dashboard-grid" id="bookmark-list">
+        <!-- Bookmark cards injected here -->
+      </div>
     </div>
   </main>
 
+  <!-- Bookmark Script -->
   <script type="module">
-    import { auth, db } from './firebaseInit.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-    import { collection, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+    import { db } from './firebase.js';
+    import {
+      collection,
+      getDocs,
+      doc,
+      deleteDoc,
+      updateDoc
+    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-    const container = document.getElementById("bookmarks-container");
+    const bookmarkList = document.getElementById('bookmark-list');
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        alert("You must be logged in to view your bookmarks.");
-        window.location.href = "login.html";
+    async function loadBookmarks() {
+      bookmarkList.innerHTML = '';
+      const snapshot = await getDocs(collection(db, 'bookmarks'));
+      const bookmarks = snapshot.docs;
+
+      if (bookmarks.length === 0) {
+        bookmarkList.innerHTML = '<p style="color: var(--text);">No bookmarks found.</p>';
         return;
       }
 
-      try {
-        const snapshot = await getDocs(collection(db, `users/${user.uid}/bookmarks`));
+      bookmarks.forEach(docSnap => {
+        const data = docSnap.data();
+        const id = docSnap.id;
 
-        if (snapshot.empty) {
-          container.innerHTML = "<p>No bookmarks found.</p>";
-          return;
-        }
+        const card = document.createElement('div');
+        card.className = 'dashboard-card';
+        card.innerHTML = `
+          <h3 contenteditable="false">${data.title}</h3>
+          <p contenteditable="false">${data.description}</p>
+          <div style="margin-top: 10px;">
+            <button class="edit-btn">✏️ Edit</button>
+            <button class="delete-btn">🗑️ Delete</button>
+            <button class="save-btn" style="display:none;">💾 Save</button>
+          </div>
+        `;
 
-        container.innerHTML = "";
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          const card = document.createElement("div");
-          card.className = "content-card fade-in";
-          card.innerHTML = `
-            <h3>${data.title}</h3>
-            <p>${data.description}</p>
-            <a href="${data.link}" class="btn" target="_blank">Watch</a>
-            <button class="btn danger" onclick="removeBookmark('${docSnap.id}')">Remove</button>
-          `;
-          container.appendChild(card);
+        // Edit logic
+        const h3 = card.querySelector('h3');
+        const p = card.querySelector('p');
+        const editBtn = card.querySelector('.edit-btn');
+        const deleteBtn = card.querySelector('.delete-btn');
+        const saveBtn = card.querySelector('.save-btn');
+
+        editBtn.addEventListener('click', () => {
+          h3.contentEditable = true;
+          p.contentEditable = true;
+          h3.focus();
+          saveBtn.style.display = 'inline-block';
+          editBtn.style.display = 'none';
         });
-      } catch (err) {
-        console.error("Error loading bookmarks:", err);
-        container.innerHTML = "<p>Error loading bookmarks. Please try again later.</p>";
-      }
-    });
 
-    window.removeBookmark = async function (id) {
-      const user = auth.currentUser;
-      if (!user) return;
+        saveBtn.addEventListener('click', async () => {
+          h3.contentEditable = false;
+          p.contentEditable = false;
+          await updateDoc(doc(db, 'bookmarks', id), {
+            title: h3.textContent.trim(),
+            description: p.textContent.trim()
+          });
+          saveBtn.style.display = 'none';
+          editBtn.style.display = 'inline-block';
+        });
 
-      try {
-        await deleteDoc(doc(db, `users/${user.uid}/bookmarks/${id}`));
-        alert("Bookmark removed.");
-        location.reload();
-      } catch (err) {
-        console.error("Error removing bookmark:", err);
-        alert("Failed to remove bookmark.");
-      }
-    };
-  </script>
+        // Delete logic
+        deleteBtn.addEventListener('click', async () => {
+          if (confirm('Are you sure you want to delete this bookmark?')) {
+            await deleteDoc(doc(db, 'bookmarks', id));
+            loadBookmarks();
+          }
+        });
 
-  <script>
-    // Theme toggle support
-    const toggle = document.getElementById("theme-toggle");
-    toggle.addEventListener("change", () => {
-      document.body.classList.toggle("light-mode");
-      localStorage.setItem("theme", document.body.classList.contains("light-mode") ? "light" : "dark");
-    });
+        bookmarkList.appendChild(card);
+      });
+    }
 
-    // Apply saved theme
-    window.addEventListener("DOMContentLoaded", () => {
-      if (localStorage.getItem("theme") === "light") {
-        document.body.classList.add("light-mode");
-        toggle.checked = true;
-      }
-    });
+    loadBookmarks();
   </script>
 </body>
 </html>
