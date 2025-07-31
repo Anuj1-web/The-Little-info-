@@ -2,53 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>User Profile - The Little Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dark-theme">
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="Green and White Modern Computer Service Repair Logo.png" alt="Site Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="#" id="logoutBtn" class="btn">Logout</a>
+        <a href="signup.html">Signup</a>
       </nav>
+      <div class="theme-toggle">
+        <input type="checkbox" id="themeSwitcher" />
+        <label for="themeSwitcher">🌓</label>
+      </div>
     </div>
   </header>
 
-  <main class="section-container">
-    <div class="profile-box">
-      <h2>Your Profile</h2>
-      <p><strong>Email:</strong> <span id="userEmail"></span></p>
-      <div class="user-actions">
-        <a href="bookmark.html" class="btn">Bookmarks</a>
-        <a href="interactions.html" class="btn">Likes & Comments</a>
-        <a href="settings.html" class="btn">Settings</a>
-      </div>
-    </div>
+  <main class="section-container login-section">
+    <h1 class="animated-header">Login</h1>
+    <form id="loginForm" class="form-box">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="Enter your email" required />
+      
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="Enter your password" required />
+
+      <button type="submit" class="btn">Login</button>
+    </form>
+
+    <p class="form-link">
+      Forgot your password? <a href="reset-password.html">Reset here</a><br />
+      Don't have an account? <a href="signup.html">Signup</a>
+    </p>
   </main>
 
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+  <footer class="site-footer">
+    <div class="footer-content">
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="ai-chatbot.html" title="Ask our AI!">🤖</a>
+    </div>
+  </footer>
 
-    const emailSpan = document.getElementById('userEmail');
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        emailSpan.textContent = user.email;
-      } else {
-        alert("You must be logged in to view your profile.");
-        window.location.href = 'login.html';
-      }
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      await signOut(auth);
-      window.location.href = 'login.html';
-    });
-  </script>
+  <script src="main.js" type="module"></script>
+  <script src="login.js" type="module"></script>
 </body>
 </html>
