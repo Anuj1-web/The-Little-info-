@@ -7,72 +7,69 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dark-theme">
-
-  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="login.html" class="btn">Login</a>
+        <a href="login.html">Login</a>
       </nav>
     </div>
   </header>
 
-  <!-- Signup Form -->
-  <main class="section-container auth-section">
+  <main class="section-container">
     <h1>Create an Account</h1>
-    <form id="signupForm" class="auth-form">
-      <label for="email">Email:</label>
-      <input type="email" id="email" placeholder="Enter your email" required />
-
-      <label for="password">Password:</label>
-      <input type="password" id="password" placeholder="Create password" required />
-
+    <form id="signupForm" class="content-form">
+      <input type="email" id="signupEmail" required placeholder="Email" />
+      <input type="password" id="signupPassword" required placeholder="Password" />
       <button type="submit" class="btn">Sign Up</button>
-      <button type="button" id="resendBtn" class="btn-outline hidden">Resend Verification</button>
     </form>
 
-    <p class="info-text">Already have an account? <a href="login.html">Login here</a></p>
+    <button id="resendVerification" class="btn" style="display: none; margin-top: 1rem;">
+      Resend Verification Email
+    </button>
+
+    <p id="message" style="margin-top: 1rem;"></p>
   </main>
 
-  <!-- Firebase Signup Script -->
   <script type="module">
     import { auth } from './firebase.js';
     import {
       createUserWithEmailAndPassword,
-      sendEmailVerification
+      sendEmailVerification,
+      signOut
     } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-    const form = document.getElementById('signupForm');
-    const resendBtn = document.getElementById('resendBtn');
+    const signupForm = document.getElementById('signupForm');
+    const messageBox = document.getElementById('message');
+    const resendBtn = document.getElementById('resendVerification');
 
-    let currentUser = null;
+    let tempUser = null;
 
-    form.addEventListener('submit', async (e) => {
+    signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
 
       try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        currentUser = userCredential.user;
-        await sendEmailVerification(currentUser);
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        tempUser = userCred.user;
 
-        alert('✅ Account created! A verification email has been sent.');
-        resendBtn.classList.remove('hidden');
-        form.reset();
-      } catch (err) {
-        alert(`❌ ${err.message}`);
+        await sendEmailVerification(tempUser);
+        messageBox.innerHTML = `✅ Verification email sent to <b>${email}</b>. Please verify before logging in.`;
+        resendBtn.style.display = 'inline-block';
+
+        await signOut(auth);
+        signupForm.reset();
+      } catch (error) {
+        messageBox.textContent = `❌ ${error.message}`;
       }
     });
 
     resendBtn.addEventListener('click', async () => {
-      if (currentUser) {
-        await sendEmailVerification(currentUser);
-        alert('🔄 Verification email resent.');
-      } else {
-        alert('No user found to resend verification.');
+      if (tempUser) {
+        await sendEmailVerification(tempUser);
+        alert("🔁 Verification email re-sent!");
       }
     });
   </script>
