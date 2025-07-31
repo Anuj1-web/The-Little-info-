@@ -1,12 +1,13 @@
 // admin-analytics.js
 import { db, auth } from './firebase.js';
-import { collection, getDocs } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import { collection, getDocs } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
 let totalViews = 0;
 let totalLikes = 0;
 let totalComments = 0;
 let totalBookmarks = 0;
+
 const viewsPerVideo = {};
 const likesPerVideo = {};
 
@@ -32,7 +33,6 @@ onAuthStateChanged(auth, async (user) => {
   const contentSnapshot = await getDocs(collection(db, 'content'));
   contentSnapshot.forEach((doc) => {
     const data = doc.data();
-    const id = doc.id;
 
     totalViews += data.views || 0;
     totalLikes += data.likes || 0;
@@ -43,39 +43,16 @@ onAuthStateChanged(auth, async (user) => {
     likesPerVideo[data.title] = data.likes || 0;
   });
 
-  document.getElementById('totalViews').textContent = `Total Views: ${totalViews}`;
-  document.getElementById('totalLikes').textContent = `Total Likes: ${totalLikes}`;
-  document.getElementById('totalComments').textContent = `Total Comments: ${totalComments}`;
-  document.getElementById('totalBookmarks').textContent = `Total Bookmarks: ${totalBookmarks}`;
+  document.getElementById('totalViews').textContent = `📊 Total Views: ${totalViews}`;
+  document.getElementById('totalLikes').textContent = `❤️ Total Likes: ${totalLikes}`;
+  document.getElementById('totalComments').textContent = `💬 Total Comments: ${totalComments}`;
+  document.getElementById('totalBookmarks').textContent = `🔖 Total Bookmarks: ${totalBookmarks}`;
 
-  renderChart('viewsChart', 'Views per Video', viewsPerVideo);
-  renderChart('likesChart', 'Likes per Video', likesPerVideo);
-});
-
-function renderChart(canvasId, label, dataMap) {
-  const ctx = document.getElementById(canvasId);
-  const labels = Object.keys(dataMap);
-  const data = Object.values(dataMap);
-
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label,
-        data,
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
+  const topContainer = document.getElementById('topVideos');
+  Object.entries(viewsPerVideo).forEach(([title, views]) => {
+    const div = document.createElement('div');
+    div.classList.add('video-stat');
+    div.innerHTML = `<strong>${title}</strong>: ${views} views, ${likesPerVideo[title] || 0} likes`;
+    topContainer.appendChild(div);
   });
-}
+});
