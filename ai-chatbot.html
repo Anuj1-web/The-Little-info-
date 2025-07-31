@@ -1,37 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AI Chatbot - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
 </head>
 <body>
+
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="profile.html">Profile</a>
         <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌙</button>
       </nav>
     </div>
   </header>
 
-  <!-- Chatbot Section -->
+  <!-- AI Chatbot Section -->
   <main class="section-container">
-    <h1>Little Info AI Chatbot</h1>
-    <div id="chatMessages" class="chat-box"></div>
+    <div class="profile-box">
+      <h2 style="color: var(--primary); text-align: center;">🤖 AI Chatbot</h2>
+      <p style="text-align: center; color: var(--text); max-width: 700px; margin: auto;">Ask any question and let our intelligent assistant help you instantly. The AI is powered to provide quick, friendly, and informative responses.</p>
 
-    <form id="chatForm">
-      <input type="text" id="userInput" placeholder="Ask something..." required />
-      <button type="submit">Send</button>
-    </form>
+      <div style="margin-top: 2rem; max-width: 700px; margin-inline: auto;">
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="userInput" placeholder="Ask something..." style="flex: 1; padding: 12px; border-radius: 6px; border: none;" />
+          <button onclick="sendMessage()" class="explore-btn">Send</button>
+        </div>
+        <div id="chatOutput" style="margin-top: 2rem; background-color: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; max-height: 300px; overflow-y: auto; color: var(--text);">
+          <p style="color: var(--primary);">AI: Hello! How can I help you today?</p>
+        </div>
+      </div>
+    </div>
   </main>
 
-  <!-- Script -->
-  <script type="module" src="ai-chatbot.js"></script>
+  <script>
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const output = document.getElementById('chatOutput');
+      const userText = input.value.trim();
+
+      if (userText === "") return;
+
+      const userMsg = document.createElement('p');
+      userMsg.textContent = `You: ${userText}`;
+      output.appendChild(userMsg);
+
+      const aiReply = document.createElement('p');
+      aiReply.style.color = "var(--primary)";
+      aiReply.textContent = `AI: This is a simulated response to "${userText}".`;
+      output.appendChild(aiReply);
+
+      input.value = '';
+      output.scrollTop = output.scrollHeight;
+    }
+  </script>
+
 </body>
 </html>
