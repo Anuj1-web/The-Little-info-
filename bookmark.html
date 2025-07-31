@@ -3,81 +3,159 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bookmarks - The Little Info</title>
+  <title>Your Bookmarks - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    header {
+      background-color: #1f1f1f;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      height: 40px;
+    }
+
+    nav a {
+      margin-left: 1.2rem;
+      color: #eee;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      color: #4dd0e1;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 2rem 0;
+      color: #fff;
+    }
+
+    #bookmarks-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1.5rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .content-card {
+      background: #1e1e1e;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .content-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 20px rgba(77, 208, 225, 0.2);
+    }
+
+    .content-card h3 {
+      margin: 0 0 0.5rem;
+      color: #4dd0e1;
+    }
+
+    .content-card p {
+      margin-bottom: 0.5rem;
+    }
+
+    .remove-btn {
+      background-color: #e53935;
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+
+    .remove-btn:hover {
+      background-color: #c62828;
+    }
+  </style>
 </head>
-<body class="dark-theme">
-  <header class="site-header">
-    <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="profile.html">Profile</a>
-        <a href="#" id="logoutBtn" class="btn">Logout</a>
-      </nav>
-    </div>
+<body>
+  <header>
+    <img src="logo.png" alt="Site Logo" class="logo" />
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="dashboard.html">Dashboard</a>
+    </nav>
   </header>
 
-  <main class="section-container">
-    <h1>Your Bookmarked Content</h1>
-    <div id="bookmarks-container" class="grid-container">
-      <p>Loading your bookmarks...</p>
-    </div>
+  <h1>Your Bookmarked Content</h1>
+
+  <main id="bookmarks-container">
+    <p>Loading your bookmarks...</p>
   </main>
 
   <script type="module">
     import { auth, db } from './firebaseInit.js';
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-    import { collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+    import {
+      onAuthStateChanged
+    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import {
+      collection,
+      getDocs,
+      deleteDoc,
+      doc
+    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-    const container = document.getElementById("bookmarks-container");
+    const container = document.getElementById('bookmarks-container');
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        alert("Please log in to view bookmarks.");
-        window.location.href = "login.html";
+        alert('You must be logged in to view your bookmarks.');
+        window.location.href = 'login.html';
         return;
       }
 
       try {
-        const snapshot = await getDocs(collection(db, `users/${user.uid}/bookmarks`));
+        const snap = await getDocs(collection(db, `users/${user.uid}/bookmarks`));
 
-        if (snapshot.empty) {
-          container.innerHTML = "<p>No bookmarks found.</p>";
+        if (snap.empty) {
+          container.innerHTML = '<p>No bookmarks found.</p>';
           return;
         }
 
-        container.innerHTML = "";
-        snapshot.forEach(docSnap => {
+        container.innerHTML = '';
+        snap.forEach(docSnap => {
           const data = docSnap.data();
-          const card = document.createElement("div");
-          card.className = "content-card";
+          const card = document.createElement('div');
+          card.className = 'content-card';
           card.innerHTML = `
-            <h3>${data.title}</h3>
-            <p>${data.description}</p>
-            ${data.fileURL ? (data.fileType === "video" ? 
-              `<video src="${data.fileURL}" controls class="media"></video>` : 
-              `<img src="${data.fileURL}" alt="${data.title}" class="media" />`) : ""}
-            <button class="btn red" onclick="removeBookmark('${docSnap.id}')">Remove</button>
+            <h3>${data.title || 'Untitled'}</h3>
+            <p>${data.description || 'No description available.'}</p>
+            <button class="remove-btn" data-id="${docSnap.id}">Remove</button>
           `;
           container.appendChild(card);
         });
+
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.getAttribute('data-id');
+            await deleteDoc(doc(db, `users/${user.uid}/bookmarks/${id}`));
+            btn.parentElement.remove();
+          });
+        });
       } catch (err) {
         console.error(err);
-        container.innerHTML = "<p>Error loading bookmarks.</p>";
+        container.innerHTML = '<p>Error loading bookmarks.</p>';
       }
-    });
-
-    window.removeBookmark = async (docId) => {
-      const user = auth.currentUser;
-      if (!user) return;
-      await deleteDoc(doc(db, `users/${user.uid}/bookmarks`, docId));
-      location.reload();
-    };
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "login.html";
     });
   </script>
 </body>
