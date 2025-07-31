@@ -72,5 +72,28 @@
     }
     type();
   </script>
+<!-- Place this footer just above the closing </body> tag in index.html -->
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-chatbot">
+      <button id="chatbotToggle" title="Need help?" aria-label="Chat with AI">
+        🤖
+      </button>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Optional: Toggle chatbot visibility
+  document.getElementById('chatbotToggle').addEventListener('click', () => {
+    window.location.href = 'ai-chatbot.html'; // or open modal if implemented
+  });
+</script>
+
 </body>
 </html>
