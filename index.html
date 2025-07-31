@@ -1,59 +1,104 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Little Info</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>The Little Info - Home</title>
+  <link rel="stylesheet" href="styles.css" />
   <script defer src="theme-toggle.js"></script>
-  <script defer src="search.js"></script>
   <style>
-    .center-logo-container {
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .center-section {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      margin-top: 50px;
-    }
-
-    .glowing-circle {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: radial-gradient(circle at center, #0ff, #03f);
-      display: flex;
       justify-content: center;
-      align-items: center;
-      animation: glowPulse 3s ease-in-out infinite;
-      box-shadow: 0 0 30px #0ff, 0 0 60px #03f;
-      transition: transform 0.4s ease;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
     }
 
-    .glowing-circle:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 40px #0ff, 0 0 80px #03f;
+    .circular-logo {
+      width: 220px;
+      height: 220px;
+      border-radius: 30%; /* Decreased circular roundness */
+      overflow: hidden;
+      margin-bottom: 30px;
+      transition: box-shadow 0.3s ease;
     }
 
-    .center-logo-img {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
+    .circular-logo:hover {
+      box-shadow: 0 0 12px rgba(0, 255, 255, 0.3); /* Softer glow */
+    }
+
+    .circular-logo img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      background-color: #111;
-      padding: 8px;
     }
 
-    @keyframes glowPulse {
-      0%, 100% {
-        box-shadow: 0 0 30px #0ff, 0 0 60px #03f;
-      }
-      50% {
-        box-shadow: 0 0 50px #0ff, 0 0 100px #03f;
-      }
+    .typewriter {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      min-height: 40px;
+    }
+
+    .explore-btn,
+    .topic-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      margin: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .explore-btn {
+      background: cyan;
+      color: black;
+    }
+
+    .explore-btn:hover {
+      transform: scale(1.05);
+      background: #00ffffcc;
+    }
+
+    .topic-buttons {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .topic-btn.trending {
+      background: #ff4c4c;
+      color: white;
+    }
+
+    .topic-btn.trending:hover {
+      background: #e63946;
+    }
+
+    .topic-btn.traditional {
+      background: #9d4edd;
+      color: white;
+    }
+
+    .topic-btn.traditional:hover {
+      background: #7b2cbf;
     }
   </style>
 </head>
-
 <body>
   <header class="site-header">
     <div class="header-container">
@@ -61,35 +106,64 @@
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="profile.html">Profile</a>
-        <a href="ai-chatbot.html">AI Chatbot</a>
-        <a href="login.html">Login</a>
-        <a href="signup.html">Signup</a>
-        <a href="search.html" title="Search">🔍</a>
+        <a href="#" id="logoutBtn" class="btn">Logout</a>
         <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <main>
-    <div class="center-logo-container">
-      <div class="glowing-circle">
-        <img src="logo.png" alt="The Little Info Logo" class="center-logo-img" />
-      </div>
+  <section class="center-section">
+    <div class="circular-logo">
+      <img src="logo.png" alt="Centered Circular Logo" />
     </div>
 
-    <section class="hero-section">
-      <h1 class="typewriter-text">Welcome to The Little Info</h1>
-      <h2 class="typewriter-text">Explore Curated Knowledge</h2>
-      <h2 class="typewriter-text">Enlighten Your Mind</h2>
-    </section>
+    <div class="typewriter" id="typewriter"></div>
 
-    <div class="button-container">
-      <a href="dashboard.html" class="explore-btn">Explore Now</a>
-      <a href="trending.html" class="topic-btn trending-btn">🔥 Trending Topics</a>
-      <a href="traditional.html" class="topic-btn traditional-btn">📘 Traditional Topics</a>
+    <button class="explore-btn">Explore Now</button>
+
+    <div class="topic-buttons">
+      <a href="trending.html"><button class="topic-btn trending">🔥 Trending Topics</button></a>
+      <a href="traditional.html"><button class="topic-btn traditional">🧠 Traditional Topics</button></a>
     </div>
-  </main>
+  </section>
+
+  <script>
+    const messages = [
+      "Welcome to The Little Info",
+      "Explore Insight, Trends and Timeless Knowledge",
+      "Stay Curious. Stay Informed."
+    ];
+
+    let msgIndex = 0;
+    let charIndex = 0;
+    const speed = 80;
+    const pause = 1200;
+    const typewriter = document.getElementById("typewriter");
+
+    function type() {
+      if (charIndex < messages[msgIndex].length) {
+        typewriter.textContent += messages[msgIndex].charAt(charIndex);
+        charIndex++;
+        setTimeout(type, speed);
+      } else {
+        setTimeout(erase, pause);
+      }
+    }
+
+    function erase() {
+      if (charIndex > 0) {
+        typewriter.textContent = messages[msgIndex].substring(0, charIndex - 1);
+        charIndex--;
+        setTimeout(erase, speed);
+      } else {
+        msgIndex = (msgIndex + 1) % messages.length;
+        setTimeout(type, speed);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (messages.length > 0) type();
+    });
+  </script>
 </body>
-
 </html>
