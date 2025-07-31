@@ -4,14 +4,10 @@ import {
   getDocs,
   orderBy,
   query,
-  doc,
-  setDoc,
-  addDoc,
-  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-import "./interactions.js"; // Ensure interaction logic loads
+import "./interactions.js"; // Enable like, bookmark, comment
 
 const trendingDiv = document.getElementById("trending-content");
 const traditionalDiv = document.getElementById("traditional-content");
@@ -25,12 +21,18 @@ async function loadContent() {
     const card = document.createElement("div");
     card.classList.add("content-card");
 
+    const media = data.videoURL
+      ? `<video width="100%" controls preload="metadata">
+          <source src="${data.videoURL}" type="video/mp4" />
+        </video>`
+      : data.imageURL
+      ? `<img src="${data.imageURL}" alt="${data.title}" class="upload-preview" />`
+      : "";
+
     card.innerHTML = `
       <h3>${data.title}</h3>
       <p>${data.description}</p>
-      <video width="100%" controls>
-        <source src="${data.videoURL}" type="video/mp4" />
-      </video>
+      ${media}
       <div class="interactions">
         <button onclick="likePost('${docSnap.id}')">👍 Like</button>
         <button onclick="bookmarkPost('${docSnap.id}')">🔖 Bookmark</button>
@@ -41,18 +43,18 @@ async function loadContent() {
       </div>
     `;
 
-    if (data.category === "Trending") {
+    if (data.category.toLowerCase() === "trending") {
       trendingDiv.appendChild(card);
-    } else {
+    } else if (data.category.toLowerCase() === "traditional") {
       traditionalDiv.appendChild(card);
     }
   });
 }
 
 onAuthStateChanged(auth, (user) => {
-  if (user) {
+  if (user && user.emailVerified) {
     loadContent();
   } else {
-    loadContent(); // Allow viewing without interaction
+    loadContent(); // allow public viewing
   }
 });
