@@ -3,103 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Little Info - Home</title>
+  <title>The Little Info</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="logo.png" />
+  <script defer src="theme-toggle.js"></script>
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
-  <div class="header-container">
-    <img src="logo.png" alt="Site Logo" class="site-logo-small" />
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="profile.html">Profile</a>
-      <a href="ai-chatbot.html">AI Chatbot</a>
-      <a href="login.html" class="btn">Login</a>
-      <a href="signup.html" class="btn">Signup</a>
-      <!-- 🔍 Search Icon Link -->
-      <a href="search.html" title="Search" class="text-xl px-2">🔍</a>
-      <!-- 🌙/☀️ Theme Toggle -->
-      <button id="themeToggle">🌙</button>
-    </nav>
-  </div>
-</header>
-
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle">🌙</button>
+      </nav>
+    </div>
+  </header>
 
   <!-- Main Hero Section -->
-  <main class="hero-section">
-    <div class="center-logo-container">
-      <img src="logo.png" alt="The Little Info Logo" class="center-logo animate-logo" />
-      <h1 class="animated-text">Welcome to The Little Info</h1>
-      <p class="animated-subtext">
-        <span class="typewriter" id="typewriter"></span>
-      </p>
-      <a href="dashboard.html" class="btn explore-btn">Explore Now</a>
+  <main class="section-container text-center mt-20">
+    <div class="animated-logo-container">
+      <img src="logo.png" alt="Floating Logo" class="floating-logo" />
     </div>
+    <h1 class="text-4xl md:text-5xl font-bold mt-6 mb-4 typewriter-text">
+      Welcome to The Little Info
+    </h1>
+    <p class="text-lg mb-6">Your go-to space for knowledge, trends, and insights.</p>
+    <a href="dashboard.html" class="btn-primary">Explore Now</a>
+
+    <!-- New Section: Topic Boxes -->
+    <section class="section-container mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
+      <!-- Trending Topics -->
+      <a href="interactions.html" class="auth-form-box cursor-pointer text-center transition-transform hover:scale-[1.02] hover:shadow-xl">
+        <h2 class="text-xl font-semibold text-primary mb-2">🔥 Trending Topics</h2>
+        <p class="text-base-content">See what’s buzzing — latest posts and insights from users.</p>
+      </a>
+
+      <!-- Traditional Topics -->
+      <a href="bookmark.html" class="auth-form-box cursor-pointer text-center transition-transform hover:scale-[1.02] hover:shadow-xl">
+        <h2 class="text-xl font-semibold text-primary mb-2">📚 Traditional Topics</h2>
+        <p class="text-base-content">Explore timeless classics and saved knowledge curated by users.</p>
+      </a>
+    </section>
   </main>
-
-  <!-- Optional Background Video -->
-  <video autoplay muted loop id="bg-video">
-    <source src="media/bg.mp4" type="video/mp4" />
-  </video>
-
-  <script>
-    // Theme toggler
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      const html = document.documentElement;
-      html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-    });
-
-    // Typewriter animation
-    const lines = [
-      "Discover knowledge in every format.",
-      "Stay updated with trending & traditional topics.",
-      "Smart video playback & AI summaries.",
-      "Your personalized info hub starts here."
-    ];
-    let currentLine = 0;
-    let charIndex = 0;
-    const typewriter = document.getElementById('typewriter');
-
-    function type() {
-      if (charIndex < lines[currentLine].length) {
-        typewriter.textContent += lines[currentLine][charIndex++];
-        setTimeout(type, 50);
-      } else {
-        setTimeout(() => {
-          typewriter.textContent = '';
-          charIndex = 0;
-          currentLine = (currentLine + 1) % lines.length;
-          type();
-        }, 2500);
-      }
-    }
-    type();
-  </script>
-<!-- Place this footer just above the closing </body> tag in index.html -->
-
-<footer class="site-footer">
-  <div class="footer-content">
-    <div class="footer-links">
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </div>
-    <div class="footer-chatbot">
-      <button id="chatbotToggle" title="Need help?" aria-label="Chat with AI">
-        🤖
-      </button>
-    </div>
-  </div>
-</footer>
-
-<script>
-  // Optional: Toggle chatbot visibility
-  document.getElementById('chatbotToggle').addEventListener('click', () => {
-    window.location.href = 'ai-chatbot.html'; // or open modal if implemented
-  });
-</script>
-
 </body>
 </html>
