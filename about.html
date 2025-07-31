@@ -3,22 +3,82 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>About - The Little Info</title>
+  <title>About Us - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="logo.png" />
 </head>
-<body>
-  <div id="header"></div>
+<body class="dark-theme">
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="search.html">Search</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="about.html" class="active">About</a>
+        <div class="theme-toggle">
+          <label class="switch">
+            <input type="checkbox" id="themeSwitch" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </nav>
+    </div>
+  </header>
 
-  <main class="container">
-    <h1>About Us</h1>
-    <p>
-      Welcome to <strong>The Little Info</strong> — your educational social media platform to learn, explore, and grow. Our goal is to provide quality content categorized into trending and traditional topics, allowing users to engage through playlists, bookmarks, likes, comments, quizzes, and more.
+  <!-- Main About Section -->
+  <main class="section-container animated fadeIn">
+    <div class="center-logo">
+      <img src="logo.png" alt="Centered Logo" class="logo-large pulse" />
+    </div>
+
+    <h1 class="section-title">About The Little Info</h1>
+    <p class="about-text">
+      <strong>The Little Info</strong> is a dynamic content platform that delivers curated videos, trending insights, traditional knowledge, and AI-powered summaries for every curious mind. 
+      Built with modern web technology and a seamless user experience in mind, this site offers:
     </p>
-    <p>
-      Created by passionate educators and developers to help students easily access curated educational videos and materials in an interactive format.
+
+    <ul class="feature-list">
+      <li>🌐 Smart search with trending & filter options</li>
+      <li>🎥 HD video playback with speed, language, and quality controls</li>
+      <li>💬 Like, comment, and bookmark interactions</li>
+      <li>📊 Admin analytics and content dashboard</li>
+      <li>🤖 Integrated AI chatbot & video summarizer</li>
+      <li>📧 Email verification and notification features</li>
+      <li>🎨 Responsive UI with dark/light mode toggle</li>
+    </ul>
+
+    <p class="about-text">
+      Whether you're here to learn something new, explore traditions, or share your thoughts, we're glad to have you on board. Thank you for being part of our journey!
     </p>
+
+    <div class="cta-buttons">
+      <a href="contact.html" class="btn">Contact Us</a>
+      <a href="signup.html" class="btn outline">Join the Community</a>
+    </div>
   </main>
 
-  <script src="script.js"></script>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>&copy; 2025 The Little Info. All rights reserved.</p>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const switchToggle = document.getElementById('themeSwitch');
+    const isDark = localStorage.getItem('theme') === 'dark';
+
+    if (isDark) {
+      document.body.classList.add('dark-theme');
+      switchToggle.checked = true;
+    }
+
+    switchToggle.addEventListener('change', () => {
+      document.body.classList.toggle('dark-theme');
+      localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+    });
+  </script>
 </body>
 </html>
