@@ -5,30 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Little Info</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="logo.png" type="image/png" />
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
+      <!-- Top-left logo -->
       <img src="logo.png" alt="Site Logo" class="site-logo" />
-      <nav class="nav-links">
+
+      <!-- Navigation -->
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="trending.html">Trending</a>
+        <a href="traditional.html">Traditional</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html" class="btn">Login</a>
         <a href="signup.html" class="btn">Signup</a>
-        <a href="trending.html" class="btn">Trending</a>
-        <a href="traditional.html" class="btn">Traditional</a>
-        <a href="profile.html" class="btn">Profile</a>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌙</button>
       </nav>
     </div>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Main Hero Section -->
   <main class="hero-section">
-    <div class="hero-content">
+    <div class="center-logo-container">
       <img src="logo.png" alt="Centered Logo" class="center-logo" />
-      <h1>Welcome to <span>The Little Info</span></h1>
-      <p>Explore curated knowledge, trends, and traditions.</p>
-      <a href="dashboard.html" class="btn primary">Get Started</a>
+      <h1 class="hero-title">Welcome to The Little Info</h1>
+      <p class="hero-subtitle">Explore knowledge in both Traditional & Trending styles.</p>
+      <a href="dashboard.html" class="btn hero-btn">Explore Now</a>
     </div>
   </main>
 
@@ -36,5 +44,23 @@
   <footer class="site-footer">
     <p>&copy; 2025 The Little Info. All rights reserved.</p>
   </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const toggleBtn = document.getElementById('themeToggle');
+    const currentTheme = localStorage.getItem('theme');
+
+    if (currentTheme === 'dark') {
+      document.body.classList.add('dark');
+      toggleBtn.textContent = '☀️';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      const isDark = document.body.classList.contains('dark');
+      toggleBtn.textContent = isDark ? '☀️' : '🌙';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  </script>
 </body>
 </html>
