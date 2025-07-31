@@ -178,3 +178,49 @@ nav a:hover, nav button:hover {
     height: 120px;
   }
 }
+/* ====== FOOTER STYLING ====== */
+.site-footer {
+  background: linear-gradient(to right, #0a232f, #0b0b1a);
+  color: #eee;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.footer-links a {
+  margin: 0 1rem;
+  color: #cce7ff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #67d1ff;
+}
+
+.footer-chatbot button {
+  background-color: #1e293b;
+  border: 1px solid #67d1ff;
+  color: #67d1ff;
+  border-radius: 50%;
+  padding: 0.7rem 0.8rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.footer-chatbot button:hover {
+  background-color: #67d1ff;
+  color: #0b0b1a;
+  transform: scale(1.1);
+}
