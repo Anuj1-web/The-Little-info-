@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Contact Us - The Little Info</title>
+  <title>Contact - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
 </head>
@@ -11,7 +11,7 @@
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
@@ -24,31 +24,17 @@
     </div>
   </header>
 
-  <!-- Contact Section -->
+  <!-- Contact Content -->
   <main class="section-container">
-    <div class="content-box">
+    <div class="info-box">
       <h2 style="color: var(--primary);">Contact Us</h2>
-      <form id="contactForm" style="margin-top: 1.5rem;">
-        <label for="name" style="color: var(--text);">Name:</label><br/>
-        <input type="text" id="name" name="name" required class="input-field"><br/><br/>
-
-        <label for="email" style="color: var(--text);">Email:</label><br/>
-        <input type="email" id="email" name="email" required class="input-field"><br/><br/>
-
-        <label for="message" style="color: var(--text);">Message:</label><br/>
-        <textarea id="message" name="message" rows="5" required class="input-field"></textarea><br/><br/>
-
-        <button type="submit" class="explore-btn">Send Message</button>
-      </form>
+      <p>Have feedback, suggestions, or need support? We're here to help.</p>
+      <ul style="margin-top: 1rem; color: var(--text);">
+        <li>Email: <a href="mailto:support@thelittleinfo.com" style="color: var(--primary);">support@thelittleinfo.com</a></li>
+        <li>Phone: +1 (555) 123-4567</li>
+        <li>Location: Remote-first team operating globally</li>
+      </ul>
     </div>
   </main>
-
-  <script>
-    document.getElementById("contactForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      alert("Thank you! Your message has been sent.");
-      this.reset();
-    });
-  </script>
 </body>
 </html>
