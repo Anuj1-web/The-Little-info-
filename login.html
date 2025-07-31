@@ -7,39 +7,62 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="signup.html" class="btn">Signup</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
+        <a href="signup.html">Sign Up</a>
       </nav>
     </div>
   </header>
 
-  <!-- Login Form -->
   <main class="section-container">
     <h1>Login</h1>
-    <form id="loginForm">
-      <label for="loginEmail">Email:</label>
-      <input type="email" id="loginEmail" placeholder="Enter your email" required />
-
-      <label for="loginPassword">Password:</label>
-      <input type="password" id="loginPassword" placeholder="Enter your password" required />
-
-      <button type="submit" class="btn">Login</button>
+    <form id="loginForm" class="content-form">
+      <input type="email" id="loginEmail" required placeholder="Email" />
+      <input type="password" id="loginPassword" required placeholder="Password" />
+      <button type="submit" class="btn">Log In</button>
     </form>
 
-    <p><a href="reset-password.html">Forgot your password?</a></p>
-    <p>Don't have an account? <a href="signup.html">Sign up here</a>.</p>
-    <!-- Optional: Placeholder for resend verification -->
-    <p><a href="#" id="resend-verification">Resend verification email</a></p>
+    <p id="message" style="margin-top: 1rem;"></p>
+    <p style="margin-top: 1rem;">
+      <a href="reset-password.html">Forgot Password?</a>
+    </p>
   </main>
 
-  <script src="firebase.js" type="module"></script>
-  <script src="login.js" type="module"></script>
+  <script type="module">
+    import { auth } from './firebase.js';
+    import {
+      signInWithEmailAndPassword,
+      signOut
+    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+
+    const loginForm = document.getElementById('loginForm');
+    const messageBox = document.getElementById('message');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        if (user.emailVerified) {
+          messageBox.innerHTML = '✅ Login successful!';
+          window.location.href = 'dashboard.html';
+        } else {
+          await signOut(auth);
+          messageBox.innerHTML = `❌ Please verify your email before logging in. Check your inbox.`;
+        }
+      } catch (error) {
+        messageBox.innerHTML = `❌ ${error.message}`;
+        console.error(error);
+      }
+    });
+  </script>
 </body>
 </html>
