@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -7,60 +7,73 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- Video Background -->
+  <video autoplay muted loop id="bg-video">
+    <source src="media/background.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <!-- Top-left logo -->
       <img src="logo.png" alt="Site Logo" class="site-logo" />
-
-      <!-- Navigation -->
       <nav>
         <a href="index.html">Home</a>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="profile.html">Profile</a>
         <a href="trending.html">Trending</a>
         <a href="traditional.html">Traditional</a>
-        <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html" class="btn">Login</a>
         <a href="signup.html" class="btn">Signup</a>
-
-        <!-- Theme Toggle -->
-        <button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌙</button>
+        <label class="theme-switch">
+          <input type="checkbox" id="themeToggle" />
+          <span class="slider"></span>
+        </label>
       </nav>
     </div>
   </header>
 
-  <!-- Main Hero Section -->
+  <!-- Hero Section -->
   <main class="hero-section">
-    <div class="center-logo-container">
+    <div class="hero-content animated fade-in-up">
       <img src="logo.png" alt="Centered Logo" class="center-logo" />
-      <h1 class="hero-title">Welcome to The Little Info</h1>
-      <p class="hero-subtitle">Explore knowledge in both Traditional & Trending styles.</p>
-      <a href="dashboard.html" class="btn hero-btn">Explore Now</a>
+      <h1 class="hero-title">Welcome to <span>The Little Info</span></h1>
+      <p class="hero-subtitle">Explore insights from trending to traditional topics</p>
+      <a href="dashboard.html" class="btn explore-btn">Explore Now</a>
     </div>
   </main>
 
-  <!-- Footer -->
+  <!-- Chatbot Activation Icon -->
+  <div id="chatbot-toggle" title="Chat with AI">
+    🤖
+  </div>
+
+  <!-- Optional Footer -->
   <footer class="site-footer">
     <p>&copy; 2025 The Little Info. All rights reserved.</p>
   </footer>
 
   <!-- Theme Toggle Script -->
   <script>
-    const toggleBtn = document.getElementById('themeToggle');
-    const currentTheme = localStorage.getItem('theme');
-
-    if (currentTheme === 'dark') {
-      document.body.classList.add('dark');
-      toggleBtn.textContent = '☀️';
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    if (localStorage.getItem('theme') === 'dark') {
+      root.setAttribute('data-theme', 'dark');
+      toggle.checked = true;
     }
-
-    toggleBtn.addEventListener('click', () => {
-      document.body.classList.toggle('dark');
-      const isDark = document.body.classList.contains('dark');
-      toggleBtn.textContent = isDark ? '☀️' : '🌙';
+    toggle.addEventListener('change', () => {
+      const isDark = toggle.checked;
+      root.setAttribute('data-theme', isDark ? 'dark' : 'light');
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
     });
   </script>
+
+  <!-- Chatbot Redirection -->
+  <script>
+    const chatbot = document.getElementById("chatbot-toggle");
+    chatbot.addEventListener("click", () => {
+      window.location.href = "ai-chatbot.html";
+    });
+  </script>
+
 </body>
 </html>
