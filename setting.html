@@ -24,6 +24,106 @@
     </div>
   </header>
 
+  <!-- Settings Section -->
+  <main class="section-container">
+    <div class="profile-box">
+      <h2 style="color: var(--primary);">⚙️ Settings</h2>
+
+      <form class="settings-form">
+        <label>
+          <span>🔔 Notifications</span>
+          <select>
+            <option value="on">Enable</option>
+            <option value="off">Disable</option>
+          </select>
+        </label>
+
+        <label>
+          <span>🌐 Language</span>
+          <select>
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+          </select>
+        </label>
+
+        <label>
+          <span>🖼️ Theme Preference</span>
+          <select id="themePreference">
+            <option value="system">System Default</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+
+        <label>
+          <span>🔒 Change Password</span>
+          <input type="password" placeholder="New Password" />
+        </label>
+
+        <button type="submit" class="explore-btn">Save Settings</button>
+      </form>
+    </div>
+  </main>
+
+  <style>
+    .settings-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-top: 1.5rem;
+    }
+
+    .settings-form label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .settings-form select,
+    .settings-form input {
+      margin-top: 0.4rem;
+      padding: 10px;
+      border: 1px solid var(--primary);
+      background: transparent;
+      color: var(--text);
+      border-radius: 8px;
+    }
+
+    .settings-form select:focus,
+    .settings-form input:focus {
+      outline: none;
+      border-color: var(--btn-bg);
+    }
+  </style>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings - The Little Info</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle" class="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
+      </nav>
+    </div>
+  </header>
+
   <!-- Settings Content -->
   <main class="section-container">
     <div class="profile-box">
