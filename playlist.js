@@ -1,8 +1,8 @@
-// playlists.js
+// playlist.js
 import { db, auth } from './firebase.js';
 import {
   collection, getDocs, doc, updateDoc,
-  deleteField, setDoc, onAuthStateChanged
+  onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const playlistContainer = document.getElementById('userPlaylists');
@@ -23,7 +23,8 @@ async function loadUserPlaylists(uid) {
       return;
     }
 
-    playlistsSnap.forEach(async docSnap => {
+    playlistContainer.innerHTML = "";
+    playlistsSnap.forEach(docSnap => {
       const data = docSnap.data();
       const playlistId = docSnap.id;
 
@@ -37,76 +38,60 @@ async function loadUserPlaylists(uid) {
       description.textContent = data.description || "";
 
       const publicToggle = document.createElement('label');
+      publicToggle.className = "toggle-switch";
       publicToggle.innerHTML = `
         <input type="checkbox" ${data.public ? 'checked' : ''}>
-        Public
+        <span class="slider"></span>
+        <span class="toggle-label">${data.public ? 'Public' : 'Private'}</span>
       `;
-      publicToggle.querySelector('input').addEventListener('change', async (e) => {
+
+      const toggleInput = publicToggle.querySelector('input');
+      toggleInput.addEventListener('change', async (e) => {
+        const newVal = e.target.checked;
         await updateDoc(doc(db, 'users', uid, 'playlists', playlistId), {
-          public: e.target.checked
+          public: newVal
         });
-
-        if (e.target.checked) {
-          // Copy to public_playlists
-          await setDoc(doc(db, 'public_playlists', playlistId), {
-            ...data,
-            public: true
-          });
-        } else {
-          // Remove from public_playlists
-          await updateDoc(doc(db, 'public_playlists', playlistId), {
-            public: false
-          });
-        }
+        publicToggle.querySelector('.toggle-label').textContent = newVal ? 'Public' : 'Private';
+        alert(`Playlist is now ${newVal ? 'public' : 'private'}.`);
       });
 
-      const videoList = document.createElement('div');
-      videoList.className = 'playlist-videos';
-
-      (data.videos || []).forEach((video, index) => {
-        const videoCard = document.createElement('div');
-        videoCard.className = 'video-thumbnail';
-
-        const videoElement = document.createElement('video');
-        videoElement.src = video.url;
-        videoElement.controls = true;
-        videoElement.className = 'responsive-video';
-
-        const title = document.createElement('p');
-        title.textContent = video.title || "Untitled";
-
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = "Remove";
-        removeBtn.addEventListener('click', async () => {
-          const newVideos = data.videos.filter((_, i) => i !== index);
-          await updateDoc(doc(db, 'users', uid, 'playlists', playlistId), {
-            videos: newVideos
-          });
-          location.reload();
-        });
-
-        videoCard.appendChild(videoElement);
-        videoCard.appendChild(title);
-        videoCard.appendChild(removeBtn);
-        videoList.appendChild(videoCard);
-      });
-
-      const shareLink = document.createElement('p');
-      if (data.public) {
-        const link = `${window.location.origin}/playlist.html?id=${playlistId}`;
-        shareLink.innerHTML = `Share: <a href="${link}" target="_blank">${link}</a>`;
-      }
+      // Optional: Embed a dummy video control UI (custom player integration needed)
+      const controls = document.createElement('div');
+      controls.className = 'video-controls';
+      controls.innerHTML = `
+        <label>Quality:
+          <select>
+            <option>Auto</option>
+            <option>1080p</option>
+            <option>720p</option>
+            <option>480p</option>
+          </select>
+        </label>
+        <label>Speed:
+          <select>
+            <option>1x</option>
+            <option>1.5x</option>
+            <option>2x</option>
+            <option>0.5x</option>
+          </select>
+        </label>
+        <label>Language:
+          <select>
+            <option>English</option>
+            <option>Hindi</option>
+            <option>Spanish</option>
+          </select>
+        </label>
+      `;
 
       card.appendChild(title);
       card.appendChild(description);
       card.appendChild(publicToggle);
-      card.appendChild(videoList);
-      card.appendChild(shareLink);
+      card.appendChild(controls);
       playlistContainer.appendChild(card);
     });
-
   } catch (err) {
-    console.error("Failed to load playlists:", err);
-    playlistContainer.innerHTML = "<p>Error loading playlists.</p>";
+    console.error("Error loading playlists:", err);
+    playlistContainer.innerHTML = "<p>⚠ Failed to load playlists. Try again later.</p>";
   }
 }
