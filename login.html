@@ -6,61 +6,66 @@
   <title>Login - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="dark-theme">
+
+  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="signup.html">Sign Up</a>
+        <a href="signup.html" class="btn">Signup</a>
       </nav>
     </div>
   </header>
 
-  <main class="section-container">
-    <h1>Login</h1>
-    <form id="loginForm" class="content-form">
-      <input type="email" id="loginEmail" required placeholder="Email" />
-      <input type="password" id="loginPassword" required placeholder="Password" />
-      <button type="submit" class="btn">Log In</button>
+  <!-- Login Form -->
+  <main class="section-container auth-section">
+    <h1>Login to Your Account</h1>
+    <form id="loginForm" class="auth-form">
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="Enter email" required />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Enter password" required />
+
+      <button type="submit" class="btn">Login</button>
     </form>
 
-    <p id="message" style="margin-top: 1rem;"></p>
-    <p style="margin-top: 1rem;">
+    <p class="info-text">
       <a href="reset-password.html">Forgot Password?</a>
     </p>
   </main>
 
+  <!-- Firebase Login Logic -->
   <script type="module">
     import { auth } from './firebase.js';
     import {
       signInWithEmailAndPassword,
+      onAuthStateChanged,
       signOut
     } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-    const loginForm = document.getElementById('loginForm');
-    const messageBox = document.getElementById('message');
+    const form = document.getElementById('loginForm');
 
-    loginForm.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
 
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCred.user;
 
-        if (user.emailVerified) {
-          messageBox.innerHTML = '✅ Login successful!';
-          window.location.href = 'dashboard.html';
-        } else {
+        if (!user.emailVerified) {
+          alert("❌ Please verify your email before logging in.");
           await signOut(auth);
-          messageBox.innerHTML = `❌ Please verify your email before logging in. Check your inbox.`;
+        } else {
+          alert("✅ Login successful!");
+          window.location.href = "dashboard.html";
         }
-      } catch (error) {
-        messageBox.innerHTML = `❌ ${error.message}`;
-        console.error(error);
+      } catch (err) {
+        alert(`❌ ${err.message}`);
       }
     });
   </script>
