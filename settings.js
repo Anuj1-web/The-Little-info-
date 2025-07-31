@@ -1,138 +1,126 @@
-import { auth, db } from './firebaseInit.js';
-import {
-  updateEmail,
-  updatePassword,
-  deleteUser,
-  onAuthStateChanged,
-  reauthenticateWithCredential,
-  EmailAuthProvider
-} from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js';
-import {
-  doc,
-  getDoc,
-  updateDoc
-} from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
+// settings.js - Fully Integrated with Firebase, Theme, and Site Design
 
-// Elements
-const emailInput = document.getElementById('emailInput');
-const passwordInput = document.getElementById('passwordInput');
-const updateEmailBtn = document.getElementById('updateEmailBtn');
-const updatePasswordBtn = document.getElementById('updatePasswordBtn');
-const deleteAccountBtn = document.getElementById('deleteAccountBtn');
-const twoStepToggle = document.getElementById('twoStepToggle');
-const userRoleSpan = document.getElementById('userRole');
-const toastBox = document.getElementById('toastBox');
+import { getAuth, onAuthStateChanged, updateProfile, updatePassword, deleteUser, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { app } from './firebase-config.js'; // Update with your Firebase config import
+import { showToast, showModal, closeModal } from './ui-utils.js'; // Toast/modal utils consistent with your theme
 
-// Current user
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 let currentUser;
+let isAdmin = false;
 
-// Show toast
-function showToast(message, type = 'success') {
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.textContent = message;
-  toastBox.appendChild(toast);
-  setTimeout(() => toast.remove(), 4000);
-}
+// DOM elements
+const form = document.getElementById('settingsForm');
+const nameInput = document.getElementById('username');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('new-password');
+const roleDisplay = document.getElementById('role');
+const twoStepToggle = document.getElementById('twoStepToggle');
+const deleteBtn = document.getElementById('deleteAccountBtn');
+const updateBtn = document.getElementById('updateProfileBtn');
+const verifyBtn = document.getElementById('verifyEmailBtn');
 
-// Load user info
+// 🔐 Auth State Check
 onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = 'login.html';
-    return;
+  if (!user) return window.location.href = "/login.html";
+  currentUser = user;
+
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  const data = userDoc.data();
+
+  // Show user info
+  nameInput.value = data.username || "";
+  emailInput.value = user.email || "";
+  roleDisplay.textContent = data.role || "user";
+  isAdmin = data.role === "admin";
+
+  // Two-step toggle
+  twoStepToggle.checked = data.twoStep || false;
+
+  // Disable editing for OAuth users
+  if (user.providerData.some(p => p.providerId !== 'password')) {
+    emailInput.disabled = true;
+    passwordInput.disabled = true;
+    verifyBtn.style.display = 'none';
+    showToast("OAuth account detected — email/password changes disabled.", "info");
   }
 
-  currentUser = user;
-  emailInput.value = user.email;
-
-  // Load user role from Firestore
-  const userRef = doc(db, 'users', user.uid);
-  const userSnap = await getDoc(userRef);
-
-  if (userSnap.exists()) {
-    const userData = userSnap.data();
-    userRoleSpan.textContent = userData.role || 'user';
-
-    if (userData.role !== 'admin') {
-      document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-    }
-
-    twoStepToggle.checked = !!userData.twoStepAuth;
-  } else {
-    showToast('User data not found in Firestore.', 'error');
+  // Admin controls
+  if (!isAdmin) {
+    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
   }
 });
 
-// Validate email
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+// ✅ Email Verification
+verifyBtn.addEventListener('click', () => {
+  if (!currentUser.emailVerified) {
+    sendEmailVerification(currentUser)
+      .then(() => showToast("Verification email sent.", "success"))
+      .catch(err => showToast("Error sending verification: " + err.message, "error"));
+  } else {
+    showToast("Email is already verified.", "info");
+  }
+});
+
+// ✅ Form Validation
+function validateForm() {
+  const username = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+
+  if (!username || !email) {
+    showToast("Username and email are required.", "error");
+    return false;
+  }
+  if (password && password.length < 6) {
+    showToast("Password must be at least 6 characters.", "error");
+    return false;
+  }
+  return true;
 }
 
-// Update email
-updateEmailBtn.addEventListener('click', async () => {
-  const newEmail = emailInput.value.trim();
-  if (!isValidEmail(newEmail)) {
-    showToast('Invalid email format.', 'error');
+// ✅ Profile Update Handler
+updateBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
+
+  if (currentUser.providerData[0].providerId === 'password' && !currentUser.emailVerified) {
+    showToast("Please verify your email before updating.", "error");
     return;
   }
 
-  try {
-    const credential = EmailAuthProvider.credential(currentUser.email, prompt("Enter current password to reauthenticate:"));
-    await reauthenticateWithCredential(currentUser, credential);
-    await updateEmail(currentUser, newEmail);
-    showToast('Email updated successfully.');
+  showModal("Are you sure you want to update your profile?", async () => {
+    try {
+      await updateDoc(doc(db, "users", currentUser.uid), {
+        username: nameInput.value,
+        twoStep: twoStepToggle.checked
+      });
 
-    // Update Firestore too
-    const userRef = doc(db, 'users', currentUser.uid);
-    await updateDoc(userRef, { email: newEmail });
+      await updateProfile(currentUser, { displayName: nameInput.value });
 
-  } catch (err) {
-    showToast('Failed to update email: ' + err.message, 'error');
-  }
+      if (passwordInput.value) {
+        await updatePassword(currentUser, passwordInput.value);
+      }
+
+      showToast("Profile updated successfully!", "success");
+      closeModal();
+    } catch (error) {
+      showToast("Update failed: " + error.message, "error");
+    }
+  });
 });
 
-// Update password
-updatePasswordBtn.addEventListener('click', async () => {
-  const newPass = passwordInput.value.trim();
-  if (newPass.length < 6) {
-    showToast('Password must be at least 6 characters.', 'error');
-    return;
-  }
-
-  try {
-    const credential = EmailAuthProvider.credential(currentUser.email, prompt("Enter current password to reauthenticate:"));
-    await reauthenticateWithCredential(currentUser, credential);
-    await updatePassword(currentUser, newPass);
-    showToast('Password updated successfully.');
-  } catch (err) {
-    showToast('Failed to update password: ' + err.message, 'error');
-  }
-});
-
-// Delete account
-deleteAccountBtn.addEventListener('click', async () => {
-  if (!confirm('Are you sure you want to delete your account? This cannot be undone.')) return;
-
-  try {
-    const credential = EmailAuthProvider.credential(currentUser.email, prompt("Enter current password to reauthenticate:"));
-    await reauthenticateWithCredential(currentUser, credential);
-    await deleteUser(currentUser);
-    showToast('Account deleted.');
-    setTimeout(() => {
-      window.location.href = 'signup.html';
-    }, 3000);
-  } catch (err) {
-    showToast('Failed to delete account: ' + err.message, 'error');
-  }
-});
-
-// Toggle Two-Step Auth
-twoStepToggle.addEventListener('change', async () => {
-  try {
-    const userRef = doc(db, 'users', currentUser.uid);
-    await updateDoc(userRef, { twoStepAuth: twoStepToggle.checked });
-    showToast(`Two-step authentication ${twoStepToggle.checked ? 'enabled' : 'disabled'}.`);
-  } catch (err) {
-    showToast('Error updating two-step setting: ' + err.message, 'error');
-  }
+// ✅ Delete Account
+deleteBtn.addEventListener('click', () => {
+  showModal("Are you sure you want to delete your account?", async () => {
+    try {
+      await deleteUser(currentUser);
+      showToast("Account deleted.", "success");
+      window.location.href = "/signup.html";
+    } catch (error) {
+      showToast("Error deleting account: " + error.message, "error");
+    }
+  });
 });
