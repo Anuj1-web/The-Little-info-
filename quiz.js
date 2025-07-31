@@ -15,6 +15,7 @@ function loadQuizzes() {
       const quiz = doc.data();
       const button = document.createElement('button');
       button.textContent = quiz.title;
+      button.classList.add("quiz-button");
       button.onclick = () => showQuiz(doc.id, quiz);
       quizList.appendChild(button);
     });
@@ -27,6 +28,7 @@ function showQuiz(id, quiz) {
   questionsContainer.innerHTML = '';
   quiz.questions.forEach((q, idx) => {
     const div = document.createElement('div');
+    div.classList.add("quiz-question");
     div.innerHTML = `
       <p><strong>${q.question}</strong></p>
       ${q.options.map((opt, i) => `
@@ -48,7 +50,7 @@ document.getElementById('submitQuiz').addEventListener('click', () => {
     const answer = document.querySelector(`input[name="q${idx}"]:checked`);
     if (answer && parseInt(answer.value) === q.correctIndex) score++;
   });
-  quizResult.textContent = `Your Score: ${score}/${currentQuiz.questions.length}`;
+  quizResult.textContent = `✅ Your Score: ${score} / ${currentQuiz.questions.length}`;
 });
-  
+
 loadQuizzes();
