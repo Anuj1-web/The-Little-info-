@@ -1,63 +1,57 @@
-// upload.js - Admin content uploader
+// search.js
+import { db } from './firebaseInit.js';
+import { collection, getDocs } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
 
-import { storage, db } from './firebaseInit.js';
-import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+const searchInput = document.getElementById('searchInput');
+const filterSelect = document.getElementById('filterSelect');
+const trendingContainer = document.getElementById('trending-content');
+const traditionalContainer = document.getElementById('traditional-content');
 
-const uploadForm = document.getElementById("uploadForm");
-const uploadStatus = document.getElementById("uploadStatus");
-const previewContainer = document.getElementById("previewContainer");
+async function fetchAndDisplayContent() {
+  const contentRef = collection(db, 'content');
+  const snapshot = await getDocs(contentRef);
+  const allData = snapshot.docs.map(doc => doc.data());
 
-uploadForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+  const keyword = searchInput.value.toLowerCase();
+  const categoryFilter = filterSelect.value;
 
-  const title = document.getElementById("title").value.trim();
-  const description = document.getElementById("description").value.trim();
-  const category = document.getElementById("category").value;
-  const file = document.getElementById("file").files[0];
+  const filtered = allData.filter(item => {
+    const matchesKeyword =
+      item.title.toLowerCase().includes(keyword) ||
+      item.description.toLowerCase().includes(keyword) ||
+      (item.tags && item.tags.join(' ').toLowerCase().includes(keyword));
 
-  if (!file || !category || !title || !description) {
-    uploadStatus.textContent = "❌ Please fill out all fields.";
-    return;
-  }
+    const matchesCategory =
+      categoryFilter === 'all' || item.category === categoryFilter;
 
-  const filePath = `uploads/${Date.now()}_${file.name}`;
-  const fileRef = ref(storage, filePath);
-  const uploadTask = uploadBytesResumable(fileRef, file);
+    return matchesKeyword && matchesCategory;
+  });
 
-  uploadStatus.textContent = "📤 Uploading...";
+  renderContent(filtered);
+}
 
-  uploadTask.on(
-    "state_changed",
-    null,
-    (error) => {
-      uploadStatus.textContent = `❌ Upload failed: ${error.message}`;
-    },
-    async () => {
-      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+function renderContent(data) {
+  trendingContainer.innerHTML = '';
+  traditionalContainer.innerHTML = '';
 
-      await addDoc(collection(db, "content"), {
-        title,
-        description,
-        category,
-        mediaUrl: downloadURL,
-        fileType: file.type.startsWith("image/") ? "image" : "video",
-        createdAt: serverTimestamp(),
-      });
+  data.forEach(item => {
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('content-card');
+    contentDiv.innerHTML = `
+      <h3>${item.title}</h3>
+      <p>${item.description}</p>
+      <video controls src="${item.videoURL}" width="100%"></video>
+    `;
 
-      uploadStatus.textContent = "✅ Upload successful!";
-      uploadForm.reset();
-
-      // Optional preview
-      let previewHTML = `<h3>Preview</h3><p><strong>Title:</strong> ${title}</p><p><strong>Description:</strong> ${description}</p><p><strong>Category:</strong> ${category}</p>`;
-
-      if (file.type.startsWith("image/")) {
-        previewHTML += `<img src="${downloadURL}" style="max-width: 300px; margin-top: 10px;" />`;
-      } else if (file.type.startsWith("video/")) {
-        previewHTML += `<video controls src="${downloadURL}" style="max-width: 300px; margin-top: 10px;"></video>`;
-      }
-
-      previewContainer.innerHTML = previewHTML;
+    if (item.category === 'Trending') {
+      trendingContainer.appendChild(contentDiv);
+    } else {
+      traditionalContainer.appendChild(contentDiv);
     }
-  );
-});
+  });
+}
+
+searchInput.addEventListener('input', fetchAndDisplayContent);
+filterSelect.addEventListener('change', fetchAndDisplayContent);
+
+fetchAndDisplayContent();
