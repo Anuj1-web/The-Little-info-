@@ -1,53 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Little Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Little Info - Home</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="Green and White Modern Computer Service Repair Logo.png" />
+  <link rel="icon" href="logo.png" />
 </head>
 <body>
-  <!-- Theme Toggle -->
-  <div class="theme-toggle">
-    <label class="switch">
-      <input type="checkbox" id="themeSwitch">
-      <span class="slider round"></span>
-    </label>
-  </div>
-
-  <!-- Corner Logo -->
-  <header>
-    <img src="Green and White Modern Computer Service Repair Logo.png" alt="Logo" class="corner-logo">
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Logo" class="site-logo-small" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+        <button id="themeToggle" title="Toggle Theme">🌓</button>
+      </nav>
+    </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <img src="Green and White Modern Computer Service Repair Logo.png" alt="Logo" class="center-logo" />
-    <h1 class="animated-text">
-      <span>Welcome</span> <span>to</span> <span>The</span> <span>Little</span> <span>Info</span>
-    </h1>
-    <p class="animated-subtext">Explore bite-sized knowledge curated just for you.</p>
-    <a href="dashboard.html" class="explore-btn">Explore Now</a>
+  <!-- Main Hero Section -->
+  <main class="hero-section">
+    <div class="center-logo-container">
+      <img src="logo.png" alt="The Little Info Logo" class="center-logo animate-logo" />
+      <h1 class="animated-text">Welcome to The Little Info</h1>
+      <p class="animated-subtext">
+        <span class="typewriter" id="typewriter"></span>
+      </p>
+      <a href="dashboard.html" class="btn explore-btn">Explore Now</a>
+    </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-links">
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </div>
-    <div class="footer-chatbot">
-      <a href="ai-chatbot.html" title="Chat with AI 🤖">🤖</a>
-    </div>
-  </footer>
+  <!-- Optional Background Video -->
+  <video autoplay muted loop id="bg-video">
+    <source src="media/bg.mp4" type="video/mp4" />
+  </video>
 
-  <!-- JS Theme Toggle -->
   <script>
-    const switchTheme = document.getElementById('themeSwitch');
-    switchTheme.addEventListener('change', () => {
-      document.body.classList.toggle('light-theme');
+    // Theme toggler
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const html = document.documentElement;
+      html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
     });
+
+    // Typewriter animation
+    const lines = [
+      "Discover knowledge in every format.",
+      "Stay updated with trending & traditional topics.",
+      "Smart video playback & AI summaries.",
+      "Your personalized info hub starts here."
+    ];
+    let currentLine = 0;
+    let charIndex = 0;
+    const typewriter = document.getElementById('typewriter');
+
+    function type() {
+      if (charIndex < lines[currentLine].length) {
+        typewriter.textContent += lines[currentLine][charIndex++];
+        setTimeout(type, 50);
+      } else {
+        setTimeout(() => {
+          typewriter.textContent = '';
+          charIndex = 0;
+          currentLine = (currentLine + 1) % lines.length;
+          type();
+        }, 2500);
+      }
+    }
+    type();
   </script>
 </body>
 </html>
