@@ -1,70 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Trending Topics - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="dark-theme">
+<body>
+  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
+        <a href="traditional.html">Traditional</a>
         <a href="profile.html">Profile</a>
-        <a href="bookmark.html">Bookmarks</a>
-        <a href="login.html" class="btn">Login</a>
+        <label class="theme-switch">
+          <input type="checkbox" id="themeToggle" />
+          <span class="slider"></span>
+        </label>
       </nav>
     </div>
   </header>
 
+  <!-- Hero Section -->
+  <section class="hero">
+    <img src="logo.png" alt="Centered Logo" class="center-logo" />
+    <h1 class="page-title">🔥 Trending Topics</h1>
+    <p class="tagline">Explore the latest and hottest content curated just for you.</p>
+  </section>
+
+  <!-- Trending Content -->
   <main class="section-container">
-    <h1>🔥 Trending Topics</h1>
-    <div id="trending-container" class="grid-container">
-      <p>Loading trending topics...</p>
+    <div id="trendingContent" class="card-grid">
+      <!-- Trending content will be dynamically loaded here -->
     </div>
   </main>
 
+  <!-- Script -->
   <script type="module">
-    import { db } from './firebaseInit.js';
-    import { collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+    // Theme Toggle
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    toggle.addEventListener('change', () => {
+      root.setAttribute('data-theme', toggle.checked ? 'light' : 'dark');
+    });
 
-    const container = document.getElementById("trending-container");
+    // Sample dynamic content (to be replaced with real data)
+    const trending = [
+      { title: "AI & Future Tech", desc: "Latest breakthroughs in AI and ML.", category: "trending" },
+      { title: "Global Warming Insights", desc: "Climate change updates worldwide.", category: "trending" },
+    ];
 
-    const fetchTrendingContent = async () => {
-      try {
-        const q = query(collection(db, "content"), where("category", "==", "trending"));
-        const snapshot = await getDocs(q);
-
-        if (snapshot.empty) {
-          container.innerHTML = "<p>No trending content available right now.</p>";
-          return;
-        }
-
-        container.innerHTML = "";
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const card = document.createElement("div");
-          card.className = "content-card";
-          card.innerHTML = `
-            <h3>${data.title}</h3>
-            <p>${data.description}</p>
-            ${data.fileURL ? (data.fileType === "video"
-              ? `<video src="${data.fileURL}" controls class="media"></video>`
-              : `<img src="${data.fileURL}" alt="${data.title}" class="media"/>`)
-              : ""
-            }
-          `;
-          container.appendChild(card);
-        });
-      } catch (error) {
-        console.error("Error fetching trending content:", error);
-        container.innerHTML = "<p>Failed to load content.</p>";
-      }
-    };
-
-    fetchTrendingContent();
+    const container = document.getElementById('trendingContent');
+    container.innerHTML = trending.map(item => `
+      <div class="card">
+        <h3>${item.title}</h3>
+        <p>${item.desc}</p>
+        <span class="badge">${item.category}</span>
+      </div>
+    `).join('');
   </script>
 </body>
 </html>
