@@ -6,20 +6,65 @@
   <title>Trending Topics - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <header>
-    <img src="logo.png" alt="Site Logo" class="site-logo" />
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+<body class="dark-theme">
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="profile.html">Profile</a>
+        <a href="bookmark.html">Bookmarks</a>
+        <a href="login.html" class="btn">Login</a>
+      </nav>
+    </div>
   </header>
 
   <main class="section-container">
     <h1>🔥 Trending Topics</h1>
-    <p>Here you'll find the latest trending topics curated just for you.</p>
-    <!-- Add dynamic trending content here -->
+    <div id="trending-container" class="grid-container">
+      <p>Loading trending topics...</p>
+    </div>
   </main>
+
+  <script type="module">
+    import { db } from './firebaseInit.js';
+    import { collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
+    const container = document.getElementById("trending-container");
+
+    const fetchTrendingContent = async () => {
+      try {
+        const q = query(collection(db, "content"), where("category", "==", "trending"));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          container.innerHTML = "<p>No trending content available right now.</p>";
+          return;
+        }
+
+        container.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const card = document.createElement("div");
+          card.className = "content-card";
+          card.innerHTML = `
+            <h3>${data.title}</h3>
+            <p>${data.description}</p>
+            ${data.fileURL ? (data.fileType === "video"
+              ? `<video src="${data.fileURL}" controls class="media"></video>`
+              : `<img src="${data.fileURL}" alt="${data.title}" class="media"/>`)
+              : ""
+            }
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Error fetching trending content:", error);
+        container.innerHTML = "<p>Failed to load content.</p>";
+      }
+    };
+
+    fetchTrendingContent();
+  </script>
 </body>
 </html>
