@@ -1,160 +1,59 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Little Info</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
+  <script defer src="search.js"></script>
   <style>
-    :root {
-      --primary-color: #00ffff;
-      --dark-bg: #111;
-      --light-bg: #fff;
-      --dark-text: #fff;
-      --light-text: #111;
-    }
-
-    [data-theme="dark"] {
-      background-color: var(--dark-bg);
-      color: var(--dark-text);
-    }
-
-    [data-theme="light"] {
-      background-color: var(--light-bg);
-      color: var(--light-text);
-    }
-
-    body {
-      margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      text-align: center;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    header.site-header {
-      background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
-      padding: 10px 20px;
-    }
-
-    .header-container {
+    .center-logo-container {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .site-logo-small {
-      height: 40px;
-      border-radius: 50%;
-    }
-
-    nav a, nav button {
-      margin-left: 15px;
-      color: #fff;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    nav button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
-    }
-
-    .center-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      min-height: calc(100vh - 80px);
-      padding: 20px;
-    }
-
-    .logo-circle {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      background: radial-gradient(circle at center, #011, #012);
-      border: 3px solid var(--primary-color);
-      display: flex;
       align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 20px var(--primary-color);
-      transition: transform 0.3s, box-shadow 0.3s;
+      margin-top: 50px;
     }
 
-    .logo-circle:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px var(--primary-color);
-    }
-
-    .logo-circle img {
-      width: 60px;
-    }
-     
-
-    .typewriter {
-      margin-top: 20px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: inherit;
-    }
-
-    .buttons {
-      margin-top: 30px;
+    .glowing-circle {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #0ff, #03f);
       display: flex;
-      flex-direction: column;
-      gap: 15px;
+      justify-content: center;
+      align-items: center;
+      animation: glowPulse 3s ease-in-out infinite;
+      box-shadow: 0 0 30px #0ff, 0 0 60px #03f;
+      transition: transform 0.4s ease;
     }
 
-    .buttons a {
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-weight: 600;
-      text-decoration: none;
-      border: 2px solid var(--primary-color);
-      transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    .glowing-circle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 40px #0ff, 0 0 80px #03f;
     }
 
-    .buttons a.explore-btn {
-      background-color: var(--primary-color);
-      color: black;
+    .center-logo-img {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #111;
+      padding: 8px;
     }
 
-    .buttons a.explore-btn:hover {
-      transform: scale(1.05);
-      background-color: #00e0e0;
-    }
-
-    .buttons a.trending-btn {
-      border-color: #ff6b6b;
-      color: #ff6b6b;
-    }
-
-    .buttons a.trending-btn:hover {
-      background-color: #ff6b6b;
-      color: white;
-    }
-
-    .buttons a.traditional-btn {
-      border-color: #a86bd6;
-      color: #a86bd6;
-    }
-
-    .buttons a.traditional-btn:hover {
-      background-color: #a86bd6;
-      color: white;
-    }
-
-    @media (min-width: 600px) {
-      .buttons {
-        flex-direction: row;
-        justify-content: center;
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow: 0 0 30px #0ff, 0 0 60px #03f;
+      }
+      50% {
+        box-shadow: 0 0 50px #0ff, 0 0 100px #03f;
       }
     }
   </style>
 </head>
+
 <body>
   <header class="site-header">
     <div class="header-container">
@@ -166,57 +65,31 @@
         <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html">Login</a>
         <a href="signup.html">Signup</a>
+        <a href="search.html" title="Search">🔍</a>
         <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <main class="center-section">
+  <main>
     <div class="center-logo-container">
-  <div class="glowing-circle">
-    <img src="logo.png" alt="The Little Info Logo" class="center-logo-img" />
-  </div>
-</div>
+      <div class="glowing-circle">
+        <img src="logo.png" alt="The Little Info Logo" class="center-logo-img" />
+      </div>
+    </div>
 
+    <section class="hero-section">
+      <h1 class="typewriter-text">Welcome to The Little Info</h1>
+      <h2 class="typewriter-text">Explore Curated Knowledge</h2>
+      <h2 class="typewriter-text">Enlighten Your Mind</h2>
+    </section>
 
-
-    <div class="typewriter" id="welcomeMessage"></div>
-
-    <div class="buttons">
+    <div class="button-container">
       <a href="dashboard.html" class="explore-btn">Explore Now</a>
-      <a href="trending.html" class="trending-btn">🔥 Trending Topics</a>
-      <a href="traditional.html" class="traditional-btn">🧠 Traditional Topics</a>
+      <a href="trending.html" class="topic-btn trending-btn">🔥 Trending Topics</a>
+      <a href="traditional.html" class="topic-btn traditional-btn">📘 Traditional Topics</a>
     </div>
   </main>
-
-  <script>
-    const messages = [
-      "Welcome to The Little Info",
-      "Discover insights, trends, and timeless topics",
-      "Explore knowledge like never before"
-    ];
-
-    let index = 0;
-    let char = 0;
-    const speed = 60;
-    const target = document.getElementById("welcomeMessage");
-
-    function typeWriter() {
-      if (char < messages[index].length) {
-        target.innerHTML += messages[index].charAt(char);
-        char++;
-        setTimeout(typeWriter, speed);
-      } else {
-        setTimeout(() => {
-          char = 0;
-          index = (index + 1) % messages.length;
-          target.innerHTML = "";
-          setTimeout(typeWriter, 500);
-        }, 2000);
-      }
-    }
-
-    typeWriter();
-  </script>
 </body>
+
 </html>
