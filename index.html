@@ -1,94 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Little Info</title>
+  <title>The Little Info - Home</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="logo.png" />
 </head>
-<body class="dark">
-
+<body>
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="search.html">Search</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="profile.html">Profile</a>
-        <a href="login.html" class="btn">Login</a>
-        <a href="signup.html" class="btn">Signup</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+        <button id="themeToggle" title="Toggle Theme">🌓</button>
       </nav>
-
-      <!-- Theme Toggle -->
-      <label class="theme-switch">
-        <input type="checkbox" id="themeToggle">
-        <span class="slider"></span>
-      </label>
     </div>
   </header>
 
-  <!-- Hero Section with Video Background -->
-  <section class="hero-section">
-    <video autoplay muted loop class="background-video">
-      <source src="assets/intro-background.mp4" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
-
-    <div class="hero-content">
-      <img src="logo.png" alt="Centered Logo" class="center-logo" />
-      <h1 class="hero-title">Welcome to The Little Info</h1>
-      <p class="hero-subtext" id="animatedSubtext"></p>
-      <a href="search.html" class="btn animated-button">Explore Now</a>
+  <!-- Main Hero Section -->
+  <main class="hero-section">
+    <div class="center-logo-container">
+      <img src="logo.png" alt="The Little Info Logo" class="center-logo animate-logo" />
+      <h1 class="animated-text">Welcome to The Little Info</h1>
+      <p class="animated-subtext">
+        <span class="typewriter" id="typewriter"></span>
+      </p>
+      <a href="dashboard.html" class="btn explore-btn">Explore Now</a>
     </div>
-  </section>
+  </main>
 
-  <!-- Chatbot Activation -->
-  <div id="chatbotLauncher" class="chatbot-launcher">💬</div>
-  <div id="chatbotBox" class="chatbot-box hidden">
-    <iframe src="ai-chatbot.html"></iframe>
-  </div>
+  <!-- Optional Background Video -->
+  <video autoplay muted loop id="bg-video">
+    <source src="media/bg.mp4" type="video/mp4" />
+  </video>
 
-  <!-- Scripts -->
   <script>
-    // Theme toggle
-    const toggle = document.getElementById('themeToggle');
-    const body = document.body;
-    toggle.checked = body.classList.contains('light');
-    toggle.addEventListener('change', () => {
-      body.classList.toggle('light');
-      body.classList.toggle('dark');
-      localStorage.setItem('theme', body.classList.contains('light') ? 'light' : 'dark');
+    // Theme toggler
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const html = document.documentElement;
+      html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
     });
 
-    // Set theme on load
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        body.classList.remove('light', 'dark');
-        body.classList.add(savedTheme);
-        toggle.checked = savedTheme === 'light';
+    // Typewriter animation
+    const lines = [
+      "Discover knowledge in every format.",
+      "Stay updated with trending & traditional topics.",
+      "Smart video playback & AI summaries.",
+      "Your personalized info hub starts here."
+    ];
+    let currentLine = 0;
+    let charIndex = 0;
+    const typewriter = document.getElementById('typewriter');
+
+    function type() {
+      if (charIndex < lines[currentLine].length) {
+        typewriter.textContent += lines[currentLine][charIndex++];
+        setTimeout(type, 50);
+      } else {
+        setTimeout(() => {
+          typewriter.textContent = '';
+          charIndex = 0;
+          currentLine = (currentLine + 1) % lines.length;
+          type();
+        }, 2500);
       }
-    });
-
-    // Word-by-word animated subtext
-    const subtextElement = document.getElementById('animatedSubtext');
-    const subtext =
-      'Dive into a world of knowledge, culture, and discovery. Explore trending topics and timeless traditions curated just for you. Start your journey of learning and inspiration today.';
-    const words = subtext.split(' ');
-    subtextElement.innerHTML = words
-      .map((word, i) => `<span style="animation-delay:${i * 0.1}s">${word}</span>`)
-      .join(' ');
-
-    // Chatbot toggle
-    const chatbotLauncher = document.getElementById("chatbotLauncher");
-    const chatbotBox = document.getElementById("chatbotBox");
-
-    chatbotLauncher.addEventListener("click", () => {
-      chatbotBox.classList.toggle("hidden");
-    });
+    }
+    type();
   </script>
 </body>
 </html>
