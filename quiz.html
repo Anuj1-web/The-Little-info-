@@ -3,31 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Little Info | Quizzes</title>
+  <title>Interactive Quiz - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <a href="index.html"><img src="Green and White Modern Computer Service Repair Logo_20250710_113545_0000.png" class="logo" alt="Logo" /></a>
-    <h1>Educational Quizzes</h1>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <div id="quizList"></div>
-    <div id="quizContainer" style="display: none;">
+  <!-- Main Quiz Section -->
+  <main class="section-container">
+    <section id="quizList" class="quiz-section">
+      <h2>Loading quizzes...</h2>
+    </section>
+
+    <section id="quizContainer" class="quiz-section" style="display: none;">
       <h2 id="quizTitle"></h2>
-      <div id="questionsContainer"></div>
-      <button id="submitQuiz">Submit Quiz</button>
-      <div id="quizResult"></div>
-    </div>
+      <div id="questionsContainer" class="questions"></div>
+      <button id="submitQuiz" class="btn">Submit Quiz</button>
+      <p id="quizResult" class="quiz-result"></p>
+      <button onclick="window.location.reload()" class="btn btn-secondary">Take Another Quiz</button>
+    </section>
   </main>
 
-  <footer>
-    <p>&copy; 2025 The Little Info</p>
-  </footer>
-
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <!-- Firebase + Scripts -->
   <script type="module" src="firebase.js"></script>
   <script type="module" src="quiz.js"></script>
 </body>
