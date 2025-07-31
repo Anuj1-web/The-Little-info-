@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -7,80 +7,78 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Header -->
+  <!-- Header (same as homepage) -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-        <a href="#" id="logoutBtn" class="btn">Logout</a>
-        <!-- Theme toggle -->
-        <label class="theme-switch">
-          <input type="checkbox" id="themeToggle">
-          <span class="slider"></span>
-        </label>
+        <a href="profile.html">Profile</a>
+        <a href="settings.html">Settings</a>
+        <a href="#" id="logoutBtn">Logout</a>
+        <a href="#" id="themeToggle">Toggle Theme</a>
       </nav>
     </div>
   </header>
 
   <!-- Dashboard Content -->
   <main class="section-container">
-    <h1>Welcome to Your Dashboard</h1>
-    <p>This is a protected area only accessible to authenticated and verified users.</p>
+    <h2 class="animated-text">Welcome to Your Dashboard</h2>
+    <p class="animated-subtext">Access your bookmarks, summaries, AI chatbot, and preferences all in one place.</p>
 
-    <!-- My Account Info -->
-    <section class="content-container">
-      <h2>My Account</h2>
-      <ul>
-        <li><strong>Email:</strong> <span id="userEmail">Loading...</span></li>
-        <li><strong>Email Verified:</strong> <span id="emailStatus">Checking...</span></li>
-        <li><strong>User ID:</strong> <span id="userId">Loading...</span></li>
-      </ul>
-    </section>
+    <div class="dashboard-grid">
+      <a href="bookmark.html" class="dashboard-card">
+        <h3>📌 Bookmarks</h3>
+        <p>Your saved content</p>
+      </a>
+      <a href="interactions.html" class="dashboard-card">
+        <h3>💬 Comments & Likes</h3>
+        <p>Your interactions</p>
+      </a>
+      <a href="ai-chatbot.html" class="dashboard-card">
+        <h3>🤖 AI Chatbot</h3>
+        <p>Ask questions</p>
+      </a>
+      <a href="settings.html" class="dashboard-card">
+        <h3>⚙️ Settings</h3>
+        <p>Customize your account</p>
+      </a>
+    </div>
   </main>
 
-  <!-- Firebase Auth Check & Logout -->
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="ai-chatbot.html" title="Ask AI">🤖</a>
+    </div>
+  </footer>
+
+  <!-- Firebase Auth Check -->
   <script type="module">
     import { auth } from './firebase.js';
     import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-    const emailEl = document.getElementById('userEmail');
-    const verifiedEl = document.getElementById('emailStatus');
-    const uidEl = document.getElementById('userId');
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user || !user.emailVerified) {
-        alert('Access denied. Please verify your email first.');
-        signOut(auth).then(() => {
-          window.location.href = 'login.html';
-        });
-      } else {
-        emailEl.textContent = user.email;
-        verifiedEl.textContent = user.emailVerified ? 'Yes' : 'No';
-        uidEl.textContent = user.uid;
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        alert('You must be logged in to access the dashboard.');
+        window.location.href = 'login.html';
       }
     });
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await signOut(auth);
-      alert('You have been logged out.');
       window.location.href = 'login.html';
     });
   </script>
 
-  <!-- Theme Toggle -->
+  <!-- Theme Toggle Script -->
   <script>
     const toggle = document.getElementById('themeToggle');
-    const isDark = localStorage.getItem('theme') === 'dark';
-    if (isDark) document.body.classList.add('dark');
-
-    toggle.checked = isDark;
-
-    toggle.addEventListener('change', () => {
-      document.body.classList.toggle('dark');
-      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    toggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      document.documentElement.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
     });
   </script>
 </body>
