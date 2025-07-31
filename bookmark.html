@@ -6,26 +6,35 @@
   <title>Bookmarks - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <header>
-    <h1>Your Bookmarked Content</h1>
-    <a href="index.html">← Back to Home</a>
+<body class="dark-theme">
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="profile.html">Profile</a>
+        <a href="#" id="logoutBtn" class="btn">Logout</a>
+      </nav>
+    </div>
   </header>
 
-  <main id="bookmarks-container">
-    <p>Loading your bookmarks...</p>
+  <main class="section-container">
+    <h1>Your Bookmarked Content</h1>
+    <div id="bookmarks-container" class="grid-container">
+      <p>Loading your bookmarks...</p>
+    </div>
   </main>
 
   <script type="module">
     import { auth, db } from './firebaseInit.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-    import { collection, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+    import { collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
     const container = document.getElementById("bookmarks-container");
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        alert("You must be logged in to view your bookmarks.");
+        alert("Please log in to view bookmarks.");
         window.location.href = "login.html";
         return;
       }
@@ -46,30 +55,30 @@
           card.innerHTML = `
             <h3>${data.title}</h3>
             <p>${data.description}</p>
-            <a href="${data.link}" target="_blank">Watch</a>
-            <button onclick="removeBookmark('${docSnap.id}')">Remove Bookmark</button>
+            ${data.fileURL ? (data.fileType === "video" ? 
+              `<video src="${data.fileURL}" controls class="media"></video>` : 
+              `<img src="${data.fileURL}" alt="${data.title}" class="media" />`) : ""}
+            <button class="btn red" onclick="removeBookmark('${docSnap.id}')">Remove</button>
           `;
           container.appendChild(card);
         });
       } catch (err) {
-        console.error("Error loading bookmarks:", err);
-        container.innerHTML = "<p>Error loading bookmarks. Please try again later.</p>";
+        console.error(err);
+        container.innerHTML = "<p>Error loading bookmarks.</p>";
       }
     });
 
-    window.removeBookmark = async function (id) {
+    window.removeBookmark = async (docId) => {
       const user = auth.currentUser;
       if (!user) return;
-
-      try {
-        await deleteDoc(doc(db, `users/${user.uid}/bookmarks/${id}`));
-        alert("Bookmark removed.");
-        location.reload(); // Refresh the page to reflect change
-      } catch (err) {
-        console.error("Error removing bookmark:", err);
-        alert("Failed to remove bookmark.");
-      }
+      await deleteDoc(doc(db, `users/${user.uid}/bookmarks`, docId));
+      location.reload();
     };
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "login.html";
+    });
   </script>
 </body>
 </html>
