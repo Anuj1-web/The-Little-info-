@@ -6,20 +6,65 @@
   <title>Traditional Topics - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <header>
-    <img src="logo.png" alt="Site Logo" class="site-logo" />
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+<body class="dark-theme">
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="profile.html">Profile</a>
+        <a href="bookmark.html">Bookmarks</a>
+        <a href="login.html" class="btn">Login</a>
+      </nav>
+    </div>
   </header>
 
   <main class="section-container">
     <h1>📜 Traditional Topics</h1>
-    <p>Explore timeless knowledge and traditional concepts here.</p>
-    <!-- Add traditional content here -->
+    <div id="traditional-container" class="grid-container">
+      <p>Loading traditional content...</p>
+    </div>
   </main>
+
+  <script type="module">
+    import { db } from './firebaseInit.js';
+    import { collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
+    const container = document.getElementById("traditional-container");
+
+    const fetchTraditionalContent = async () => {
+      try {
+        const q = query(collection(db, "content"), where("category", "==", "traditional"));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          container.innerHTML = "<p>No traditional content found.</p>";
+          return;
+        }
+
+        container.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const card = document.createElement("div");
+          card.className = "content-card";
+          card.innerHTML = `
+            <h3>${data.title}</h3>
+            <p>${data.description}</p>
+            ${data.fileURL ? (data.fileType === "video"
+              ? `<video src="${data.fileURL}" controls class="media"></video>`
+              : `<img src="${data.fileURL}" alt="${data.title}" class="media"/>`)
+              : ""
+            }
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Error fetching traditional content:", error);
+        container.innerHTML = "<p>Failed to load content.</p>";
+      }
+    };
+
+    fetchTraditionalContent();
+  </script>
 </body>
 </html>
