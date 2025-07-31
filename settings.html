@@ -29,55 +29,50 @@
 
 
   <!-- ✅ Settings Box (Styled Like Signup/Profile Cards) -->
-  <main class="flex items-center justify-center p-6">
-    <div class="bg-base-200 hover:shadow-xl hover:scale-[1.01] transition-all duration-300 w-full max-w-md rounded-2xl shadow-md p-6 animate-fade-in">
-      <h2 class="text-2xl font-bold text-center mb-4">Account Settings</h2>
-      <form id="settingsForm" class="space-y-5">
+ <main class="flex items-center justify-center min-h-screen bg-base-100 px-4">
+  <div class="settings-box bg-base-200 p-8 rounded-2xl shadow-lg transition-transform hover:scale-[1.02] w-full max-w-2xl">
+    <h2 class="text-2xl font-semibold text-center mb-6">Account Settings</h2>
 
-        <!-- Username -->
-        <div>
-          <label for="username" class="label">Username</label>
-          <input type="text" id="username" class="input input-bordered w-full" required />
-        </div>
+    <!-- Settings form starts here -->
+    <form id="settingsForm" class="space-y-4">
 
-        <!-- Email -->
-        <div>
-          <label for="email" class="label">Email</label>
-          <input type="email" id="email" class="input input-bordered w-full" required />
-          <button type="button" id="verifyEmailBtn" class="btn btn-sm mt-2">Verify Email</button>
-        </div>
+      <div>
+        <label for="username" class="block text-sm font-medium">Username</label>
+        <input type="text" id="username" class="input input-bordered w-full mt-1" required />
+      </div>
 
-        <!-- New Password -->
-        <div>
-          <label for="new-password" class="label">New Password</label>
-          <input type="password" id="new-password" class="input input-bordered w-full" placeholder="Leave blank to keep current" />
-        </div>
+      <div>
+        <label for="email" class="block text-sm font-medium">Email</label>
+        <input type="email" id="email" class="input input-bordered w-full mt-1" required />
+        <button type="button" id="verifyEmail" class="btn btn-sm mt-2">Verify Email</button>
+      </div>
 
-        <!-- Two-Step Auth -->
-        <div class="flex justify-between items-center">
-          <span class="label-text">Two-Step Authentication</span>
+      <div>
+        <label for="password" class="block text-sm font-medium">New Password</label>
+        <input type="password" id="password" class="input input-bordered w-full mt-1" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium">Two-Step Authentication</label>
+        <label class="flex items-center gap-2 mt-1">
           <input type="checkbox" id="twoStepToggle" class="toggle toggle-primary" />
-        </div>
+          Enable 2FA
+        </label>
+      </div>
 
-        <!-- Role Display -->
-        <div>
-          <label class="label">Role</label>
-          <div id="role" class="font-semibold">user</div>
-        </div>
+      <div>
+        <label class="block text-sm font-medium">Role</label>
+        <input type="text" id="userRole" class="input input-bordered w-full mt-1" disabled />
+      </div>
 
-        <!-- Admin-only Section -->
-        <div class="admin-only hidden">
-          <p class="text-sm text-warning">Admin-only settings will appear here</p>
-        </div>
+      <div class="flex justify-between mt-6 gap-4">
+        <button type="submit" class="btn btn-primary w-full">Update Settings</button>
+        <button type="button" id="deleteAccountBtn" class="btn btn-error w-full">Delete Account</button>
+      </div>
+    </form>
+  </div>
+</main>
 
-        <!-- Buttons -->
-        <div class="flex justify-between pt-4">
-          <button type="button" id="deleteAccountBtn" class="btn btn-error btn-outline">Delete</button>
-          <button type="submit" id="updateProfileBtn" class="btn btn-primary">Update</button>
-        </div>
-      </form>
-    </div>
-  </main>
 
   <!-- ✅ Confirmation Modal -->
   <div id="confirmationModal" class="modal fixed inset-0 hidden items-center justify-center bg-black bg-opacity-50 z-50">
