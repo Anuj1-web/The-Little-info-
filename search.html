@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Search - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="dark-theme">
-
+<body>
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
@@ -15,47 +14,99 @@
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
+        <a href="search.html" class="active">Search</a>
         <a href="profile.html">Profile</a>
-        <a href="login.html" class="btn">Login</a>
+        <label class="theme-toggle">
+          <input type="checkbox" id="themeSwitch">
+          <span class="slider"></span>
+        </label>
       </nav>
     </div>
   </header>
 
   <!-- Search Section -->
   <main class="section-container">
-    <h1>🔍 Search Content</h1>
-
-    <form id="searchForm" class="search-form">
-      <input type="text" id="searchQuery" placeholder="Enter keyword..." required />
-      <select id="searchCategory">
-        <option value="all">All Categories</option>
+    <h1>Search Content</h1>
+    <div class="search-controls">
+      <input type="text" id="searchInput" placeholder="Search content..." />
+      <select id="categoryFilter">
+        <option value="all">All</option>
         <option value="trending">Trending</option>
         <option value="traditional">Traditional</option>
       </select>
-      <button type="submit" class="btn">Search</button>
-    </form>
-
-    <div id="resultsContainer" class="results-grid"></div>
+    </div>
+    <div id="resultsContainer" class="grid-container fade-in"></div>
   </main>
 
-  <!-- JS for handling search (Dummy for now) -->
   <script type="module">
-    const searchForm = document.getElementById('searchForm');
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
     const resultsContainer = document.getElementById('resultsContainer');
 
-    searchForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const query = document.getElementById('searchQuery').value.trim().toLowerCase();
-      const category = document.getElementById('searchCategory').value;
+    const contentList = [
+      {
+        title: "The Rise of AI",
+        description: "An introduction to artificial intelligence.",
+        category: "trending",
+        type: "video",
+        url: "videos/ai-intro.mp4"
+      },
+      {
+        title: "Cultural Heritage of India",
+        description: "Discover traditional Indian values.",
+        category: "traditional",
+        type: "image",
+        url: "images/heritage.jpg"
+      }
+    ];
 
-      resultsContainer.innerHTML = `
-        <div class="card animate-fade">
-          <h3>Sample Result for "${query}"</h3>
-          <p>Category: ${category}</p>
-          <p>Description: This is a placeholder result.</p>
-        </div>
-      `;
-    });
+    function renderResults() {
+      const query = searchInput.value.toLowerCase();
+      const filter = categoryFilter.value;
+
+      const filtered = contentList.filter(item => {
+        return (
+          (filter === "all" || item.category === filter) &&
+          (item.title.toLowerCase().includes(query) || item.description.toLowerCase().includes(query))
+        );
+      });
+
+      resultsContainer.innerHTML = "";
+
+      if (filtered.length === 0) {
+        resultsContainer.innerHTML = "<p>No content found.</p>";
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "content-card fade-in";
+
+        let media = "";
+        if (item.type === "video") {
+          media = `<video src="${item.url}" controls></video>`;
+        } else if (item.type === "image") {
+          media = `<img src="${item.url}" alt="${item.title}" />`;
+        }
+
+        card.innerHTML = `
+          <h3>${item.title}</h3>
+          <p>${item.description}</p>
+          ${media}
+          <p class="category-tag">${item.category}</p>
+        `;
+
+        resultsContainer.appendChild(card);
+      });
+    }
+
+    searchInput.addEventListener("input", renderResults);
+    categoryFilter.addEventListener("change", renderResults);
+    window.addEventListener("DOMContentLoaded", renderResults);
   </script>
-</body>
-</html>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const toggleSwitch = document.getElementById("themeSwitch");
+    toggleSwitch.addEventListener("change", () => {
+      document.documentElemen
