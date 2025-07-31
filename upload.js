@@ -1,57 +1,51 @@
-// search.js
-import { db } from './firebaseInit.js';
-import { collection, getDocs } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
+// upload.js - Admin content uploader
 
-const searchInput = document.getElementById('searchInput');
-const filterSelect = document.getElementById('filterSelect');
-const trendingContainer = document.getElementById('trending-content');
-const traditionalContainer = document.getElementById('traditional-content');
+import { storage, db } from './firebaseInit.js';
+import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-async function fetchAndDisplayContent() {
-  const contentRef = collection(db, 'content');
-  const snapshot = await getDocs(contentRef);
-  const allData = snapshot.docs.map(doc => doc.data());
+const uploadForm = document.getElementById("uploadForm");
+const uploadStatus = document.getElementById("uploadStatus");
 
-  const keyword = searchInput.value.toLowerCase();
-  const categoryFilter = filterSelect.value;
+uploadForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-  const filtered = allData.filter(item => {
-    const matchesKeyword =
-      item.title.toLowerCase().includes(keyword) ||
-      item.description.toLowerCase().includes(keyword) ||
-      (item.tags && item.tags.join(' ').toLowerCase().includes(keyword));
+  const title = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
+  const category = document.querySelector('input[name="category"]:checked')?.value;
+  const file = document.getElementById("file").files[0];
 
-    const matchesCategory =
-      categoryFilter === 'all' || item.category === categoryFilter;
+  if (!file || !category || !title || !description) {
+    uploadStatus.textContent = "Please fill out all fields.";
+    return;
+  }
 
-    return matchesKeyword && matchesCategory;
-  });
+  const storagePath = `uploads/${Date.now()}_${file.name}`;
+  const storageRef = ref(storage, storagePath);
+  const uploadTask = uploadBytesResumable(storageRef, file);
 
-  renderContent(filtered);
-}
+  uploadStatus.textContent = "Uploading...";
 
-function renderContent(data) {
-  trendingContainer.innerHTML = '';
-  traditionalContainer.innerHTML = '';
+  uploadTask.on(
+    "state_changed",
+    null,
+    (error) => {
+      uploadStatus.textContent = `Upload failed: ${error.message}`;
+    },
+    async () => {
+      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-  data.forEach(item => {
-    const contentDiv = document.createElement('div');
-    contentDiv.classList.add('content-card');
-    contentDiv.innerHTML = `
-      <h3>${item.title}</h3>
-      <p>${item.description}</p>
-      <video controls src="${item.videoURL}" width="100%"></video>
-    `;
+      await addDoc(collection(db, "content"), {
+        title,
+        description,
+        url: downloadURL,
+        type: file.type.startsWith("video") ? "video" : "image",
+        category,
+        timestamp: serverTimestamp()
+      });
 
-    if (item.category === 'Trending') {
-      trendingContainer.appendChild(contentDiv);
-    } else {
-      traditionalContainer.appendChild(contentDiv);
+      uploadStatus.textContent = "Upload successful!";
+      uploadForm.reset();
     }
-  });
-}
-
-searchInput.addEventListener('input', fetchAndDisplayContent);
-filterSelect.addEventListener('change', fetchAndDisplayContent);
-
-fetchAndDisplayContent();
+  );
+});
