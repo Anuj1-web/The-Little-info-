@@ -1,141 +1,179 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Little Info</title>
+  <link rel="icon" href="logo.png" />
   <link rel="stylesheet" href="style.css" />
-  <script defer src="theme-toggle.js"></script>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
       background-color: var(--background);
       color: var(--text);
+      transition: background 0.3s, color 0.3s;
     }
 
-    .logo-container {
-      animation: float 4s ease-in-out infinite;
-      margin-top: 80px;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
-
-    .logo {
-      width: 240px;
-      height: 240px;
-      border-radius: 50%;
-      border: 5px solid #00f0ff;
-      padding: 10px;
-      background: radial-gradient(circle, #002f4b, #000);
-      transition: transform 0.3s ease;
-    }
-
-    .logo:hover {
-      transform: scale(1.05) rotate(3deg);
-    }
-
-    .typewriter {
-      font-size: 1.5rem;
-      text-align: center;
-      margin: 20px 0;
-      height: 40px;
-    }
-
-    .explore-btn {
-      background: #00f0ff;
-      border: none;
-      padding: 12px 24px;
-      font-size: 1rem;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-bottom: 30px;
-      transition: background 0.3s ease;
-    }
-
-    .explore-btn:hover {
-      background: #00c0cc;
-    }
-
-    .topic-buttons {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .topic-box {
-      padding: 14px 24px;
-      border: 2px solid #00f0ff;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      color: var(--text);
-      transition: background 0.3s ease, transform 0.3s ease;
-    }
-
-    .topic-box:hover {
-      background-color: #00f0ff22;
-      transform: translateY(-4px);
-    }
-
-    /* Locked header style */
-    header.site-header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      background-color: var(--background);
-      z-index: 999;
-      border-bottom: 1px solid #333;
+    .site-header {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      padding: 10px 20px;
     }
 
     .header-container {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 10px 20px;
+      align-items: center;
     }
 
     .site-logo-small {
+      width: 40px;
       height: 40px;
       border-radius: 50%;
     }
 
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    nav a, nav button {
-      color: var(--text);
+    nav a {
+      color: white;
+      margin-left: 15px;
       text-decoration: none;
-      font-weight: bold;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
+      font-weight: 600;
+      transition: color 0.3s;
     }
 
-    #searchIcon {
+    nav a:hover {
+      color: cyan;
+    }
+
+    #themeToggle {
+      margin-left: 15px;
       font-size: 1.2rem;
       cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    main.hero-section {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .center-logo-container {
+      margin: 30px auto;
+    }
+
+    .center-logo {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: 5px solid aqua;
+      transition: transform 0.3s ease;
+    }
+
+    .center-logo:hover {
+      transform: rotate(360deg) scale(1.05);
+    }
+
+    .animated-logo {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .welcome-text {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+
+    .typewriter {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid;
+      animation: typing 4s steps(30, end), blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: black }
+    }
+
+    .subheading {
+      margin: 10px 0 30px;
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    .explore-btn {
+      display: inline-block;
+      padding: 10px 24px;
+      background-color: cyan;
+      color: #000;
+      border-radius: 10px;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0,255,255,0.6);
+      transition: background 0.3s;
+      text-decoration: none;
+    }
+
+    .explore-btn:hover {
+      background-color: #00dddd;
+    }
+
+    .topic-buttons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .topic-box {
+      padding: 12px 20px;
+      border: 2px solid cyan;
+      border-radius: 10px;
+      font-weight: bold;
+      box-shadow: 0 0 8px rgba(0,255,255,0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .topic-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0,255,255,0.6);
+    }
+
+    .trending-box {
+      background-color: #fff5f5;
+      color: #ff4d4d;
+    }
+
+    .traditional-box {
+      background-color: #f5f5ff;
+      color: #8855ff;
+    }
+
+    /* Dark mode styles */
+    html[data-theme="dark"] {
+      --background: #121212;
+      --text: #e0e0e0;
+    }
+
+    html[data-theme="light"] {
+      --background: #ffffff;
+      --text: #000000;
     }
   </style>
 </head>
-<body>
-
-  <!-- Locked Header -->
+<body data-theme="light">
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -152,54 +190,20 @@
     </div>
   </header>
 
-  <!-- Main Content -->
-  <div class="logo-container">
-    <img src="logo.png" alt="Animated Logo" class="logo" />
-  </div>
+  <main class="hero-section">
+    <div class="center-logo-container">
+      <img src="logo.png" alt="The Little Info Logo" class="center-logo animated-logo" />
+    </div>
+    <h2 class="welcome-text typewriter">Welcome to <span style="font-style: italic;">The Little Info</span></h2>
+    <p class="subheading">Discover insights, trends, and timeless knowledge.</p>
+    <a href="dashboard.html" class="explore-btn">Explore Now</a>
 
-  <div class="typewriter" id="typewriter"></div>
+    <div class="topic-buttons">
+      <a href="trending.html" class="topic-box trending-box">🔥 Trending Topics</a>
+      <a href="traditional.html" class="topic-box traditional-box">🧠 Traditional Topics</a>
+    </div>
+  </main>
 
-  <button class="explore-btn">Explore Now</button>
-
-  <div class="topic-buttons">
-    <a href="trending.html" class="topic-box">🔥 Trending Topics</a>
-    <a href="traditional.html" class="topic-box">🧠 Traditional Topics</a>
-  </div>
-
-  <script>
-    const messages = [
-      "Welcome to The Little Info.",
-      "Discover insights, trends, and timeless knowledge.",
-      "Powered by community & AI wisdom."
-    ];
-    let i = 0, j = 0, current = "", isDeleting = false;
-
-    function type() {
-      const typewriter = document.getElementById("typewriter");
-      if (i < messages.length) {
-        if (!isDeleting && j <= messages[i].length) {
-          current = messages[i].substring(0, j++);
-        } else if (isDeleting && j >= 0) {
-          current = messages[i].substring(0, j--);
-        }
-
-        typewriter.textContent = current;
-
-        if (!isDeleting && j === messages[i].length) {
-          isDeleting = true;
-          setTimeout(type, 1500);
-        } else if (isDeleting && j === 0) {
-          isDeleting = false;
-          i = (i + 1) % messages.length;
-          setTimeout(type, 500);
-        } else {
-          setTimeout(type, isDeleting ? 30 : 60);
-        }
-      }
-    }
-
-    type();
-  </script>
-
+  <script src="theme-toggle.js"></script>
 </body>
 </html>
