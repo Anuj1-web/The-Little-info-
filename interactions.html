@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Interactions - The Little Info</title>
+  <title>Interactions - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="theme-toggle.js"></script>
-  <script type="module" src="interactions.js"></script>
+  <script defer src="interactions.js"></script>
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
@@ -25,25 +24,34 @@
     </div>
   </header>
 
-  <!-- Main Section -->
+  <!-- Interactions Section -->
   <main class="section-container">
-    <h2 class="animated-text" style="text-align:center;">💬 Your Interactions</h2>
-    <div id="interactions-list" class="dashboard-grid">
-      <!-- Cards will be dynamically injected here -->
+    <h2 style="color: var(--primary); text-align: center; margin-bottom: 1.5rem;">Your Comments & Likes</h2>
+    <div id="interactions-container" class="dashboard-grid">
+      <!-- Interaction cards will be injected by JS -->
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-content">
-      <div class="footer-links">
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-      </div>
-      <div class="footer-chatbot">
-        <button onclick="window.location.href='ai-chatbot.html'" title="Ask the AI">🤖</button>
-      </div>
-    </div>
-  </footer>
+  <!-- Theme Toggle Script -->
+  <script>
+    const toggleBtn = document.getElementById('themeToggle');
+    const currentTheme = localStorage.getItem('theme');
+
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      toggleBtn.textContent = '☀️';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      toggleBtn.textContent = '🌙';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      toggleBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    });
+  </script>
 </body>
 </html>
