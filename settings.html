@@ -8,11 +8,11 @@
   <script defer src="theme-toggle.js"></script>
   <script type="module" src="settings.js"></script>
 </head>
-<body class="bg-base-100 text-base-content transition-all duration-300">
+<body class="min-h-screen bg-base-100 text-base-content transition-all duration-300">
 
-  <!-- ✅ Final Compact Header (consistent across site) -->
-  <header class="flex items-center justify-between px-4 py-2 bg-base-200 shadow">
-    <div class="flex items-center gap-3">
+  <!-- ✅ Final Compact Header (Same as Profile & Dashboard) -->
+  <header class="flex justify-between items-center px-4 py-2 bg-base-200 shadow-md">
+    <div class="flex items-center space-x-3">
       <img src="logo.png" alt="Logo" class="w-8 h-8 rounded-full" />
       <nav class="space-x-3 text-sm sm:text-base">
         <a href="index.html" class="hover:underline">Home</a>
@@ -26,54 +26,56 @@
     <button id="themeToggle" class="text-xl">🌙</button>
   </header>
 
-  <!-- ✅ Settings Main Section -->
-  <main class="flex items-center justify-center px-4 py-10">
-    <form id="settingsForm" class="w-full max-w-md bg-base-200 rounded-xl shadow-md p-6 space-y-5 animate-fade-in">
+  <!-- ✅ Settings Box (Styled Like Signup/Profile Cards) -->
+  <main class="flex items-center justify-center p-6">
+    <div class="bg-base-200 hover:shadow-xl hover:scale-[1.01] transition-all duration-300 w-full max-w-md rounded-2xl shadow-md p-6 animate-fade-in">
 
-      <h2 class="text-xl font-bold text-center">Account Settings</h2>
+      <h2 class="text-2xl font-bold text-center mb-4">Account Settings</h2>
 
-      <!-- Username -->
-      <div>
-        <label class="label" for="username">Username</label>
-        <input type="text" id="username" class="input input-bordered w-full" required>
-      </div>
+      <form id="settingsForm" class="space-y-5">
+        <!-- Username -->
+        <div>
+          <label for="username" class="label">Username</label>
+          <input type="text" id="username" class="input input-bordered w-full" required />
+        </div>
 
-      <!-- Email -->
-      <div>
-        <label class="label" for="email">Email</label>
-        <input type="email" id="email" class="input input-bordered w-full" required>
-        <button type="button" id="verifyEmailBtn" class="btn btn-sm mt-2">Verify Email</button>
-      </div>
+        <!-- Email -->
+        <div>
+          <label for="email" class="label">Email</label>
+          <input type="email" id="email" class="input input-bordered w-full" required />
+          <button type="button" id="verifyEmailBtn" class="btn btn-sm mt-2">Verify Email</button>
+        </div>
 
-      <!-- New Password -->
-      <div>
-        <label class="label" for="new-password">New Password</label>
-        <input type="password" id="new-password" class="input input-bordered w-full" placeholder="Leave blank to keep current">
-      </div>
+        <!-- New Password -->
+        <div>
+          <label for="new-password" class="label">New Password</label>
+          <input type="password" id="new-password" class="input input-bordered w-full" placeholder="Leave blank to keep current" />
+        </div>
 
-      <!-- Two-Step Auth -->
-      <div class="flex items-center justify-between">
-        <span class="label-text">Two-Step Authentication</span>
-        <input type="checkbox" class="toggle toggle-primary" id="twoStepToggle">
-      </div>
+        <!-- Two-Step Auth -->
+        <div class="flex justify-between items-center">
+          <span class="label-text">Two-Step Authentication</span>
+          <input type="checkbox" id="twoStepToggle" class="toggle toggle-primary" />
+        </div>
 
-      <!-- Role Display -->
-      <div>
-        <label class="label">Role</label>
-        <div id="role" class="font-semibold">user</div>
-      </div>
+        <!-- Role Display -->
+        <div>
+          <label class="label">Role</label>
+          <div id="role" class="font-semibold">user</div>
+        </div>
 
-      <!-- Admin-only Section -->
-      <div class="admin-only hidden">
-        <p class="text-sm text-warning">Admin-only settings visible only to admin users</p>
-      </div>
+        <!-- Admin-only Section -->
+        <div class="admin-only hidden">
+          <p class="text-sm text-warning">Admin-only settings will appear here</p>
+        </div>
 
-      <!-- Buttons -->
-      <div class="flex justify-between pt-4">
-        <button type="button" id="deleteAccountBtn" class="btn btn-error btn-outline">Delete</button>
-        <button type="submit" id="updateProfileBtn" class="btn btn-primary">Update</button>
-      </div>
-    </form>
+        <!-- Buttons -->
+        <div class="flex justify-between pt-4">
+          <button type="button" id="deleteAccountBtn" class="btn btn-error btn-outline">Delete</button>
+          <button type="submit" id="updateProfileBtn" class="btn btn-primary">Update</button>
+        </div>
+      </form>
+    </div>
   </main>
 
   <!-- ✅ Confirmation Modal -->
