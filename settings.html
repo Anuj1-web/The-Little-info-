@@ -8,13 +8,13 @@
   <script defer src="theme-toggle.js"></script>
   <script type="module" src="settings.js"></script>
 </head>
-<body class="min-h-screen flex flex-col bg-base-100 text-base-content transition-all duration-300">
+<body class="bg-base-100 text-base-content transition-all duration-300">
 
-  <!-- ✅ Finalized Header -->
-  <header class="flex items-center justify-between p-4 shadow-md bg-base-200">
-    <div class="flex items-center gap-4">
-      <img src="logo.png" alt="Logo" class="w-10 h-10 rounded-full">
-      <nav class="space-x-4 text-sm sm:text-base">
+  <!-- ✅ Final Compact Header (consistent across site) -->
+  <header class="flex items-center justify-between px-4 py-2 bg-base-200 shadow">
+    <div class="flex items-center gap-3">
+      <img src="logo.png" alt="Logo" class="w-8 h-8 rounded-full" />
+      <nav class="space-x-3 text-sm sm:text-base">
         <a href="index.html" class="hover:underline">Home</a>
         <a href="dashboard.html" class="hover:underline">Dashboard</a>
         <a href="profile.html" class="hover:underline">Profile</a>
@@ -23,15 +23,14 @@
         <a href="signup.html" class="hover:underline">Signup</a>
       </nav>
     </div>
-    <!-- Theme Toggle -->
     <button id="themeToggle" class="text-xl">🌙</button>
   </header>
 
-  <!-- ✅ Settings Form -->
-  <main class="flex-grow flex items-center justify-center p-6">
-    <form id="settingsForm" class="w-full max-w-md bg-base-200 rounded-2xl shadow-lg p-6 space-y-5 animate-fade-in">
+  <!-- ✅ Settings Main Section -->
+  <main class="flex items-center justify-center px-4 py-10">
+    <form id="settingsForm" class="w-full max-w-md bg-base-200 rounded-xl shadow-md p-6 space-y-5 animate-fade-in">
 
-      <h2 class="text-2xl font-bold text-center">Account Settings</h2>
+      <h2 class="text-xl font-bold text-center">Account Settings</h2>
 
       <!-- Username -->
       <div>
@@ -39,20 +38,20 @@
         <input type="text" id="username" class="input input-bordered w-full" required>
       </div>
 
-      <!-- Email (read-only for OAuth) -->
+      <!-- Email -->
       <div>
         <label class="label" for="email">Email</label>
         <input type="email" id="email" class="input input-bordered w-full" required>
         <button type="button" id="verifyEmailBtn" class="btn btn-sm mt-2">Verify Email</button>
       </div>
 
-      <!-- New Password (only for Email/Password users) -->
+      <!-- New Password -->
       <div>
         <label class="label" for="new-password">New Password</label>
         <input type="password" id="new-password" class="input input-bordered w-full" placeholder="Leave blank to keep current">
       </div>
 
-      <!-- Two-Step Auth Toggle -->
+      <!-- Two-Step Auth -->
       <div class="flex items-center justify-between">
         <span class="label-text">Two-Step Authentication</span>
         <input type="checkbox" class="toggle toggle-primary" id="twoStepToggle">
@@ -64,15 +63,15 @@
         <div id="role" class="font-semibold">user</div>
       </div>
 
-      <!-- Admin-only section -->
+      <!-- Admin-only Section -->
       <div class="admin-only hidden">
-        <p class="text-sm text-warning">Admin-only settings would go here</p>
+        <p class="text-sm text-warning">Admin-only settings visible only to admin users</p>
       </div>
 
       <!-- Buttons -->
       <div class="flex justify-between pt-4">
-        <button type="button" id="deleteAccountBtn" class="btn btn-error btn-outline">Delete Account</button>
-        <button type="submit" id="updateProfileBtn" class="btn btn-primary">Update Profile</button>
+        <button type="button" id="deleteAccountBtn" class="btn btn-error btn-outline">Delete</button>
+        <button type="submit" id="updateProfileBtn" class="btn btn-primary">Update</button>
       </div>
     </form>
   </main>
@@ -91,10 +90,10 @@
   <!-- ✅ Toast Container -->
   <div id="toastContainer" class="fixed top-4 right-4 space-y-2 z-50"></div>
 
-  <!-- ✅ Animation Support -->
+  <!-- ✅ Animation & Toast Styling -->
   <style>
     .animate-fade-in {
-      animation: fadeIn 0.6s ease;
+      animation: fadeIn 0.5s ease;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
