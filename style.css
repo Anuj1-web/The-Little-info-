@@ -1,190 +1,243 @@
-/* ==== CSS RESET ==== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* ==== VARIABLES ==== */
 :root {
-  --primary: #0ed2f7;
-  --accent: #00bcd4;
-  --light-bg: #fdfdfd;
-  --light-text: #1e1e1e;
-  --dark-bg: #0a0f1c;
-  --dark-text: #f1f1f1;
-  --btn-hover: #05b2c5;
-  --glass: rgba(255, 255, 255, 0.08);
+  --primary: #00a8e8;
+  --accent: #0077b6;
+  --background-dark: #0d1117;
+  --background-light: #ffffff;
+  --text-dark: #ffffff;
+  --text-light: #000000;
+  --button-bg: #00a8e8;
+  --button-hover: #0077b6;
+  --font: 'Segoe UI', sans-serif;
 }
 
-/* ==== GLOBAL STYLES ==== */
 body {
-  font-family: 'Segoe UI', sans-serif;
-  transition: background-color 0.4s, color 0.4s;
-  line-height: 1.6;
+  margin: 0;
+  font-family: var(--font);
+  transition: background 0.3s, color 0.3s;
   overflow-x: hidden;
 }
 
-/* ==== THEME CLASSES ==== */
-body.light-mode {
-  background-color: var(--light-bg);
-  color: var(--light-text);
+body.dark {
+  background-color: var(--background-dark);
+  color: var(--text-dark);
 }
 
-body.dark-mode {
-  background-color: var(--dark-bg);
-  color: var(--dark-text);
+body.light {
+  background-color: var(--background-light);
+  color: var(--text-light);
 }
 
-/* ==== HEADER ==== */
 .site-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.2rem 2rem;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
   position: fixed;
-  width: 100%;
   top: 0;
-  z-index: 20;
-  backdrop-filter: blur(12px);
-  background-color: var(--glass);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  width: 100%;
+  z-index: 1000;
 }
 
 .site-logo {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  transition: transform 0.3s;
+  height: 40px;
 }
 
-.site-logo:hover {
-  transform: scale(1.1);
-}
-
-.site-header nav a {
-  color: var(--primary);
+.header-container nav a {
   margin: 0 1rem;
   text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.site-header nav a:hover {
-  color: var(--accent);
-}
-
-/* ==== THEME TOGGLE BUTTON ==== */
-.theme-toggle {
-  background-color: transparent;
-  border: 2px solid var(--primary);
-  color: var(--primary);
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.3s;
-}
-
-.theme-toggle:hover {
-  background-color: var(--primary);
-  color: white;
-}
-
-/* ==== HERO SECTION ==== */
-.hero-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  min-height: 100vh;
-  padding-top: 6rem;
-  background: linear-gradient(to bottom, rgba(10,15,28,0.9), rgba(10,15,28,0.8)), url('assets/bg-video-frame.jpg') no-repeat center center/cover;
+  color: inherit;
+  font-weight: 500;
   position: relative;
 }
 
-.hero-section::before {
-  content: "";
+nav a::after {
+  content: '';
   position: absolute;
-  top: 0; left: 0;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--primary);
+  transition: 0.3s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+.btn {
+  background: var(--button-bg);
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: var(--button-hover);
+}
+
+/* Theme Toggle */
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: gray;
+  border-radius: 34px;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  height: 100vh;
+  text-align: center;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background: url('video.mp4') center center/cover no-repeat;
-  opacity: 0.25;
+  object-fit: cover;
   z-index: -1;
+  filter: brightness(0.3);
 }
 
-.hero-logo {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
+.hero-content {
+  z-index: 2;
+  padding: 0 2rem;
+}
+
+.center-logo {
+  width: 100px;
   margin-bottom: 1.5rem;
-  border: 4px solid var(--primary);
-  animation: float 3s ease-in-out infinite;
-}
-
-.welcome-message {
-  font-size: 2.2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  color: var(--primary);
   animation: fadeInDown 1s ease-in-out;
 }
 
-.explore-btn {
-  background-color: var(--primary);
-  color: white;
-  border: none;
-  padding: 0.8rem 2rem;
-  border-radius: 30px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-  animation: fadeInUp 1s ease-in-out;
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  animation: fadeInUp 1s ease;
 }
 
-.explore-btn:hover {
-  background-color: var(--btn-hover);
-  transform: scale(1.05);
+.hero-subtext span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: wordFadeIn 0.6s forwards;
 }
 
-/* ==== CHATBOT TOGGLE BUTTON ==== */
-.chatbot-toggle {
+.hero-subtext span:nth-child(odd) {
+  color: var(--primary);
+}
+
+@keyframes wordFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated-button {
+  margin-top: 2rem;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  animation: fadeIn 2s ease;
+}
+
+/* Chatbot */
+.chatbot-launcher {
   position: fixed;
   bottom: 20px;
-  right: 25px;
-  background-color: var(--primary);
-  border: none;
-  padding: 12px;
-  border-radius: 50%;
-  z-index: 999;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.3s;
-  box-shadow: 0 0 12px rgba(0,0,0,0.3);
-}
-
-.chatbot-toggle:hover {
-  background-color: var(--btn-hover);
-  transform: scale(1.1);
-}
-
-.chatbot-toggle i {
+  right: 20px;
+  background: var(--primary);
   color: white;
-  font-size: 1.3rem;
+  border-radius: 50%;
+  font-size: 24px;
+  padding: 14px;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: background 0.3s;
 }
 
-/* ==== FOOTER ==== */
-footer {
-  text-align: center;
-  padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.4);
-  color: #aaa;
-  font-size: 0.9rem;
-  margin-top: 2rem;
+.chatbot-launcher:hover {
+  background: var(--button-hover);
 }
 
-/* ==== ANIMATIONS ==== */
+.chatbot-box {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 320px;
+  height: 450px;
+  background: #1e1e1e;
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 1001;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.chatbot-box iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Utility Animations */
 @keyframes fadeInDown {
   from {
     opacity: 0;
@@ -207,32 +260,28 @@ footer {
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  50% {
-    transform: translateY(-10px);
+  to {
+    opacity: 1;
   }
 }
 
-/* ==== MEDIA QUERIES ==== */
+/* Responsive */
 @media (max-width: 768px) {
-  .hero-section {
-    padding: 5rem 1rem;
+  .hero-title {
+    font-size: 1.8rem;
   }
 
-  .welcome-message {
-    font-size: 1.6rem;
+  .center-logo {
+    width: 80px;
   }
 
-  .explore-btn {
-    font-size: 1rem;
-    padding: 0.6rem 1.6rem;
-  }
-
-  .site-header {
-    flex-direction: column;
-    align-items: flex-start;
+  .chatbot-box {
+    width: 90%;
+    right: 5%;
+    height: 400px;
   }
 }
