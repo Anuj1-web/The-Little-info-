@@ -254,3 +254,92 @@ nav a:hover, nav button:hover {
   gap: 2rem;
   padding: 2rem;
 }
+/* Auth Form Box (Login/Signup) */
+.auth-form-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 4rem auto;
+  box-shadow: 0 0 20px rgba(0, 201, 167, 0.15);
+  backdrop-filter: blur(12px);
+  animation: fadeIn 0.8s ease;
+}
+
+.auth-form-box h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-form-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-form-box input {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--primary);
+  background-color: transparent;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.auth-form-box input:focus {
+  outline: none;
+  border-color: var(--btn-bg);
+  box-shadow: 0 0 5px var(--btn-bg);
+}
+
+.auth-form-box label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.btn-primary {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: var(--primary);
+  color: var(--text);
+  transform: scale(1.02);
+}
+
+.auth-redirect {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.auth-redirect a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-redirect a:hover {
+  text-decoration: underline;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
