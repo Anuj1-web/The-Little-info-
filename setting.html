@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Settings - The Little Info</title>
+  <title>Account Settings - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
+  <script defer type="module" src="settings.js"></script>
 </head>
 <body>
   <!-- Header -->
@@ -26,76 +27,46 @@
 
   <!-- Settings Section -->
   <main class="section-container">
-    <div class="profile-box">
-      <h2 style="color: var(--primary);">⚙️ Settings</h2>
+    <div class="settings-box">
+      <h2 style="color: var(--primary);">Account Settings</h2>
 
-      <form class="settings-form">
-        <label>
-          <span>🔔 Notifications</span>
-          <select>
-            <option value="on">Enable</option>
-            <option value="off">Disable</option>
-          </select>
-        </label>
+      <div class="user-info">
+        <p><strong>Email:</strong> <span id="userEmail" style="color: var(--text);"></span></p>
+        <p><strong>Role:</strong> <span id="userRole" class="role-tag">User</span></p>
+      </div>
 
-        <label>
-          <span>🌐 Language</span>
-          <select>
-            <option value="en">English</option>
-            <option value="hi">Hindi</option>
-          </select>
-        </label>
+      <form id="updateForm" class="settings-form">
+        <label for="newEmail">New Email</label>
+        <input type="email" id="newEmail" placeholder="Enter new email" required />
 
-        <label>
-          <span>🖼️ Theme Preference</span>
-          <select id="themePreference">
-            <option value="system">System Default</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label>
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" placeholder="Enter new password" required />
 
-        <label>
-          <span>🔒 Change Password</span>
-          <input type="password" placeholder="New Password" />
-        </label>
+        <div class="toggle-auth">
+          <label>
+            <input type="checkbox" id="twoStepToggle" />
+            Enable Two-Step Authentication
+          </label>
+        </div>
 
-        <button type="submit" class="explore-btn">Save Settings</button>
+        <button type="submit" class="explore-btn">Update Profile</button>
       </form>
+
+      <button id="deleteAccountBtn" class="danger-btn">Delete Account</button>
     </div>
   </main>
 
-  <style>
-    .settings-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-      margin-top: 1.5rem;
-    }
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Confirm Deletion</h3>
+      <p>Are you sure you want to delete your account?</p>
+      <button id="confirmDelete" class="danger-btn">Yes, Delete</button>
+      <button id="cancelDelete" class="explore-btn">Cancel</button>
+    </div>
+  </div>
 
-    .settings-form label {
-      display: flex;
-      flex-direction: column;
-      font-weight: 500;
-      color: var(--text);
-    }
-
-    .settings-form select,
-    .settings-form input {
-      margin-top: 0.4rem;
-      padding: 10px;
-      border: 1px solid var(--primary);
-      background: transparent;
-      color: var(--text);
-      border-radius: 8px;
-    }
-
-    .settings-form select:focus,
-    .settings-form input:focus {
-      outline: none;
-      border-color: var(--btn-bg);
-    }
-  </style>
-<script src="setting.js"></script>
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden"></div>
 </body>
 </html>
