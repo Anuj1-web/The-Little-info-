@@ -6,20 +6,21 @@
   <title>Admin Panel - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="dark-theme">
+
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo" />
       <nav>
-        <a href="dashboard.html">Dashboard</a>
+        <a href="admin-dashboard.html">Dashboard</a>
         <a href="#" id="logoutBtn" class="btn">Logout</a>
       </nav>
     </div>
   </header>
 
   <!-- Admin Upload Section -->
-  <main class="section-container">
+  <main class="section-container admin-upload">
     <h1>Upload New Content</h1>
     <form id="uploadForm" class="content-form">
       <label for="title">Title:</label>
@@ -41,18 +42,21 @@
       <button type="submit" class="btn">Upload</button>
     </form>
 
-    <div id="previewContainer" style="margin-top: 2rem;"></div>
+    <div id="previewContainer" class="preview-box"></div>
   </main>
 
   <!-- Firebase Auth + Upload Script -->
   <script type="module">
     import { auth } from './firebase.js';
-    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import {
+      onAuthStateChanged,
+      signOut
+    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-    // Access protection
+    // Auth check
     onAuthStateChanged(auth, (user) => {
       if (!user || !user.emailVerified) {
-        alert('Only verified users can access the admin panel.');
+        alert('Only verified admins can access this panel.');
         signOut(auth).then(() => {
           window.location.href = 'login.html';
         });
@@ -65,18 +69,20 @@
       window.location.href = 'login.html';
     });
 
-    // Handle upload form
-    document.getElementById('uploadForm').addEventListener('submit', (e) => {
+    // Upload Form Handler
+    const form = document.getElementById('uploadForm');
+    const preview = document.getElementById('previewContainer');
+
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
 
       const title = document.getElementById('title').value.trim();
       const description = document.getElementById('description').value.trim();
       const category = document.getElementById('category').value;
       const file = document.getElementById('file').files[0];
-      const preview = document.getElementById('previewContainer');
 
       if (!title || !description || !category) {
-        alert('Please fill in all required fields.');
+        alert('⚠ Please complete all fields.');
         return;
       }
 
@@ -86,21 +92,21 @@
         const type = file.type;
 
         if (type.startsWith('image/')) {
-          filePreview = `<img src="${fileURL}" alt="Uploaded Image" style="max-width: 300px; margin-top: 1rem;" />`;
+          filePreview = `<img src="${fileURL}" alt="Uploaded Image" class="preview-img" />`;
         } else if (type.startsWith('video/')) {
-          filePreview = `<video src="${fileURL}" controls style="max-width: 300px; margin-top: 1rem;"></video>`;
+          filePreview = `<video src="${fileURL}" controls class="preview-video"></video>`;
         } else {
-          filePreview = `<p>Unsupported file type: ${type}</p>`;
+          filePreview = `<p>Unsupported file type.</p>`;
         }
       }
 
       preview.innerHTML = `
-        <h3>Content Preview</h3>
+        <h3>Preview</h3>
         <p><strong>Title:</strong> ${title}</p>
         <p><strong>Description:</strong> ${description}</p>
-        <p><strong>Category:</strong> ${category.charAt(0).toUpperCase() + category.slice(1)}</p>
+        <p><strong>Category:</strong> ${category}</p>
         ${filePreview}
-        <p style="color: green;">✔ Content captured! (ready to save to database or storage)</p>
+        <p class="success-msg">✔ Content ready for publishing!</p>
       `;
     });
   </script>
