@@ -1,22 +1,19 @@
 // reset-password.js
-import { auth } from './firebase.js'; // assumes firebase.js exports configured auth instance
+import { auth } from './firebase.js';
+import { sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-document.getElementById('resetForm').addEventListener('submit', async (e) => {
+const resetForm = document.getElementById('resetForm');
+
+resetForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-
   const email = document.getElementById('resetEmail').value.trim();
 
-  if (!email) {
-    alert('Please enter your email.');
-    return;
-  }
-
   try {
-    await auth.sendPasswordResetEmail(email);
-    alert('Password reset email sent. Please check your inbox.');
-    document.getElementById('resetForm').reset();
+    await sendPasswordResetEmail(auth, email);
+    alert(`✅ Reset link sent to ${email}. Check your inbox.`);
+    resetForm.reset();
   } catch (error) {
-    console.error('Error sending password reset email:', error);
-    alert(error.message || 'Something went wrong. Please try again.');
+    alert(`❌ ${error.message}`);
+    console.error(error);
   }
 });
