@@ -1,3 +1,4 @@
+// search.js
 import { db } from './firebaseInit.js';
 import { collection, getDocs } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
 
@@ -6,6 +7,7 @@ const filterSelect = document.getElementById('filterSelect');
 const trendingContainer = document.getElementById('trending-content');
 const traditionalContainer = document.getElementById('traditional-content');
 
+// Fetch and filter content
 async function fetchAndDisplayContent() {
   const contentRef = collection(db, 'content');
   const snapshot = await getDocs(contentRef);
@@ -29,6 +31,7 @@ async function fetchAndDisplayContent() {
   renderContent(filtered);
 }
 
+// Render search result
 function renderContent(data) {
   trendingContainer.innerHTML = '';
   traditionalContainer.innerHTML = '';
@@ -39,18 +42,26 @@ function renderContent(data) {
     contentDiv.innerHTML = `
       <h3>${item.title}</h3>
       <p>${item.description}</p>
-      <video controls src="${item.videoURL}" width="100%"></video>
+      ${item.videoUrl
+        ? `<video controls src="${item.videoUrl}" style="max-width: 100%"></video>`
+        : item.imageUrl
+        ? `<img src="${item.imageUrl}" alt="Image" style="max-width: 100%" />`
+        : '<p>No media available.</p>'
+      }
+      <p><strong>Category:</strong> ${item.category}</p>
     `;
 
-    if (item.category === 'Trending') {
+    if (item.category === 'trending') {
       trendingContainer.appendChild(contentDiv);
-    } else {
+    } else if (item.category === 'traditional') {
       traditionalContainer.appendChild(contentDiv);
     }
   });
 }
 
+// Event listeners
 searchInput.addEventListener('input', fetchAndDisplayContent);
 filterSelect.addEventListener('change', fetchAndDisplayContent);
 
+// Initial load
 fetchAndDisplayContent();
