@@ -1,115 +1,62 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Search - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
+  <script defer src="search.js" type="module"></script>
 </head>
-<body>
-  <!-- Header -->
+<body class="min-h-screen bg-base-100 text-base-content transition-all duration-300">
+
+  <!-- ✅ Locked Compact Site Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="search.html" class="active">Search</a>
         <a href="profile.html">Profile</a>
-        <label class="theme-toggle">
-          <input type="checkbox" id="themeSwitch">
-          <span class="slider"></span>
-        </label>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle">🌙</button>
       </nav>
     </div>
   </header>
 
-  <!-- Search Section -->
+  <!-- ✅ Search Box Styled Like Signup Box -->
   <main class="section-container">
-    <h1>Search Content</h1>
-    <div class="search-controls">
-      <input type="text" id="searchInput" placeholder="Search content..." />
-      <select id="categoryFilter">
-        <option value="all">All</option>
-        <option value="trending">Trending</option>
-        <option value="traditional">Traditional</option>
-      </select>
+    <div class="auth-form-box">
+      <h2 style="color: var(--primary);">Search The Little Info</h2>
+      <form id="searchForm">
+        <label for="searchQuery">Enter a keyword or topic</label>
+        <input type="text" id="searchQuery" placeholder="Search..." required />
+        <button type="submit" class="btn-primary mt-4 w-full">Search</button>
+      </form>
     </div>
-    <div id="resultsContainer" class="grid-container fade-in"></div>
   </main>
 
+  <!-- ✅ Search Results Section -->
+  <section id="resultsContainer" class="section-container mt-8 space-y-4 px-4"></section>
+
+  <!-- ✅ Optional JS Example Placeholder -->
   <script type="module">
-    const searchInput = document.getElementById('searchInput');
-    const categoryFilter = document.getElementById('categoryFilter');
+    const form = document.getElementById('searchForm');
     const resultsContainer = document.getElementById('resultsContainer');
 
-    const contentList = [
-      {
-        title: "The Rise of AI",
-        description: "An introduction to artificial intelligence.",
-        category: "trending",
-        type: "video",
-        url: "videos/ai-intro.mp4"
-      },
-      {
-        title: "Cultural Heritage of India",
-        description: "Discover traditional Indian values.",
-        category: "traditional",
-        type: "image",
-        url: "images/heritage.jpg"
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const query = document.getElementById('searchQuery').value.trim();
+      resultsContainer.innerHTML = '';
+
+      if (query) {
+        const resultCard = document.createElement('div');
+        resultCard.className = 'bg-base-200 p-4 rounded-xl shadow-md hover:shadow-lg transition duration-300';
+        resultCard.textContent = `Results for: "${query}"`;
+        resultsContainer.appendChild(resultCard);
       }
-    ];
-
-    function renderResults() {
-      const query = searchInput.value.toLowerCase();
-      const filter = categoryFilter.value;
-
-      const filtered = contentList.filter(item => {
-        return (
-          (filter === "all" || item.category === filter) &&
-          (item.title.toLowerCase().includes(query) || item.description.toLowerCase().includes(query))
-        );
-      });
-
-      resultsContainer.innerHTML = "";
-
-      if (filtered.length === 0) {
-        resultsContainer.innerHTML = "<p>No content found.</p>";
-        return;
-      }
-
-      filtered.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "content-card fade-in";
-
-        let media = "";
-        if (item.type === "video") {
-          media = `<video src="${item.url}" controls></video>`;
-        } else if (item.type === "image") {
-          media = `<img src="${item.url}" alt="${item.title}" />`;
-        }
-
-        card.innerHTML = `
-          <h3>${item.title}</h3>
-          <p>${item.description}</p>
-          ${media}
-          <p class="category-tag">${item.category}</p>
-        `;
-
-        resultsContainer.appendChild(card);
-      });
-    }
-
-    searchInput.addEventListener("input", renderResults);
-    categoryFilter.addEventListener("change", renderResults);
-    window.addEventListener("DOMContentLoaded", renderResults);
-  </script>
-
-  <!-- Theme Toggle Script -->
-  <script>
-    const toggleSwitch = document.getElementById("themeSwitch");
-    toggleSwitch.addEventListener("change", () => {
-      document.documentElement.setAttribute("data-theme", toggleSwitch.checked ? "light" : "dark");
     });
   </script>
 </body>
