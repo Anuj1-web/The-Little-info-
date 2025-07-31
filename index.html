@@ -6,8 +6,135 @@
   <title>The Little Info</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: var(--background);
+      color: var(--text);
+    }
+
+    .logo-container {
+      animation: float 4s ease-in-out infinite;
+      margin-top: 80px;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .logo {
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      border: 5px solid #00f0ff;
+      padding: 10px;
+      background: radial-gradient(circle, #002f4b, #000);
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05) rotate(3deg);
+    }
+
+    .typewriter {
+      font-size: 1.5rem;
+      text-align: center;
+      margin: 20px 0;
+      height: 40px;
+    }
+
+    .explore-btn {
+      background: #00f0ff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 30px;
+      transition: background 0.3s ease;
+    }
+
+    .explore-btn:hover {
+      background: #00c0cc;
+    }
+
+    .topic-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .topic-box {
+      padding: 14px 24px;
+      border: 2px solid #00f0ff;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text);
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .topic-box:hover {
+      background-color: #00f0ff22;
+      transform: translateY(-4px);
+    }
+
+    /* Locked header style */
+    header.site-header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: var(--background);
+      z-index: 999;
+      border-bottom: 1px solid #333;
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+    }
+
+    .site-logo-small {
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    nav a, nav button {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: bold;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    #searchIcon {
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+
   <!-- Locked Header -->
   <header class="site-header">
     <div class="header-container">
@@ -17,32 +144,62 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="profile.html">Profile</a>
         <a href="ai-chatbot.html">AI Chatbot</a>
-        <a href="login.html" class="btn">Login</a>
-        <a href="signup.html" class="btn">Signup</a>
-        <a href="search.html" title="Search" class="search-icon">🔍</a>
-        <button id="themeToggle">🌙</button>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+        <span id="searchIcon">🔍</span>
+        <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero-section">
-    <video autoplay muted loop id="bg-video">
-      <source src="background.mp4" type="video/mp4" />
-    </video>
+  <!-- Main Content -->
+  <div class="logo-container">
+    <img src="logo.png" alt="Animated Logo" class="logo" />
+  </div>
 
-    <div class="hero-content">
-      <img src="logo.png" alt="Animated Logo" class="animated-logo" />
-      <h1 class="typewriter">Welcome to The Little Info</h1>
-      <p class="subtitle">Your one-stop space for knowledge, trends, and insights.</p>
-      <a href="dashboard.html" class="btn-primary">Explore Now</a>
+  <div class="typewriter" id="typewriter"></div>
 
-      <!-- Topic Buttons (Added Below Explore Now) -->
-      <div class="topic-buttons">
-        <a href="interactions.html" class="topic-box">🔥 Trending Topics</a>
-        <a href="bookmark.html" class="topic-box">📚 Traditional Topics</a>
-      </div>
-    </div>
-  </section>
+  <button class="explore-btn">Explore Now</button>
+
+  <div class="topic-buttons">
+    <a href="trending.html" class="topic-box">🔥 Trending Topics</a>
+    <a href="traditional.html" class="topic-box">🧠 Traditional Topics</a>
+  </div>
+
+  <script>
+    const messages = [
+      "Welcome to The Little Info.",
+      "Discover insights, trends, and timeless knowledge.",
+      "Powered by community & AI wisdom."
+    ];
+    let i = 0, j = 0, current = "", isDeleting = false;
+
+    function type() {
+      const typewriter = document.getElementById("typewriter");
+      if (i < messages.length) {
+        if (!isDeleting && j <= messages[i].length) {
+          current = messages[i].substring(0, j++);
+        } else if (isDeleting && j >= 0) {
+          current = messages[i].substring(0, j--);
+        }
+
+        typewriter.textContent = current;
+
+        if (!isDeleting && j === messages[i].length) {
+          isDeleting = true;
+          setTimeout(type, 1500);
+        } else if (isDeleting && j === 0) {
+          isDeleting = false;
+          i = (i + 1) % messages.length;
+          setTimeout(type, 500);
+        } else {
+          setTimeout(type, isDeleting ? 30 : 60);
+        }
+      }
+    }
+
+    type();
+  </script>
+
 </body>
 </html>
