@@ -343,3 +343,45 @@ nav a:hover, nav button:hover {
     transform: translateY(0);
   }
 }
+/* ========================
+   Toast Notifications
+======================== */
+#toastBox {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+}
+
+.toast {
+  background-color: var(--primary);
+  color: #fff;
+  padding: 12px 20px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  animation: slideInFadeOut 4s ease forwards;
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.toast.error {
+  background-color: #e74c3c;
+}
+
+/* Toast animation */
+@keyframes slideInFadeOut {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  10%, 90% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
