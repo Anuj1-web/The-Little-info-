@@ -52,24 +52,30 @@
       const password = document.getElementById('signupPassword').value;
 
       try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        tempUser = userCred.user;
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        tempUser = userCredential.user;
 
         await sendEmailVerification(tempUser);
-        messageBox.innerHTML = `✅ Verification email sent to <b>${email}</b>. Please verify before logging in.`;
-        resendBtn.style.display = 'inline-block';
+        messageBox.textContent = `✅ Verification email sent to ${email}. Please verify your email before logging in.`;
+        resendBtn.style.display = 'block';
 
         await signOut(auth);
         signupForm.reset();
       } catch (error) {
         messageBox.textContent = `❌ ${error.message}`;
+        console.error(error);
       }
     });
 
     resendBtn.addEventListener('click', async () => {
       if (tempUser) {
-        await sendEmailVerification(tempUser);
-        alert("🔁 Verification email re-sent!");
+        try {
+          await sendEmailVerification(tempUser);
+          messageBox.textContent = `✅ Verification email resent to ${tempUser.email}.`;
+        } catch (error) {
+          messageBox.textContent = `❌ ${error.message}`;
+          console.error(error);
+        }
       }
     });
   </script>
