@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search - The Little Info</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dark-theme">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="login.html" class="btn">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Search Section -->
+  <main class="section-container">
+    <h1>🔍 Search Content</h1>
+
+    <form id="searchForm" class="search-form">
+      <input type="text" id="searchQuery" placeholder="Enter keyword..." required />
+      <select id="searchCategory">
+        <option value="all">All Categories</option>
+        <option value="trending">Trending</option>
+        <option value="traditional">Traditional</option>
+      </select>
+      <button type="submit" class="btn">Search</button>
+    </form>
+
+    <div id="resultsContainer" class="results-grid"></div>
+  </main>
+
+  <!-- JS for handling search (Dummy for now) -->
+  <script type="module">
+    const searchForm = document.getElementById('searchForm');
+    const resultsContainer = document.getElementById('resultsContainer');
+
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const query = document.getElementById('searchQuery').value.trim().toLowerCase();
+      const category = document.getElementById('searchCategory').value;
+
+      resultsContainer.innerHTML = `
+        <div class="card animate-fade">
+          <h3>Sample Result for "${query}"</h3>
+          <p>Category: ${category}</p>
+          <p>Description: This is a placeholder result.</p>
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>
