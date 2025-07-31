@@ -2,102 +2,10 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Little Info - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Little Info</title>
   <link rel="stylesheet" href="styles.css" />
   <script defer src="theme-toggle.js"></script>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: var(--background);
-      color: var(--text);
-      transition: background 0.3s, color 0.3s;
-    }
-
-    .center-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .circular-logo {
-      width: 220px;
-      height: 220px;
-      border-radius: 30%; /* Decreased circular roundness */
-      overflow: hidden;
-      margin-bottom: 30px;
-      transition: box-shadow 0.3s ease;
-    }
-
-    .circular-logo:hover {
-      box-shadow: 0 0 12px rgba(0, 255, 255, 0.3); /* Softer glow */
-    }
-
-    .circular-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .typewriter {
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-      min-height: 40px;
-    }
-
-    .explore-btn,
-    .topic-btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      margin: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s, transform 0.3s;
-    }
-
-    .explore-btn {
-      background: cyan;
-      color: black;
-    }
-
-    .explore-btn:hover {
-      transform: scale(1.05);
-      background: #00ffffcc;
-    }
-
-    .topic-buttons {
-      display: flex;
-      gap: 16px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .topic-btn.trending {
-      background: #ff4c4c;
-      color: white;
-    }
-
-    .topic-btn.trending:hover {
-      background: #e63946;
-    }
-
-    .topic-btn.traditional {
-      background: #9d4edd;
-      color: white;
-    }
-
-    .topic-btn.traditional:hover {
-      background: #7b2cbf;
-    }
-  </style>
 </head>
 <body>
   <header class="site-header">
@@ -106,64 +14,35 @@
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="#" id="logoutBtn" class="btn">Logout</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
         <button id="themeToggle">🌓</button>
+        <a href="search.html" class="search-icon">🔍</a>
       </nav>
     </div>
   </header>
 
-  <section class="center-section">
-    <div class="circular-logo">
-      <img src="logo.png" alt="Centered Circular Logo" />
+  <main class="home-container">
+    <div class="center-logo-container">
+      <div class="floating-logo-circle">
+        <img src="logo-center.png" alt="The Little Info Logo" class="floating-logo" />
+      </div>
     </div>
 
-    <div class="typewriter" id="typewriter"></div>
+    <div class="welcome-messages">
+      <h1 class="typewriter">Welcome to The Little Info</h1>
+      <h2 class="fadein-message">Your Gateway to Smarter Knowledge</h2>
+    </div>
 
-    <button class="explore-btn">Explore Now</button>
-
+    <div class="home-buttons">
+      <a href="dashboard.html" class="btn btn-explore">🌐 Explore Now</a>
+    </div>
     <div class="topic-buttons">
-      <a href="trending.html"><button class="topic-btn trending">🔥 Trending Topics</button></a>
-      <a href="traditional.html"><button class="topic-btn traditional">🧠 Traditional Topics</button></a>
+      <a href="trending.html" class="btn btn-trending">🔥 Trending Topics</a>
+      <a href="traditional.html" class="btn btn-traditional">📚 Traditional Topics</a>
     </div>
-  </section>
-
-  <script>
-    const messages = [
-      "Welcome to The Little Info",
-      "Explore Insight, Trends and Timeless Knowledge",
-      "Stay Curious. Stay Informed."
-    ];
-
-    let msgIndex = 0;
-    let charIndex = 0;
-    const speed = 80;
-    const pause = 1200;
-    const typewriter = document.getElementById("typewriter");
-
-    function type() {
-      if (charIndex < messages[msgIndex].length) {
-        typewriter.textContent += messages[msgIndex].charAt(charIndex);
-        charIndex++;
-        setTimeout(type, speed);
-      } else {
-        setTimeout(erase, pause);
-      }
-    }
-
-    function erase() {
-      if (charIndex > 0) {
-        typewriter.textContent = messages[msgIndex].substring(0, charIndex - 1);
-        charIndex--;
-        setTimeout(erase, speed);
-      } else {
-        msgIndex = (msgIndex + 1) % messages.length;
-        setTimeout(type, speed);
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      if (messages.length > 0) type();
-    });
-  </script>
+  </main>
 </body>
 </html>
