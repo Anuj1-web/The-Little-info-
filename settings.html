@@ -11,7 +11,7 @@
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
@@ -19,49 +19,136 @@
         <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html" class="btn">Login</a>
         <a href="signup.html" class="btn">Signup</a>
-        <button id="themeToggle" class="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
+        <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <!-- Settings Section -->
+  <!-- Settings Content -->
   <main class="section-container">
     <div class="profile-box">
-      <h2 style="color: var(--primary);">Settings</h2>
-      <p style="color: var(--text); margin-bottom: 1.5rem;">Manage your preferences</p>
+      <h2 style="color: var(--primary); margin-bottom: 1rem;">Account Settings</h2>
 
       <div class="dashboard-grid">
+        <!-- Edit Profile Info -->
         <div class="dashboard-card">
-          <h3>🔒 Privacy</h3>
-          <p>Update password or enable 2FA</p>
+          <h3>✏️ Edit Profile Info</h3>
+          <p>Update your name or email</p>
+          <button onclick="openEditForm()">Edit Info</button>
         </div>
+
+        <!-- Update Password -->
         <div class="dashboard-card">
-          <h3>🎨 Appearance</h3>
-          <p>Toggle dark/light mode and themes</p>
+          <h3>🔒 Update Password</h3>
+          <p>Change your account password</p>
+          <button onclick="updatePassword()">Change Password</button>
         </div>
-        <div class="dashboard-card">
-          <h3>📧 Notifications</h3>
-          <p>Control email & app alerts</p>
-        </div>
+
+        <!-- Delete Account -->
         <div class="dashboard-card">
           <h3>🗑️ Delete Account</h3>
-          <p>Permanently remove your data</p>
+          <p>This action is irreversible</p>
+          <button onclick="deleteAccount()" style="background: crimson; color: white;">Delete</button>
         </div>
+      </div>
+
+      <!-- Hidden Edit Form -->
+      <div id="editForm" class="settings-form" style="margin-top: 2rem; display: none;">
+        <h3 style="color: var(--primary);">Edit Profile</h3>
+        <label>
+          Display Name:
+          <input type="text" id="displayName" placeholder="Enter new name" />
+        </label>
+        <label>
+          Email:
+          <input type="email" id="newEmail" placeholder="Enter new email" />
+        </label>
+        <button onclick="submitEdit()">Save Changes</button>
+        <button onclick="cancelEdit()" style="background: #777;">Cancel</button>
       </div>
     </div>
   </main>
 
-  <!-- Firebase Placeholder -->
+  <!-- Firebase Script -->
   <script type="module">
     import { auth } from './firebase.js';
-    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import {
+      updatePassword as updatePass,
+      deleteUser,
+      updateProfile,
+      updateEmail,
+      onAuthStateChanged
+    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+
+    let currentUser;
+
+    const nameInput = document.getElementById('displayName');
+    const emailInput = document.getElementById('newEmail');
+    const editForm = document.getElementById('editForm');
 
     onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        alert("You must be logged in to access settings.");
+      if (user) {
+        currentUser = user;
+        nameInput.value = user.displayName || '';
+        emailInput.value = user.email || '';
+      } else {
+        alert("You must be logged in.");
         window.location.href = 'login.html';
       }
     });
+
+    window.openEditForm = function () {
+      editForm.style.display = 'block';
+    };
+
+    window.cancelEdit = function () {
+      editForm.style.display = 'none';
+    };
+
+    window.submitEdit = async function () {
+      const newName = nameInput.value.trim();
+      const newEmail = emailInput.value.trim();
+
+      try {
+        if (newName !== currentUser.displayName) {
+          await updateProfile(currentUser, { displayName: newName });
+        }
+
+        if (newEmail !== currentUser.email) {
+          await updateEmail(currentUser, newEmail);
+        }
+
+        alert('Profile updated successfully.');
+        window.location.reload();
+      } catch (err) {
+        alert('Error updating profile: ' + err.message);
+      }
+    };
+
+    window.updatePassword = async function () {
+      const newPass = prompt("Enter your new password:");
+      if (newPass) {
+        try {
+          await updatePass(currentUser, newPass);
+          alert("Password updated successfully.");
+        } catch (err) {
+          alert("Error updating password: " + err.message);
+        }
+      }
+    };
+
+    window.deleteAccount = async function () {
+      const confirmed = confirm("Are you sure you want to permanently delete your account?");
+      if (confirmed) {
+        try {
+          await deleteUser(currentUser);
+          alert("Your account has been deleted.");
+          window.location.href = 'signup.html';
+        } catch (err) {
+          alert("Error deleting account: " + err.message);
+        }
+      }
+    };
   </script>
 </body>
 </html>
