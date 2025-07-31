@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Interactions - The Little Info</title>
+  <title>Your Interactions - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="interactions.js"></script>
+  <script defer src="theme-toggle.js"></script>
+  <script type="module" defer src="interactions.js"></script>
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
@@ -19,39 +20,30 @@
         <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html" class="btn">Login</a>
         <a href="signup.html" class="btn">Signup</a>
-        <button id="themeToggle" class="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
+        <button id="themeToggle" title="Toggle Light/Dark Mode">🌙</button>
       </nav>
     </div>
   </header>
 
-  <!-- Interactions Section -->
+  <!-- Main Content -->
   <main class="section-container">
-    <h2 style="color: var(--primary); text-align: center; margin-bottom: 1.5rem;">Your Comments & Likes</h2>
-    <div id="interactions-container" class="dashboard-grid">
-      <!-- Interaction cards will be injected by JS -->
+    <h2 style="color: var(--primary); margin-bottom: 1rem;">💬 Your Interactions</h2>
+    <div id="interactions-container" class="interaction-grid">
+      <!-- JS will inject interaction cards here -->
     </div>
   </main>
 
-  <!-- Theme Toggle Script -->
-  <script>
-    const toggleBtn = document.getElementById('themeToggle');
-    const currentTheme = localStorage.getItem('theme');
-
-    if (currentTheme === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      toggleBtn.textContent = '☀️';
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-      toggleBtn.textContent = '🌙';
-    }
-
-    toggleBtn.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      const newTheme = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-      toggleBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-    });
-  </script>
+  <!-- Optional Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-chatbot">
+        <button title="Open AI Chatbot">🤖</button>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
