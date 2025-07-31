@@ -3,66 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - The Little Info</title>
+  <title>User Profile - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dark-theme">
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="signup.html">Sign Up</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#" id="logoutBtn" class="btn">Logout</a>
       </nav>
     </div>
   </header>
 
   <main class="section-container">
-    <h1>Login</h1>
-    <form id="loginForm" class="content-form">
-      <input type="email" id="loginEmail" required placeholder="Email" />
-      <input type="password" id="loginPassword" required placeholder="Password" />
-      <button type="submit" class="btn">Log In</button>
-    </form>
-
-    <p id="message" style="margin-top: 1rem;"></p>
-    <p style="margin-top: 1rem;">
-      <a href="reset-password.html">Forgot Password?</a>
-    </p>
+    <div class="profile-box">
+      <h2>Your Profile</h2>
+      <p><strong>Email:</strong> <span id="userEmail"></span></p>
+      <div class="user-actions">
+        <a href="bookmark.html" class="btn">Bookmarks</a>
+        <a href="interactions.html" class="btn">Likes & Comments</a>
+        <a href="settings.html" class="btn">Settings</a>
+      </div>
+    </div>
   </main>
 
   <script type="module">
     import { auth } from './firebase.js';
-    import {
-      signInWithEmailAndPassword,
-      signOut
-    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-    const loginForm = document.getElementById('loginForm');
-    const messageBox = document.getElementById('message');
+    const emailSpan = document.getElementById('userEmail');
 
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-
-      try {
-        const userCred = await signInWithEmailAndPassword(auth, email, password);
-        if (!userCred.user.emailVerified) {
-          await signOut(auth);
-          messageBox.innerHTML = `❌ Please verify your email before logging in. Check your inbox.`;
-          return;
-        }
-
-        messageBox.innerHTML = '✅ Login successful! Redirecting...';
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 1000);
-      } catch (error) {
-        messageBox.textContent = `❌ ${error.message}`;
-        console.error(error);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        emailSpan.textContent = user.email;
+      } else {
+        alert("You must be logged in to view your profile.");
+        window.location.href = 'login.html';
       }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = 'login.html';
     });
   </script>
 </body>
