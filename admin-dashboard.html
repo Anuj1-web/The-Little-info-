@@ -1,35 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Admin Dashboard - The Little Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
   <script type="module" src="firebase.js"></script>
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    h1 { color: #2c3e50; }
-    button { padding: 10px; margin-top: 10px; }
-  </style>
 </head>
-<body>
-  <h1>Welcome Admin</h1>
-  <p>This is your dashboard. You can manage users and content here.</p>
+<body class="dark-theme">
 
-  <button onclick="signOut()">Logout</button>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <nav>
+        <a href="admin.html">Upload</a>
+        <a href="index.html">Home</a>
+        <a href="#" id="logoutBtn" class="btn">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Admin Dashboard -->
+  <main class="section-container dashboard">
+    <h1>Welcome, Admin</h1>
+    <p class="subtitle">Monitor user activity and uploaded content</p>
+
+    <div class="dashboard-cards">
+      <div class="card">
+        <h2>Total Users</h2>
+        <p id="userCount">Loading...</p>
+      </div>
+
+      <div class="card">
+        <h2>Total Uploads</h2>
+        <p id="uploadCount">Loading...</p>
+      </div>
+
+      <div class="card">
+        <h2>Pending Approvals</h2>
+        <p id="pendingCount">Loading...</p>
+      </div>
+    </div>
+
+    <div class="analytics">
+      <h3>Site Activity (Mock)</h3>
+      <ul>
+        <li>✔ 124 likes this week</li>
+        <li>✔ 63 new comments</li>
+        <li>✔ 19 new bookmarks</li>
+        <li>✔ 44 content uploads</li>
+      </ul>
+    </div>
+  </main>
 
   <script type="module">
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
+    import { auth } from './firebase.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
     onAuthStateChanged(auth, (user) => {
-      if (!user || user.email !== "thelittleinfo01@gmail.com") {
-        alert("Unauthorized access. Redirecting...");
+      if (!user || !user.emailVerified || user.email !== "thelittleinfo01@gmail.com") {
+        alert("Access restricted to admin.");
         window.location.href = "login.html";
       }
     });
 
-    function signOut() {
-      window.signOut().then(() => {
-        window.location.href = "login.html";
-      });
-    }
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = 'login.html';
+    });
+
+    // Simulated analytics values
+    document.getElementById('userCount').innerText = "245 users";
+    document.getElementById('uploadCount').innerText = "98 uploads";
+    document.getElementById('pendingCount').innerText = "5 items";
   </script>
 </body>
 </html>
