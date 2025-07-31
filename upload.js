@@ -1,19 +1,12 @@
 // upload.js - Admin content uploader
 
 import { storage, db } from './firebaseInit.js';
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
-import {
-  collection,
-  addDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
 const uploadForm = document.getElementById("uploadForm");
 const uploadStatus = document.getElementById("uploadStatus");
+const previewContainer = document.getElementById("previewContainer");
 
 uploadForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -24,41 +17,47 @@ uploadForm.addEventListener("submit", async (e) => {
   const file = document.getElementById("file").files[0];
 
   if (!file || !category || !title || !description) {
-    uploadStatus.textContent = "⚠️ Please fill out all fields.";
-    uploadStatus.style.color = "orange";
+    uploadStatus.textContent = "❌ Please fill out all fields.";
     return;
   }
 
-  const storagePath = `uploads/${Date.now()}_${file.name}`;
-  const storageRef = ref(storage, storagePath);
-  const uploadTask = uploadBytesResumable(storageRef, file);
+  const filePath = `uploads/${Date.now()}_${file.name}`;
+  const fileRef = ref(storage, filePath);
+  const uploadTask = uploadBytesResumable(fileRef, file);
 
-  uploadStatus.textContent = "⏳ Uploading...";
-  uploadStatus.style.color = "#00bfff";
+  uploadStatus.textContent = "📤 Uploading...";
 
   uploadTask.on(
     "state_changed",
-    (snapshot) => {
-      const progress = Math.floor((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-      uploadStatus.textContent = `Uploading... ${progress}%`;
-    },
+    null,
     (error) => {
       uploadStatus.textContent = `❌ Upload failed: ${error.message}`;
-      uploadStatus.style.color = "red";
     },
     async () => {
       const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+
       await addDoc(collection(db, "content"), {
         title,
         description,
         category,
-        url: downloadURL,
-        timestamp: serverTimestamp()
+        mediaUrl: downloadURL,
+        fileType: file.type.startsWith("image/") ? "image" : "video",
+        createdAt: serverTimestamp(),
       });
 
       uploadStatus.textContent = "✅ Upload successful!";
-      uploadStatus.style.color = "lightgreen";
       uploadForm.reset();
+
+      // Optional preview
+      let previewHTML = `<h3>Preview</h3><p><strong>Title:</strong> ${title}</p><p><strong>Description:</strong> ${description}</p><p><strong>Category:</strong> ${category}</p>`;
+
+      if (file.type.startsWith("image/")) {
+        previewHTML += `<img src="${downloadURL}" style="max-width: 300px; margin-top: 10px;" />`;
+      } else if (file.type.startsWith("video/")) {
+        previewHTML += `<video controls src="${downloadURL}" style="max-width: 300px; margin-top: 10px;"></video>`;
+      }
+
+      previewContainer.innerHTML = previewHTML;
     }
   );
 });
