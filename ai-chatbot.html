@@ -3,111 +3,142 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Chatbot & Video Summary - The Little Info</title>
+  <title>AI Chatbot - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .chat-container {
+      max-width: 800px;
+      margin: auto;
+      padding: 2rem;
+      background: #1e1e2f;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    .chat-box {
+      height: 400px;
+      overflow-y: auto;
+      padding: 1rem;
+      background-color: #11111b;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border: 1px solid #333;
+    }
+
+    .message {
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background-color: #4f46e5;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 16px 16px 0 16px;
+      max-width: 75%;
+    }
+
+    .bot-message {
+      align-self: flex-start;
+      background-color: #27272a;
+      color: #ddd;
+      padding: 10px 14px;
+      border-radius: 16px 16px 16px 0;
+      max-width: 75%;
+    }
+
+    .input-bar {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-bar input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: #2d2d44;
+      color: white;
+    }
+
+    .input-bar button {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      background-color: #4f46e5;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .input-bar button:hover {
+      background-color: #6d6de5;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body class="dark-theme">
+
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="profile.html">Profile</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="#" id="logoutBtn" class="btn">Logout</a>
+        <a href="login.html" class="btn">Login</a>
       </nav>
     </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- Chatbot Main -->
   <main class="section-container">
-    <h1>🤖 AI Help & Video Summary</h1>
-
-    <section class="chat-section">
-      <div class="chat-box" id="chatBox">
-        <div class="bot-message">Hi! I'm your AI Assistant. Ask me anything or upload a video to summarize.</div>
+    <div class="chat-container">
+      <h2>🤖 AI Help & Video Summary</h2>
+      <div id="chatBox" class="chat-box"></div>
+      <div class="input-bar">
+        <input type="text" id="userInput" placeholder="Ask something..." />
+        <button id="sendBtn">Send</button>
       </div>
-      <form id="chatForm">
-        <input type="text" id="chatInput" placeholder="Ask a question..." required />
-        <button type="submit" class="btn">Send</button>
-      </form>
-    </section>
-
-    <section class="video-summary-section">
-      <h2>📹 Video Summary</h2>
-      <form id="videoForm">
-        <label for="videoUpload">Upload a video file:</label>
-        <input type="file" id="videoUpload" accept="video/*" required />
-        <button type="submit" class="btn">Generate Summary</button>
-      </form>
-      <div id="summaryOutput" class="summary-box"></div>
-    </section>
+    </div>
   </main>
 
-  <!-- Chat + Summary Script -->
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+  <script>
+    const chatBox = document.getElementById("chatBox");
+    const userInput = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
 
-    const chatForm = document.getElementById('chatForm');
-    const chatBox = document.getElementById('chatBox');
-    const chatInput = document.getElementById('chatInput');
-    const videoForm = document.getElementById('videoForm');
-    const videoUpload = document.getElementById('videoUpload');
-    const summaryOutput = document.getElementById('summaryOutput');
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        alert('Login required to access the chatbot.');
-        window.location.href = 'login.html';
-      }
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "login.html";
-    });
-
-    chatForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const userMsg = chatInput.value.trim();
-      if (!userMsg) return;
-
-      const userDiv = document.createElement('div');
-      userDiv.className = 'user-message';
-      userDiv.textContent = userMsg;
-      chatBox.appendChild(userDiv);
-
-      const botDiv = document.createElement('div');
-      botDiv.className = 'bot-message';
-      botDiv.textContent = "🤔 Thinking...";
-      chatBox.appendChild(botDiv);
-
+    function appendMessage(content, type) {
+      const msgDiv = document.createElement("div");
+      msgDiv.classList.add("message");
+      msgDiv.classList.add(type === "user" ? "user-message" : "bot-message");
+      msgDiv.textContent = content;
+      chatBox.appendChild(msgDiv);
       chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    sendBtn.addEventListener("click", () => {
+      const input = userInput.value.trim();
+      if (!input) return;
+      appendMessage(input, "user");
 
       setTimeout(() => {
-        botDiv.textContent = `You asked: "${userMsg}" — I'm still learning to answer that!`;
-      }, 1000);
+        appendMessage("This is a sample AI reply. Your full assistant integration will go here.", "bot");
+      }, 600);
 
-      chatInput.value = '';
+      userInput.value = "";
     });
 
-    videoForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const file = videoUpload.files[0];
-      if (!file) {
-        alert("Please upload a video file.");
-        return;
-      }
-
-      summaryOutput.innerHTML = `<p>📄 Generating summary for: <strong>${file.name}</strong>...</p>`;
-      setTimeout(() => {
-        summaryOutput.innerHTML = `
-          <h3>AI Summary:</h3>
-          <p>This is a placeholder summary. Connect to an AI backend to generate real summaries from uploaded videos.</p>
-        `;
-      }, 2000);
+    userInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendBtn.click();
     });
   </script>
 </body>
