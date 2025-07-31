@@ -3,74 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Little Info - Home</title>
+  <title>The Little Info</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="logo.png" />
+  <link rel="icon" href="Green and White Modern Computer Service Repair Logo.png" />
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Logo" class="site-logo-small" />
+      <img src="Green and White Modern Computer Service Repair Logo.png" alt="Site Logo" class="site-logo-top" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="login.html">Login</a>
-        <a href="signup.html">Signup</a>
-        <button id="themeToggle" title="Toggle Theme">🌓</button>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <label class="theme-switch">
+          <input type="checkbox" id="themeToggle" />
+          <span class="slider"></span>
+        </label>
       </nav>
     </div>
   </header>
 
-  <!-- Main Hero Section -->
+  <!-- Hero Section -->
   <main class="hero-section">
-    <div class="center-logo-container">
-      <img src="logo.png" alt="The Little Info Logo" class="center-logo animate-logo" />
-      <h1 class="animated-text">Welcome to The Little Info</h1>
-      <p class="animated-subtext">
-        <span class="typewriter" id="typewriter"></span>
-      </p>
-      <a href="dashboard.html" class="btn explore-btn">Explore Now</a>
-    </div>
+    <img src="Green and White Modern Computer Service Repair Logo.png" alt="Centered Logo" class="center-logo" />
+    <h1 class="hero-title">Welcome to The Little Info</h1>
+    <p class="hero-subtitle" id="animatedSubtitle"></p>
+    <a href="dashboard.html" class="btn explore-btn">Explore Now</a>
   </main>
 
-  <!-- Optional Background Video -->
-  <video autoplay muted loop id="bg-video">
-    <source src="media/bg.mp4" type="video/mp4" />
-  </video>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <button class="chatbot-button" onclick="window.location.href='ai-chatbot.html'" title="Ask AI">
+        🤖
+      </button>
+    </div>
+  </footer>
 
+  <!-- Theme Toggle Script -->
   <script>
-    // Theme toggler
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      const html = document.documentElement;
-      html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    const toggle = document.getElementById('themeToggle');
+    toggle.addEventListener('change', () => {
+      document.documentElement.setAttribute('data-theme', toggle.checked ? 'light' : 'dark');
     });
+  </script>
 
-    // Typewriter animation
-    const lines = [
-      "Discover knowledge in every format.",
-      "Stay updated with trending & traditional topics.",
-      "Smart video playback & AI summaries.",
-      "Your personalized info hub starts here."
-    ];
-    let currentLine = 0;
-    let charIndex = 0;
-    const typewriter = document.getElementById('typewriter');
+  <!-- Subtitle Animation -->
+  <script>
+    const subtitle = "Discover knowledge, engage with content, and explore insights!";
+    const subtitleEl = document.getElementById('animatedSubtitle');
+    let idx = 0;
 
-    function type() {
-      if (charIndex < lines[currentLine].length) {
-        typewriter.textContent += lines[currentLine][charIndex++];
-        setTimeout(type, 50);
-      } else {
-        setTimeout(() => {
-          typewriter.textContent = '';
-          charIndex = 0;
-          currentLine = (currentLine + 1) % lines.length;
-          type();
-        }, 2500);
+    function typeSubtitle() {
+      if (idx < subtitle.length) {
+        subtitleEl.textContent += subtitle[idx++];
+        setTimeout(typeSubtitle, 50);
       }
     }
-    type();
+
+    typeSubtitle();
   </script>
 </body>
 </html>
