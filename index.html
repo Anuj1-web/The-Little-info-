@@ -1,37 +1,49 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Little Info</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home - The Literacy Project</title>
+  <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
   <style>
+    :root {
+      --bg-light: #ffffff;
+      --text-light: #000000;
+      --bg-dark: #121212;
+      --text-dark: #ffffff;
+      --accent-color: #4caf50;
+    }
+
+    [data-theme="light"] {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    [data-theme="dark"] {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
     body {
       margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
       transition: background-color 0.3s, color 0.3s;
     }
 
-    :root[data-theme='light'] {
-      --bg: #f4f4f4;
-      --text: #111;
-    }
-
-    :root[data-theme='dark'] {
-      --bg: #111;
-      --text: #fff;
-    }
-
-    .site-header {
-      padding: 1rem;
+    header.site-header {
+      padding: 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background-color: var(--bg);
+      background: transparent;
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
     }
 
     .site-logo-small {
@@ -40,158 +52,164 @@
       border-radius: 50%;
     }
 
-    nav a,
-    #logoutBtn {
-      margin-left: 1rem;
-      color: var(--text);
+    nav a {
+      margin: 0 10px;
       text-decoration: none;
+      color: inherit;
       font-weight: bold;
+    }
+
+    nav a:hover {
+      color: var(--accent-color);
     }
 
     #themeToggle {
       background: none;
       border: none;
-      font-size: 1.2rem;
+      font-size: 20px;
       cursor: pointer;
     }
 
-    .main-container {
-      text-align: center;
-      padding-top: 60px;
-    }
-
-    .logo-circle {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      margin: 0 auto;
-      background: radial-gradient(circle, #0f2027, #203a43, #2c5364);
+    .center-container {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: calc(100vh - 60px);
+      text-align: center;
+      padding: 20px;
     }
 
-    .logo-circle:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 35px rgba(0, 255, 255, 0.6);
-    }
-
-    .logo-circle img {
-      width: 80%;
-      height: auto;
+    .floating-logo {
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      animation: rotate 5s linear infinite;
-    }
-
-    @keyframes rotate {
-      0% {
-        transform: rotate(0);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    .welcome-message {
-      font-size: 1.8rem;
-      margin: 20px 0;
-      animation: fadeInUp 1.2s ease forwards;
-      opacity: 0;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        transform: translateY(20px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .explore-btn,
-    .topics-btn {
-      padding: 10px 20px;
-      margin: 10px;
-      border-radius: 12px;
-      font-weight: bold;
+      overflow: hidden;
+      border: 4px solid var(--accent-color);
+      animation: float 3s ease-in-out infinite;
+      transition: transform 0.3s ease;
       cursor: pointer;
-      border: 2px solid transparent;
-      transition: all 0.3s;
     }
 
-    .explore-btn {
-      background-color: cyan;
-      color: black;
+    .floating-logo:hover {
+      transform: scale(1.05);
     }
 
-    .topics-btn:hover,
-    .explore-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    .floating-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
     }
 
-    .trending-btn {
-      background-color: #ff5722;
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .typewriter-text {
+      font-size: 1.6rem;
+      margin-top: 25px;
+      min-height: 30px;
+      height: 30px;
+      font-weight: bold;
+    }
+
+    .explore-btn, .topic-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      background-color: var(--accent-color);
       color: #fff;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
     }
 
-    .traditional-btn {
-      background-color: #9c27b0;
-      color: #fff;
+    .explore-btn:hover, .topic-btn:hover {
+      background-color: #388e3c;
+    }
+
+    .topic-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    a.topic-btn {
+      text-decoration: none;
+      text-align: center;
     }
   </style>
 </head>
-
 <body>
+  <!-- LOCKED CONSISTENT HEADER -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="#" id="logoutBtn" class="btn">Logout</a>
-        <button id="themeToggle">🌓</button>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+        <button id="themeToggle">🌙</button>
       </nav>
     </div>
   </header>
 
-  <main class="main-container">
-    <div class="logo-circle">
-      <img src="logo-center.png" alt="Centered Logo" />
+  <div class="center-container">
+    <!-- CIRCULAR CENTERED FLOATING LOGO -->
+    <div class="floating-logo">
+      <img src="logo.png" alt="Floating Logo" />
     </div>
 
-    <div class="welcome-message" style="animation-delay: 0.3s;">Welcome to The Little Info</div>
-    <div class="welcome-message" style="animation-delay: 0.6s;">Empower Your Curiosity</div>
-    <div class="welcome-message" style="animation-delay: 0.9s;">Explore. Learn. Grow.</div>
+    <!-- MULTIPLE WELCOME MESSAGES -->
+    <div class="typewriter-text" id="welcomeMessage"></div>
 
-    <div>
-      <button class="explore-btn">Explore Now</button>
-    </div>
+    <!-- EXPLORE NOW BUTTON -->
+    <a href="dashboard.html" class="explore-btn">Explore Now</a>
 
-    <div>
-      <a href="trending.html"><button class="topics-btn trending-btn">🔥 Trending Topics</button></a>
-      <a href="traditional.html"><button class="topics-btn traditional-btn">📘 Traditional Topics</button></a>
+    <!-- TRENDING AND TRADITIONAL BUTTONS -->
+    <div class="topic-buttons">
+      <a href="trending.html" class="topic-btn">Trending Topics</a>
+      <a href="traditional.html" class="topic-btn">Traditional Topics</a>
     </div>
-  </main>
+  </div>
 
   <script>
-    document.getElementById("themeToggle").addEventListener("click", function () {
-      const html = document.documentElement;
-      const currentTheme = html.getAttribute("data-theme");
-      const newTheme = currentTheme === "dark" ? "light" : "dark";
-      html.setAttribute("data-theme", newTheme);
-      localStorage.setItem("theme", newTheme);
-    });
+    const messages = [
+      "Welcome to The Literacy Project",
+      "Empowering through Education",
+      "Explore Insights and Interact",
+      "Join the Learning Movement"
+    ];
+    let messageIndex = 0;
+    const messageElement = document.getElementById("welcomeMessage");
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const savedTheme = localStorage.getItem("theme") || "light";
-      document.documentElement.setAttribute("data-theme", savedTheme);
-    });
+    function typeWriter(text, i = 0) {
+      if (i < text.length) {
+        messageElement.innerHTML = text.substring(0, i + 1);
+        setTimeout(() => typeWriter(text, i + 1), 80);
+      } else {
+        setTimeout(() => deleteWriter(text), 1500);
+      }
+    }
+
+    function deleteWriter(text, i = text.length) {
+      if (i > 0) {
+        messageElement.innerHTML = text.substring(0, i - 1);
+        setTimeout(() => deleteWriter(text, i - 1), 50);
+      } else {
+        messageIndex = (messageIndex + 1) % messages.length;
+        setTimeout(() => typeWriter(messages[messageIndex]), 500);
+      }
+    }
+
+    typeWriter(messages[messageIndex]);
   </script>
 </body>
-
 </html>
