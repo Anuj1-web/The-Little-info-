@@ -7,40 +7,48 @@
   <link rel="stylesheet" href="styles.css" />
   <style>
     :root {
-      --primary-color: #1e1e2f;
-      --secondary-color: #f0f0f0;
+      --primary-bg-dark: #0e0e10;
+      --text-dark: #ffffff;
+      --card-dark: #1a1a1d;
+      --primary-bg-light: #f5f5f5;
+      --text-light: #1a1a1d;
+      --card-light: #ffffff;
       --accent-color: #4f46e5;
-      --card-bg: #2a2a40;
-      --font-color-light: #ffffff;
-      --font-color-dark: #1e1e2f;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: var(--primary-bg-dark);
+      --text-color: var(--text-dark);
+      --card-color: var(--card-dark);
     }
 
     [data-theme="light"] {
-      --primary-color: #ffffff;
-      --secondary-color: #1e1e2f;
-      --card-bg: #e6e6e6;
-      --font-color-light: #1e1e2f;
+      --bg-color: var(--primary-bg-light);
+      --text-color: var(--text-light);
+      --card-color: var(--card-light);
     }
 
     body {
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: var(--primary-color);
-      color: var(--font-color-light);
+      background-color: var(--bg-color);
+      color: var(--text-color);
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     header {
       width: 100%;
       padding: 10px 20px;
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      background: var(--card-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .site-logo-small {
@@ -52,7 +60,7 @@
     nav a {
       margin: 0 10px;
       text-decoration: none;
-      color: var(--font-color-light);
+      color: var(--text-color);
       font-weight: 500;
     }
 
@@ -61,7 +69,7 @@
       border: none;
       font-size: 1.2rem;
       cursor: pointer;
-      color: var(--font-color-light);
+      color: var(--text-color);
     }
 
     .center-container {
@@ -70,8 +78,8 @@
     }
 
     .floating-logo {
-      width: 140px;
-      height: 140px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       animation: float 3s ease-in-out infinite;
       transition: transform 0.3s;
@@ -91,10 +99,11 @@
     }
 
     .typewriter {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-style: italic;
       margin-top: 20px;
       min-height: 40px;
+      color: var(--text-color);
     }
 
     .home-buttons {
@@ -106,13 +115,13 @@
     }
 
     .home-buttons a {
-      background-color: var(--card-bg);
-      color: var(--font-color-light);
+      background-color: var(--card-color);
+      color: var(--text-color);
       padding: 18px 28px;
       border-radius: 12px;
       text-decoration: none;
       font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       transition: background 0.3s ease, transform 0.2s ease;
       width: 250px;
       text-align: center;
@@ -121,13 +130,14 @@
 
     .home-buttons a:hover {
       background-color: var(--accent-color);
+      color: #fff;
       transform: scale(1.05);
     }
 
     footer {
       margin-top: 60px;
       padding: 20px;
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      background: var(--card-color);
       width: 100%;
       display: flex;
       justify-content: center;
@@ -135,7 +145,7 @@
     }
 
     footer a {
-      color: var(--font-color-light);
+      color: var(--text-color);
       text-decoration: none;
       font-weight: 500;
     }
@@ -158,7 +168,7 @@
   <main class="center-container">
     <img src="logo.png" alt="Main Logo" class="floating-logo" />
     <div class="typewriter" id="typewriterText"></div>
-    
+
     <div class="home-buttons">
       <a href="dashboard.html">🚀 Explore Now</a>
       <a href="trending.html">📚 Trending Topics</a>
@@ -173,7 +183,7 @@
   </footer>
 
   <script>
-    // Theme toggle
+    // Theme Toggle
     const themeToggle = document.getElementById('themeToggle');
     const html = document.documentElement;
 
@@ -184,7 +194,6 @@
       localStorage.setItem('theme', newTheme);
     });
 
-    // Load saved theme
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       html.setAttribute('data-theme', savedTheme);
@@ -227,4 +236,3 @@
   </script>
 </body>
 </html>
-
