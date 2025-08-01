@@ -1,70 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard - The Little Info</title>
+  <title>Admin Dashboard</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
+  <script defer src="admin-dashboard.js"></script>
 </head>
-<body class="dark-theme">
-
-  <!-- Header -->
+<body>
   <header class="site-header">
     <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo" />
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
-        <a href="admin-dashboard.html" class="btn">Dashboard</a>
-        <a href="admin-analytics.html">Analytics</a>
-        <a href="#" id="logoutBtn" class="btn">Logout</a>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+        <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="section-container">
-    <h1>📊 Welcome, Admin</h1>
-    <p>You can manage users, view analytics, and moderate content here.</p>
-
-    <div class="stats-grid">
-      <div class="card animate-fade">
-        <h2>👤 Users</h2>
-        <p id="userCount">Loading...</p>
-      </div>
-      <div class="card animate-fade">
-        <h2>📥 Uploads</h2>
-        <p id="uploadCount">Loading...</p>
-      </div>
-      <div class="card animate-fade">
-        <h2>💬 Comments</h2>
-        <p id="commentCount">Loading...</p>
-      </div>
+  <main class="section-container fade-in">
+    <div class="auth-form-box">
+      <h2>🛠️ Admin Dashboard</h2>
+      <p>Manage uploaded topics by category.</p>
+      <div id="adminTopicsContainer" class="card-list"></div>
     </div>
   </main>
 
-  <!-- Auth + Admin Protection -->
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user || user.email !== 'thelittleinfo01@gmail.com') {
-        alert("❌ Unauthorized access.");
-        window.location.href = "login.html";
-      } else {
-        document.getElementById('userCount').innerText = '✔ 153 users';
-        document.getElementById('uploadCount').innerText = '✔ 78 uploads';
-        document.getElementById('commentCount').innerText = '✔ 240 comments';
-      }
-    });
-
-    logoutBtn.addEventListener('click', () => {
-      signOut(auth).then(() => {
-        alert("Logged out.");
-        window.location.href = "login.html";
-      });
-    });
-  </script>
+  <div id="toastContainer"></div>
 </body>
 </html>
