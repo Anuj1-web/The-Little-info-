@@ -27,21 +27,32 @@
   <main class="section-container fade-in">
     <div class="auth-form-box">
       <h2>📤 Admin Upload</h2>
-      <form id="uploadForm">
-        <label>Title</label>
-        <input type="text" id="titleInput" required />
+      <form id="uploadForm" class="upload-form">
+  <label for="title">Title</label>
+  <input type="text" id="title" required placeholder="Enter topic title" />
 
-        <label>Description</label>
-        <textarea id="descriptionInput" required></textarea>
+  <label for="description">Description</label>
+  <textarea id="description" rows="3" placeholder="Short summary..." required></textarea>
 
-        <label>Category</label>
-        <select id="categoryInput" required>
-          <option value="trending">Trending</option>
-          <option value="traditional">Traditional</option>
-        </select>
+  <label for="category">Category</label>
+  <select id="category" required>
+    <option value="">Select category</option>
+    <option value="trending">Trending</option>
+    <option value="traditional">Traditional</option>
+  </select>
 
-        <button type="submit" class="btn">Upload</button>
-      </form>
+  <label for="imageUpload">Upload Image</label>
+  <input type="file" id="imageUpload" accept="image/*" />
+
+  <label for="videoUpload">Upload Video</label>
+  <input type="file" id="videoUpload" accept="video/*" />
+
+  <label for="bodyText">Content Body</label>
+  <textarea id="bodyText" rows="6" placeholder="Full content, text or HTML allowed"></textarea>
+
+  <button type="submit" class="green-btn">📤 Upload Content</button>
+</form>
+
     </div>
   </main>
 
