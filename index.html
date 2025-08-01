@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Little Info</title>
+  <title>The Little Info - Home</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
     :root {
@@ -31,6 +31,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
     }
 
     header {
@@ -69,7 +70,7 @@
     }
 
     .floating-logo {
-      width: 140px; /* Reduced from 160px */
+      width: 140px;
       height: 140px;
       border-radius: 50%;
       animation: float 3s ease-in-out infinite;
@@ -141,13 +142,15 @@
   </style>
 </head>
 <body>
-  <header>
+  <header class="site-header">
     <img src="logo.png" alt="Site Logo" class="site-logo-small" />
     <nav>
       <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
       <a href="profile.html">Profile</a>
-      <a href="settings.html">Settings</a>
-      <a href="#" id="logoutBtn">Logout</a>
+      <a href="ai-chatbot.html">AI Chatbot</a>
+      <a href="login.html">Login</a>
+      <a href="signup.html">Signup</a>
       <button id="themeToggle">🌓</button>
     </nav>
   </header>
@@ -224,3 +227,4 @@
   </script>
 </body>
 </html>
+
