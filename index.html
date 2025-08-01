@@ -5,83 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Little Info - Home</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script defer src="theme-toggle.js"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    [data-theme="dark"] {
-      background: #0d0f17;
-      color: white;
+    :root {
+      --bg-color: #0d1117;
+      --text-color: #ffffff;
+      --box-bg: #161b22;
+      --box-hover: #1f6feb;
     }
 
     [data-theme="light"] {
-      background: #f8f8f8;
-      color: #111;
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --box-bg: #f1f1f1;
+      --box-hover: #007bff;
     }
 
-    .site-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header.site-header {
+      background: linear-gradient(to right, #07333d, #0b0f2c);
       padding: 10px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
     }
 
     .site-logo-small {
-      width: 40px;
       height: 40px;
+      width: 40px;
       border-radius: 50%;
-    }
-
-    nav a, nav button {
-      margin-left: 15px;
-      color: inherit;
-      text-decoration: none;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-
-    nav a:hover {
-      text-decoration: underline;
-    }
-
-    .main-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: calc(100vh - 60px);
-      text-align: center;
-    }
-
-    .logo-circle {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
       animation: float 3s ease-in-out infinite;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-      background-color: transparent;
-      border: 2px solid currentColor;
       transition: transform 0.3s;
     }
 
-    .logo-circle:hover {
+    .site-logo-small:hover {
       transform: scale(1.05);
     }
 
-    .logo-circle img {
-      width: 100%;
-      height: auto;
-      object-fit: contain;
+    nav a, nav button {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    nav button#themeToggle {
+      font-size: 18px;
+    }
+
+    .center-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 60px;
+      padding: 0 20px;
+    }
+
+    .center-logo {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: var(--box-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: float 4s ease-in-out infinite;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease;
+    }
+
+    .center-logo:hover {
+      transform: scale(1.03);
+    }
+
+    .center-logo img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
     }
 
     @keyframes float {
@@ -89,53 +106,59 @@
       50% { transform: translateY(-10px); }
     }
 
-    .welcome-text {
+    .welcome-message {
+      margin-top: 25px;
+      font-size: 1.25rem;
       font-style: italic;
-      font-size: 1.1rem;
-      height: 30px;
-      margin-top: 15px;
-      margin-bottom: 20px;
+      min-height: 30px;
       white-space: nowrap;
       overflow: hidden;
-      border-right: 2px solid;
-      width: 20ch;
-      animation: typing 3s steps(20), blink 0.5s step-end infinite alternate;
+      border-right: 2px solid var(--text-color);
+      animation: typing 3s steps(40, end) infinite, blink 0.7s step-end infinite;
     }
 
     @keyframes typing {
-      from { width: 0 }
-      to { width: 20ch }
+      0% { width: 0 }
+      50% { width: 100% }
+      100% { width: 0 }
     }
 
     @keyframes blink {
-      50% { border-color: transparent; }
+      0%, 100% { border-color: transparent; }
+      50% { border-color: var(--text-color); }
     }
 
-    .btn {
-      background: #3b82f6;
-      color: white;
-      padding: 10px 20px;
-      margin: 8px;
+    .button {
+      background-color: var(--box-bg);
+      color: var(--text-color);
       border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      padding: 15px 25px;
       font-size: 1rem;
-      display: inline-flex;
-      align-items: center;
-      transition: background 0.3s;
+      border-radius: 10px;
+      margin-top: 20px;
+      cursor: pointer;
+      width: 90%;
+      max-width: 380px;
+      transition: background 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
 
-    .btn:hover {
-      background: #2563eb;
+    .button:hover {
+      background-color: var(--box-hover);
+      transform: translateY(-3px);
     }
 
-    .btn i {
-      margin-right: 8px;
+    .footer-links {
+      text-align: center;
+      margin-top: 60px;
+      padding: 20px;
+      background: linear-gradient(to right, #07333d, #0b0f2c);
     }
 
-    #themeToggle {
-      font-size: 1.2rem;
-      background: none;
+    .footer-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      margin: 0 10px;
     }
   </style>
 </head>
@@ -145,63 +168,62 @@
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
-        <a href="dashboard.html">Dashboard</a>
         <a href="profile.html">Profile</a>
-        <a href="ai-chatbot.html">AI Chatbot</a>
-        <a href="login.html">Login</a>
-        <a href="signup.html">Signup</a>
-        <button id="themeToggle">🌙</button>
+        <a href="settings.html">Settings</a>
+        <a href="#">Logout</a>
+        <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <main class="main-content">
-    <div class="logo-circle">
-      <img src="logo.png" alt="The Little Info Logo" />
+  <section class="center-section">
+    <div class="center-logo">
+      <img src="logo.png" alt="Centered Logo" />
     </div>
 
-    <div class="welcome-text" id="welcomeText"></div>
+    <div class="welcome-message" id="welcomeMessage"></div>
 
-    <button class="btn" onclick="location.href='explore.html'">Explore Now</button>
-    <button class="btn" onclick="location.href='trending.html'"><i class="fas fa-fire"></i>Trending Topics</button>
-    <button class="btn" onclick="location.href='traditional.html'"><i class="fas fa-leaf"></i>Traditional Topics</button>
-  </main>
+    <button class="button">🚀 Explore Now</button>
+    <button class="button">📚 Trending Topics</button>
+    <button class="button">📖 Traditional Topics</button>
+  </section>
+
+  <footer class="footer-links">
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="ai-chatbot.html">🤖</a>
+  </footer>
 
   <script>
     const messages = [
-      "Welcome to The Literacy Project",
-      "Empowering through Knowledge",
-      "Learn. Grow. Succeed."
+      "Welcome to The Little Info!",
+      "Discover, Learn, Grow.",
+      "Empowering knowledge at your fingertips."
     ];
-    let msgIndex = 0;
-    const welcomeText = document.getElementById("welcomeText");
 
-    function typeMessage() {
-      welcomeText.textContent = "";
-      welcomeText.style.animation = "none";
-      void welcomeText.offsetWidth;
-      welcomeText.textContent = messages[msgIndex];
-      welcomeText.style.animation = "typing 3s steps(20), blink 0.5s step-end infinite alternate";
+    let msgIndex = 0;
+    const msgEl = document.getElementById("welcomeMessage");
+
+    function typeWriter() {
+      msgEl.innerHTML = messages[msgIndex];
       msgIndex = (msgIndex + 1) % messages.length;
     }
-    setInterval(typeMessage, 4000);
-    typeMessage();
+
+    setInterval(typeWriter, 4000);
+    typeWriter();
 
     const themeToggle = document.getElementById("themeToggle");
     themeToggle.addEventListener("click", () => {
-      const html = document.documentElement;
-      const currentTheme = html.getAttribute("data-theme");
-      const newTheme = currentTheme === "dark" ? "light" : "dark";
-      html.setAttribute("data-theme", newTheme);
-      localStorage.setItem("theme", newTheme);
-      themeToggle.textContent = newTheme === "dark" ? "🌙" : "☀️";
+      const current = document.documentElement.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
     });
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const savedTheme = localStorage.getItem("theme") || "dark";
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
       document.documentElement.setAttribute("data-theme", savedTheme);
-      themeToggle.textContent = savedTheme === "dark" ? "🌙" : "☀️";
-    });
+    }
   </script>
 <footer class="site-footer">
   <div class="footer-content">
@@ -244,6 +266,6 @@
     --footer-bg: #f5f5f5;
   }
 </style>
-
+  
 </body>
 </html>
