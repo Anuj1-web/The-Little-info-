@@ -1,55 +1,64 @@
 // admin-dashboard.js
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, getDoc } from "firebase/firestore";
-import { app } from "./firebase.js";
 
-const auth = getAuth(app);
-const db = getFirestore(app);
+document.addEventListener("DOMContentLoaded", () => {
+  const adminTopicsContainer = document.getElementById("adminTopicsContainer");
+  const toastContainer = document.getElementById("toastContainer");
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) return (window.location.href = "login.html");
+  firebase.auth().onAuthStateChanged((user) => {
+    if (!user) {
+      showToast("Please log in to continue.", "error");
+      setTimeout(() => window.location.href = "login.html", 1500);
+      return;
+    }
 
-  const userDoc = await getDoc(doc(db, "users", user.uid));
-  const userData = userDoc.data();
+    const uid = user.uid;
+    firebase.firestore().collection("users").doc(uid).get().then((doc) => {
+      const userData = doc.data();
+      if (userData && userData.role === "admin") {
+        // Load admin dashboard data
+        loadAdminTopics();
+      } else {
+        showToast("Access denied. Admins only.", "error");
+        setTimeout(() => window.location.href = "dashboard.html", 1500);
+      }
+    }).catch((err) => {
+      console.error("Error verifying admin role:", err);
+      showToast("Something went wrong. Try again later.", "error");
+      setTimeout(() => window.location.href = "dashboard.html", 2000);
+    });
+  });
 
-  if (userData?.role !== "admin") {
-    alert("❌ Access denied: Admins only.");
-    window.location.href = "index.html";
-  } else {
-    console.log("✅ Admin dashboard access granted.");
-    loadAdminDashboard();
+  function loadAdminTopics() {
+    firebase.firestore().collection("topics").orderBy("timestamp", "desc").get()
+      .then((querySnapshot) => {
+        adminTopicsContainer.innerHTML = "";
+        if (querySnapshot.empty) {
+          adminTopicsContainer.innerHTML = "<p>No uploaded topics yet.</p>";
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const card = document.createElement("div");
+          card.className = "topic-card fade-in";
+          card.innerHTML = `
+            <h3>${data.title || "Untitled"}</h3>
+            <p><strong>Category:</strong> ${data.category || "Uncategorized"}</p>
+            <p><strong>Uploaded:</strong> ${new Date(data.timestamp?.toDate()).toLocaleString()}</p>
+          `;
+          adminTopicsContainer.appendChild(card);
+        });
+      }).catch((err) => {
+        console.error("Error loading topics:", err);
+        showToast("Failed to load topics.", "error");
+      });
+  }
+
+  function showToast(message, type = "info") {
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.innerText = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
   }
 });
-
-async function loadAdminDashboard() {
-  const trendingCol = collection(db, "trending");
-  const traditionalCol = collection(db, "traditional");
-
-  const trendingSnap = await getDocs(trendingCol);
-  const traditionalSnap = await getDocs(traditionalCol);
-
-  displayContent("#trendingList", trendingSnap);
-  displayContent("#traditionalList", traditionalSnap);
-}
-
-function displayContent(containerSelector, snapshot) {
-  const container = document.querySelector(containerSelector);
-  container.innerHTML = "";
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    const card = document.createElement("div");
-    card.className = "topic-card fade-in";
-    card.innerHTML = `
-      <h3>${data.title}</h3>
-      <p>${data.description}</p>
-      <button onclick="deleteContent('${doc.ref.path}')">Delete</button>
-    `;
-    container.appendChild(card);
-  });
-}
-
-async function deleteContent(path) {
-  await deleteDoc(doc(db, path));
-  alert("Content deleted.");
-  location.reload();
-}
