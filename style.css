@@ -561,3 +561,46 @@ html {
   background-color: var(--primary-color, #66bb6a);
   transition: width 0.3s ease;
 }
+.recent-videos-section {
+  margin-top: 3rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+.recent-videos-section .section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.video-slider {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.video-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  background: var(--box-bg);
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+  min-width: 300px;
+  max-width: 320px;
+}
+
+.video-preview {
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.video-title {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: var(--text-color);
+}
