@@ -4,103 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Traditional Topics</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="theme-toggle.js"></script>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      transition: background 0.3s, color 0.3s;
-      margin: 0;
-      padding: 0;
-    }
-
-    [data-theme="dark"] {
-      background-color: #121212;
-      color: #fff;
-    }
-
-    [data-theme="light"] {
-      background-color: #fff;
-      color: #111;
-    }
-
-    .site-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      background: var(--header-bg, #f0f0f0);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .site-header img {
-      height: 40px;
-      border-radius: 50%;
-    }
-
-    .site-header nav a {
-      margin: 0 10px;
-      text-decoration: none;
-      font-weight: 500;
-      color: inherit;
-    }
-
-    .section-container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 40px 20px;
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 30px;
-    }
-
-    .topic-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      animation: fadeIn 1s ease;
-    }
-
-    .topic-card {
-      background: var(--card-bg, #fff);
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      transition: transform 0.3s, background 0.3s;
-    }
-
-    .topic-card:hover {
-      transform: translateY(-5px);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="theme-toggle.js" defer></script>
 </head>
 <body>
   <header class="site-header">
-    <img src="logo.png" alt="Logo" />
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="profile.html">Profile</a>
-      <button id="themeToggle">🌓</button>
-    </nav>
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+        <button id="themeToggle">🌓</button>
+      </nav>
+    </div>
   </header>
 
-  <section class="section-container">
-    <h1 class="section-title">📜 Traditional Topics</h1>
-    <div class="topic-grid" id="traditionalContainer">
-      <!-- Add Firebase-driven cards here -->
-      <div class="topic-card">Sample Traditional Topic 1</div>
-      <div class="topic-card">Sample Traditional Topic 2</div>
-      <div class="topic-card">Sample Traditional Topic 3</div>
+  <main class="section-container">
+    <div class="section-header">
+      <h1 class="section-title">📜 Traditional Topics</h1>
+      <p class="section-subtitle">Culturally rich and timeless topics curated by the admin.</p>
     </div>
-  </section>
+
+    <div class="card-grid" id="traditionalContent">
+      <!-- Admin-uploaded traditional content will be dynamically loaded here -->
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const content = document.getElementById('traditionalContent');
+      // Placeholder for Firebase: Load only "traditional" category content
+      content.innerHTML = `
+        <div class="content-card fade-in">
+          <h3>Traditional Post Title</h3>
+          <p>This is where traditional content uploaded by admin appears.</p>
+        </div>
+      `;
+    });
+  </script>
 </body>
 </html>
