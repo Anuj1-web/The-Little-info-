@@ -1,11 +1,12 @@
+<!-- traditional.html -->
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Traditional Topics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traditional Topics - The Little Info</title>
   <link rel="stylesheet" href="styles.css" />
-  <script src="theme-toggle.js" defer></script>
+  <script defer src="theme-toggle.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -23,28 +24,15 @@
     </div>
   </header>
 
-  <main class="section-container">
-    <div class="section-header">
-      <h1 class="section-title">📜 Traditional Topics</h1>
-      <p class="section-subtitle">Culturally rich and timeless topics curated by the admin.</p>
-    </div>
+  <main class="section-container fade-in">
+    <h2 class="section-title">📜 Traditional Topics</h2>
+    <p class="section-description">Culturally rich and timeless topics curated by the admin.</p>
 
-    <div class="card-grid" id="traditionalContent">
-      <!-- Admin-uploaded traditional content will be dynamically loaded here -->
+    <div class="content-card">
+      <h3>Traditional Post Title</h3>
+      <p>Traditional post description or summary here...</p>
     </div>
+    <!-- Repeat content-card for more posts -->
   </main>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const content = document.getElementById('traditionalContent');
-      // Placeholder for Firebase: Load only "traditional" category content
-      content.innerHTML = `
-        <div class="content-card fade-in">
-          <h3>Traditional Post Title</h3>
-          <p>This is where traditional content uploaded by admin appears.</p>
-        </div>
-      `;
-    });
-  </script>
 </body>
 </html>
