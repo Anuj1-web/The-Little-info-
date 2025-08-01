@@ -377,6 +377,18 @@ nav a:hover, nav button:hover {
 .auth-redirect a:hover {
   text-decoration: underline;
 }
+/* Additional consistent green links for auth actions */
+.auth-links a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.auth-links a:hover {
+  color: #32c997; /* Slightly lighter green on hover */
+  text-decoration: underline;
+}
 
 /* Fade-in animation */
 @keyframes fadeIn {
