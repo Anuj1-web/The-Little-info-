@@ -6,6 +6,7 @@
   <title>Home - The Literacy Project</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <style>
     :root {
       --bg-light: #ffffff;
@@ -81,11 +82,11 @@
     }
 
     .floating-logo {
-      width: 120px;
-      height: 120px;
+      width: 160px;
+      height: 160px;
       border-radius: 50%;
       overflow: hidden;
-      border: 4px solid var(--accent-color);
+      border: 5px solid var(--accent-color);
       animation: float 3s ease-in-out infinite;
       transition: transform 0.3s ease;
       cursor: pointer;
@@ -108,39 +109,45 @@
     }
 
     .typewriter-text {
-      font-size: 1.6rem;
+      font-size: 1.2rem;
+      font-style: italic;
       margin-top: 25px;
       min-height: 30px;
       height: 30px;
-      font-weight: bold;
+      font-weight: 500;
     }
 
     .explore-btn, .topic-btn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 1rem;
+      margin-top: 25px;
+      padding: 14px 28px;
+      font-size: 1.1rem;
       border: none;
       cursor: pointer;
       background-color: var(--accent-color);
       color: #fff;
-      border-radius: 6px;
-      transition: background-color 0.3s ease;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
     .explore-btn:hover, .topic-btn:hover {
       background-color: #388e3c;
+      transform: scale(1.03);
     }
 
     .topic-buttons {
       display: flex;
       flex-direction: column;
-      gap: 15px;
-      margin-top: 20px;
+      gap: 18px;
+      margin-top: 25px;
     }
 
     a.topic-btn {
       text-decoration: none;
       text-align: center;
+    }
+
+    .topic-btn i {
+      margin-right: 10px;
     }
   </style>
 </head>
@@ -175,8 +182,8 @@
 
     <!-- TRENDING AND TRADITIONAL BUTTONS -->
     <div class="topic-buttons">
-      <a href="trending.html" class="topic-btn">Trending Topics</a>
-      <a href="traditional.html" class="topic-btn">Traditional Topics</a>
+      <a href="trending.html" class="topic-btn"><i class="fas fa-fire"></i>Trending Topics</a>
+      <a href="traditional.html" class="topic-btn"><i class="fas fa-feather-alt"></i>Traditional Topics</a>
     </div>
   </div>
 
@@ -210,6 +217,23 @@
     }
 
     typeWriter(messages[messageIndex]);
+
+    // THEME TOGGLE (must match theme-toggle.js)
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute("data-theme");
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+      html.setAttribute("data-theme", newTheme);
+      localStorage.setItem("theme", newTheme);
+      document.getElementById("themeToggle").textContent = newTheme === "light" ? "🌙" : "☀️";
+    });
+
+    // Load saved theme on page load
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      document.getElementById("themeToggle").textContent = savedTheme === "light" ? "🌙" : "☀️";
+    });
   </script>
 </body>
 </html>
