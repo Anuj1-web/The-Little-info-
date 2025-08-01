@@ -1,50 +1,34 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Home - The Literacy Project</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Little Info - Home</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="theme-toggle.js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    :root {
-      --bg-light: #ffffff;
-      --text-light: #000000;
-      --bg-dark: #121212;
-      --text-dark: #ffffff;
-      --accent-color: #4caf50;
-    }
-
-    [data-theme="light"] {
-      background-color: var(--bg-light);
-      color: var(--text-light);
-    }
-
-    [data-theme="dark"] {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-    }
-
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      transition: background-color 0.3s, color 0.3s;
+      transition: background 0.3s, color 0.3s;
     }
 
-    header.site-header {
+    [data-theme="dark"] {
+      background: #0d0f17;
+      color: white;
+    }
+
+    [data-theme="light"] {
+      background: #f8f8f8;
+      color: #111;
+    }
+
+    .site-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: transparent;
-    }
-
-    .header-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .site-logo-small {
@@ -53,54 +37,51 @@
       border-radius: 50%;
     }
 
-    nav a {
-      margin: 0 10px;
-      text-decoration: none;
+    nav a, nav button {
+      margin-left: 15px;
       color: inherit;
-      font-weight: bold;
-    }
-
-    nav a:hover {
-      color: var(--accent-color);
-    }
-
-    #themeToggle {
+      text-decoration: none;
       background: none;
       border: none;
-      font-size: 20px;
       cursor: pointer;
     }
 
-    .center-container {
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .main-content {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: calc(100vh - 60px);
       text-align: center;
-      padding: 20px;
     }
 
-    .floating-logo {
-      width: 160px;
-      height: 160px;
+    .logo-circle {
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       overflow: hidden;
-      border: 5px solid var(--accent-color);
       animation: float 3s ease-in-out infinite;
-      transition: transform 0.3s ease;
-      cursor: pointer;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      background-color: transparent;
+      border: 2px solid currentColor;
+      transition: transform 0.3s;
     }
 
-    .floating-logo:hover {
+    .logo-circle:hover {
       transform: scale(1.05);
     }
 
-    .floating-logo img {
+    .logo-circle img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
+      height: auto;
+      object-fit: contain;
     }
 
     @keyframes float {
@@ -108,51 +89,57 @@
       50% { transform: translateY(-10px); }
     }
 
-    .typewriter-text {
-      font-size: 1.2rem;
+    .welcome-text {
       font-style: italic;
-      margin-top: 25px;
-      min-height: 30px;
-      height: 30px;
-      font-weight: 500;
-    }
-
-    .explore-btn, .topic-btn {
-      margin-top: 25px;
-      padding: 14px 28px;
       font-size: 1.1rem;
+      height: 30px;
+      margin-top: 15px;
+      margin-bottom: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid;
+      width: 20ch;
+      animation: typing 3s steps(20), blink 0.5s step-end infinite alternate;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 20ch }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    .btn {
+      background: #3b82f6;
+      color: white;
+      padding: 10px 20px;
+      margin: 8px;
       border: none;
-      cursor: pointer;
-      background-color: var(--accent-color);
-      color: #fff;
       border-radius: 8px;
-      transition: background-color 0.3s ease, transform 0.2s ease;
+      cursor: pointer;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      transition: background 0.3s;
     }
 
-    .explore-btn:hover, .topic-btn:hover {
-      background-color: #388e3c;
-      transform: scale(1.03);
+    .btn:hover {
+      background: #2563eb;
     }
 
-    .topic-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      margin-top: 25px;
+    .btn i {
+      margin-right: 8px;
     }
 
-    a.topic-btn {
-      text-decoration: none;
-      text-align: center;
-    }
-
-    .topic-btn i {
-      margin-right: 10px;
+    #themeToggle {
+      font-size: 1.2rem;
+      background: none;
     }
   </style>
 </head>
 <body>
-  <!-- LOCKED CONSISTENT HEADER -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -168,71 +155,52 @@
     </div>
   </header>
 
-  <div class="center-container">
-    <!-- CIRCULAR CENTERED FLOATING LOGO -->
-    <div class="floating-logo">
-      <img src="logo.png" alt="Floating Logo" />
+  <main class="main-content">
+    <div class="logo-circle">
+      <img src="logo.png" alt="The Little Info Logo" />
     </div>
 
-    <!-- MULTIPLE WELCOME MESSAGES -->
-    <div class="typewriter-text" id="welcomeMessage"></div>
+    <div class="welcome-text" id="welcomeText"></div>
 
-    <!-- EXPLORE NOW BUTTON -->
-    <a href="dashboard.html" class="explore-btn">Explore Now</a>
-
-    <!-- TRENDING AND TRADITIONAL BUTTONS -->
-    <div class="topic-buttons">
-      <a href="trending.html" class="topic-btn"><i class="fas fa-fire"></i>Trending Topics</a>
-      <a href="traditional.html" class="topic-btn"><i class="fas fa-feather-alt"></i>Traditional Topics</a>
-    </div>
-  </div>
+    <button class="btn" onclick="location.href='explore.html'">Explore Now</button>
+    <button class="btn" onclick="location.href='trending.html'"><i class="fas fa-fire"></i>Trending Topics</button>
+    <button class="btn" onclick="location.href='traditional.html'"><i class="fas fa-leaf"></i>Traditional Topics</button>
+  </main>
 
   <script>
     const messages = [
       "Welcome to The Literacy Project",
-      "Empowering through Education",
-      "Explore Insights and Interact",
-      "Join the Learning Movement"
+      "Empowering through Knowledge",
+      "Learn. Grow. Succeed."
     ];
-    let messageIndex = 0;
-    const messageElement = document.getElementById("welcomeMessage");
+    let msgIndex = 0;
+    const welcomeText = document.getElementById("welcomeText");
 
-    function typeWriter(text, i = 0) {
-      if (i < text.length) {
-        messageElement.innerHTML = text.substring(0, i + 1);
-        setTimeout(() => typeWriter(text, i + 1), 80);
-      } else {
-        setTimeout(() => deleteWriter(text), 1500);
-      }
+    function typeMessage() {
+      welcomeText.textContent = "";
+      welcomeText.style.animation = "none";
+      void welcomeText.offsetWidth;
+      welcomeText.textContent = messages[msgIndex];
+      welcomeText.style.animation = "typing 3s steps(20), blink 0.5s step-end infinite alternate";
+      msgIndex = (msgIndex + 1) % messages.length;
     }
+    setInterval(typeMessage, 4000);
+    typeMessage();
 
-    function deleteWriter(text, i = text.length) {
-      if (i > 0) {
-        messageElement.innerHTML = text.substring(0, i - 1);
-        setTimeout(() => deleteWriter(text, i - 1), 50);
-      } else {
-        messageIndex = (messageIndex + 1) % messages.length;
-        setTimeout(() => typeWriter(messages[messageIndex]), 500);
-      }
-    }
-
-    typeWriter(messages[messageIndex]);
-
-    // THEME TOGGLE (must match theme-toggle.js)
-    document.getElementById("themeToggle").addEventListener("click", () => {
+    const themeToggle = document.getElementById("themeToggle");
+    themeToggle.addEventListener("click", () => {
       const html = document.documentElement;
       const currentTheme = html.getAttribute("data-theme");
-      const newTheme = currentTheme === "light" ? "dark" : "light";
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
       html.setAttribute("data-theme", newTheme);
       localStorage.setItem("theme", newTheme);
-      document.getElementById("themeToggle").textContent = newTheme === "light" ? "🌙" : "☀️";
+      themeToggle.textContent = newTheme === "dark" ? "🌙" : "☀️";
     });
 
-    // Load saved theme on page load
     window.addEventListener("DOMContentLoaded", () => {
-      const savedTheme = localStorage.getItem("theme") || "light";
+      const savedTheme = localStorage.getItem("theme") || "dark";
       document.documentElement.setAttribute("data-theme", savedTheme);
-      document.getElementById("themeToggle").textContent = savedTheme === "light" ? "🌙" : "☀️";
+      themeToggle.textContent = savedTheme === "dark" ? "🌙" : "☀️";
     });
   </script>
 </body>
