@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login - The Little Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="theme-toggle.js"></script>
 </head>
 <body>
-  <!-- Header -->
+
+  <!-- ✅ Compact Consistent Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -17,47 +17,31 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="profile.html">Profile</a>
         <a href="ai-chatbot.html">AI Chatbot</a>
-        <a href="login.html" class="btn">Login</a>
-        <a href="signup.html" class="btn">Signup</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
         <button id="themeToggle">🌙</button>
       </nav>
     </div>
   </header>
 
-  <!-- Login Section -->
-  <main class="section-container">
-    <div class="auth-form-box">
-      <h2 style="color: var(--primary);">Login to Your Account</h2>
+  <!-- ✅ Auth Form Box (Matches signup/settings) -->
+  <section class="section-container">
+    <div class="auth-form-box animate-fade-in">
+      <h2>Login</h2>
       <form id="loginForm">
-  <input type="email" id="loginEmail" required />
-  <input type="password" id="loginPassword" required />
-  <button type="submit">Login</button>
-</form>
-
-      <p class="auth-redirect">Don't have an account? <a href="signup.html">Sign up here</a></p>
+        <input type="email" id="loginEmail" placeholder="Email" required />
+        <input type="password" id="loginPassword" placeholder="Password" required />
+        <button type="submit" class="btn-primary">Login</button>
+      </form>
     </div>
-  </main>
+  </section>
 
-  <!-- Firebase Login Logic -->
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+  <!-- ✅ Toast container (optional for feedback) -->
+  <div id="toast-container"></div>
 
-    const loginForm = document.getElementById('loginForm');
-
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        alert("Login successful!");
-        window.location.href = "dashboard.html";
-      } catch (error) {
-        alert("Login failed: " + error.message);
-      }
-    });
-  </script>
+  <!-- ✅ Scripts -->
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="login.js"></script>
+  <script src="theme-toggle.js"></script>
 </body>
 </html>
