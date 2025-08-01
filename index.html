@@ -203,5 +203,47 @@
       themeToggle.textContent = savedTheme === "dark" ? "🌙" : "☀️";
     });
   </script>
+<footer class="site-footer">
+  <div class="footer-content">
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="ai-chatbot.html">AI Chatbot 🤖</a>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.95rem;
+    background: var(--footer-bg, transparent);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 3rem;
+  }
+
+  .footer-content a {
+    margin: 0 12px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .footer-content a:hover {
+    color: #4fc3f7;
+  }
+
+  /* Theme support */
+  [data-theme="dark"] .site-footer {
+    --text-color: #e0e0e0;
+    --footer-bg: #121212;
+  }
+
+  [data-theme="light"] .site-footer {
+    --text-color: #222;
+    --footer-bg: #f5f5f5;
+  }
+</style>
+
 </body>
 </html>
