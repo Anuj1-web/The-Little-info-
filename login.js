@@ -30,17 +30,22 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const userDocSnap = await getDoc(userDocRef);
 
     if (userDocSnap.exists()) {
-      const userData = userDocSnap.data();
-      const role = userData.role;
-      console.log("Logged in user role:", role);
+  const userData = userDocSnap.data();
+  const role = userData.role;
+  console.log("Logged in user role:", role);
 
-      alert('Login successful!');
+  // Avoid alert to prevent redirect issue
+  console.log('Login successful!');
 
-      if (role === 'admin') {
-        window.location.href = 'admin-dashboard.html';
-      } else {
-        window.location.href = 'dashboard.html';
-      }
+  if (role?.toLowerCase() === 'admin') {
+    window.location.href = 'admin-dashboard.html';
+  } else {
+    window.location.href = 'dashboard.html';
+  }
+} else {
+  alert("User data not found in database.");
+}
+
     } else {
       alert("User data not found in database.");
     }
