@@ -1,8 +1,7 @@
 // admin.js
 import { auth, db } from './firebase.js';
 import {
-  onAuthStateChanged,
-  signOut
+  onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import {
   doc,
@@ -12,69 +11,70 @@ import {
   serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-// ✅ Admin authentication check
 document.addEventListener('DOMContentLoaded', () => {
+  // ✅ Role check only for current page
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
+      console.warn('User not logged in. Redirecting...');
       window.location.href = 'login.html';
       return;
     }
 
     try {
-      const userDocRef = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userDocRef);
-
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
-        if (userData.role?.toLowerCase() !== 'admin') {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        const role = userDoc.data().role?.toLowerCase();
+        if (role !== 'admin') {
+          console.warn('Not an admin. Redirecting...');
           window.location.href = 'dashboard.html';
+        } else {
+          console.log('Admin access granted');
         }
       } else {
+        console.warn('User document missing. Redirecting...');
         window.location.href = 'dashboard.html';
       }
-    } catch (error) {
-      console.error('Role check error:', error);
+    } catch (err) {
+      console.error('Error checking role:', err);
       window.location.href = 'dashboard.html';
     }
   });
-});
 
-// ✅ Form submission for uploading content
-document.addEventListener('DOMContentLoaded', () => {
+  // ✅ Upload logic
   const uploadForm = document.getElementById('uploadForm');
-  if (!uploadForm) return;
+  if (uploadForm) {
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-  uploadForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+      const title = document.getElementById('title').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const category = document.getElementById('category').value;
+      const content = document.getElementById('content').value.trim();
+      const imageURL = document.getElementById('imageURL').value.trim();
+      const videoURL = document.getElementById('videoURL').value.trim();
 
-    const title = document.getElementById('title').value.trim();
-    const description = document.getElementById('description').value.trim();
-    const category = document.getElementById('category').value;
-    const content = document.getElementById('content').value.trim();
-    const imageURL = document.getElementById('imageURL').value.trim();
-    const videoURL = document.getElementById('videoURL').value.trim();
+      if (!title || !description || !category) {
+        alert('Please fill in all required fields');
+        return;
+      }
 
-    if (!title || !description || !category) {
-      alert('Please fill in all required fields.');
-      return;
-    }
+      try {
+        await addDoc(collection(db, 'posts'), {
+          title,
+          description,
+          category,
+          content,
+          imageURL,
+          videoURL,
+          createdAt: serverTimestamp()
+        });
 
-    try {
-      const docRef = await addDoc(collection(db, 'posts'), {
-        title,
-        description,
-        category,
-        content,
-        imageURL,
-        videoURL,
-        createdAt: serverTimestamp(),
-      });
-
-      alert('Content uploaded successfully!');
-      uploadForm.reset();
-    } catch (error) {
-      console.error('Upload error:', error);
-      alert('Failed to upload content. Please try again.');
-    }
-  });
+        alert('Upload successful!');
+        uploadForm.reset();
+      } catch (uploadError) {
+        console.error('Upload failed:', uploadError);
+        alert('Upload failed');
+      }
+    });
+  }
 });
