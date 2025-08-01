@@ -8,6 +8,7 @@ import {
   doc,
   getDoc
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -52,5 +53,23 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   } catch (error) {
     console.error('Login error:', error);
     alert(error.message || 'Login failed. Please check your credentials.');
+  }
+});
+// Password Reset
+document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+
+  if (!email) {
+    alert("Please enter your email above to reset your password.");
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    alert("Password reset email sent!");
+  } catch (error) {
+    console.error("Password reset error:", error);
+    alert(error.message || "Failed to send reset email.");
   }
 });
