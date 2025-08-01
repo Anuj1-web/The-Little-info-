@@ -2,270 +2,225 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Little Info - Home</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="theme-toggle.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Little Info</title>
+  <link rel="stylesheet" href="styles.css" />
   <style>
     :root {
-      --bg-color: #0d1117;
-      --text-color: #ffffff;
-      --box-bg: #161b22;
-      --box-hover: #1f6feb;
+      --primary-color: #1e1e2f;
+      --secondary-color: #f0f0f0;
+      --accent-color: #4f46e5;
+      --card-bg: #2a2a40;
+      --font-color-light: #ffffff;
+      --font-color-dark: #1e1e2f;
     }
 
     [data-theme="light"] {
-      --bg-color: #ffffff;
-      --text-color: #000000;
-      --box-bg: #f1f1f1;
-      --box-hover: #007bff;
+      --primary-color: #ffffff;
+      --secondary-color: #1e1e2f;
+      --card-bg: #e6e6e6;
+      --font-color-light: #1e1e2f;
     }
 
     body {
       margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      transition: background 0.3s, color 0.3s;
+      background: var(--primary-color);
+      color: var(--font-color-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    header.site-header {
-      background: linear-gradient(to right, #07333d, #0b0f2c);
+    header {
+      width: 100%;
       padding: 10px 20px;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .header-container {
-      display: flex;
-      align-items: center;
-      gap: 20px;
+    .site-logo-small {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
     }
 
-    .site-logo-small {
-      height: 40px;
-      width: 40px;
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: var(--font-color-light);
+      font-weight: 500;
+    }
+
+    #themeToggle {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--font-color-light);
+    }
+
+    .center-container {
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    .floating-logo {
+      width: 140px; /* Reduced from 160px */
+      height: 140px;
       border-radius: 50%;
       animation: float 3s ease-in-out infinite;
       transition: transform 0.3s;
     }
 
-    .site-logo-small:hover {
+    .floating-logo:hover {
       transform: scale(1.05);
     }
 
-    nav a, nav button {
-      color: var(--text-color);
-      text-decoration: none;
-      font-weight: 500;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
     }
 
-    nav button#themeToggle {
-      font-size: 18px;
+    .typewriter {
+      font-size: 1.3rem;
+      font-style: italic;
+      margin-top: 20px;
+      min-height: 40px;
     }
 
-    .center-section {
+    .home-buttons {
+      margin-top: 30px;
       display: flex;
       flex-direction: column;
+      gap: 15px;
       align-items: center;
+    }
+
+    .home-buttons a {
+      background-color: var(--card-bg);
+      color: var(--font-color-light);
+      padding: 18px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: background 0.3s ease, transform 0.2s ease;
+      width: 250px;
       text-align: center;
-      margin-top: 60px;
-      padding: 0 20px;
+      font-size: 1.05rem;
     }
 
-    .center-logo {
-      width: 160px;
-      height: 160px;
-      border-radius: 50%;
-      background: var(--box-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: float 4s ease-in-out infinite;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      transition: transform 0.3s ease;
+    .home-buttons a:hover {
+      background-color: var(--accent-color);
+      transform: scale(1.05);
     }
 
-    .center-logo:hover {
-      transform: scale(1.03);
-    }
-
-    .center-logo img {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .welcome-message {
-      margin-top: 25px;
-      font-size: 1.25rem;
-      font-style: italic;
-      min-height: 30px;
-      white-space: nowrap;
-      overflow: hidden;
-      border-right: 2px solid var(--text-color);
-      animation: typing 3s steps(40, end) infinite, blink 0.7s step-end infinite;
-    }
-
-    @keyframes typing {
-      0% { width: 0 }
-      50% { width: 100% }
-      100% { width: 0 }
-    }
-
-    @keyframes blink {
-      0%, 100% { border-color: transparent; }
-      50% { border-color: var(--text-color); }
-    }
-
-    .button {
-      background-color: var(--box-bg);
-      color: var(--text-color);
-      border: none;
-      padding: 15px 25px;
-      font-size: 1rem;
-      border-radius: 10px;
-      margin-top: 20px;
-      cursor: pointer;
-      width: 90%;
-      max-width: 380px;
-      transition: background 0.3s ease, transform 0.3s ease;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .button:hover {
-      background-color: var(--box-hover);
-      transform: translateY(-3px);
-    }
-
-    .footer-links {
-      text-align: center;
+    footer {
       margin-top: 60px;
       padding: 20px;
-      background: linear-gradient(to right, #07333d, #0b0f2c);
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
     }
 
-    .footer-links a {
-      color: var(--text-color);
+    footer a {
+      color: var(--font-color-light);
       text-decoration: none;
-      margin: 0 10px;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-container">
-      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="profile.html">Profile</a>
-        <a href="settings.html">Settings</a>
-        <a href="#">Logout</a>
-        <button id="themeToggle">🌓</button>
-      </nav>
-    </div>
+  <header>
+    <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="profile.html">Profile</a>
+      <a href="settings.html">Settings</a>
+      <a href="#" id="logoutBtn">Logout</a>
+      <button id="themeToggle">🌓</button>
+    </nav>
   </header>
 
-  <section class="center-section">
-    <div class="center-logo">
-      <img src="logo.png" alt="Centered Logo" />
+  <main class="center-container">
+    <img src="logo.png" alt="Main Logo" class="floating-logo" />
+    <div class="typewriter" id="typewriterText"></div>
+    
+    <div class="home-buttons">
+      <a href="dashboard.html">🚀 Explore Now</a>
+      <a href="trending.html">📚 Trending Topics</a>
+      <a href="traditional.html">📖 Traditional Topics</a>
     </div>
+  </main>
 
-    <div class="welcome-message" id="welcomeMessage"></div>
-
-    <button class="button">🚀 Explore Now</button>
-    <button class="button">📚 Trending Topics</button>
-    <button class="button">📖 Traditional Topics</button>
-  </section>
-
-  <footer class="footer-links">
+  <footer>
     <a href="about.html">About</a>
     <a href="contact.html">Contact</a>
     <a href="ai-chatbot.html">🤖</a>
   </footer>
 
   <script>
-    const messages = [
-      "Welcome to The Little Info!",
-      "Discover, Learn, Grow.",
-      "Empowering knowledge at your fingertips."
-    ];
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
 
-    let msgIndex = 0;
-    const msgEl = document.getElementById("welcomeMessage");
-
-    function typeWriter() {
-      msgEl.innerHTML = messages[msgIndex];
-      msgIndex = (msgIndex + 1) % messages.length;
-    }
-
-    setInterval(typeWriter, 4000);
-    typeWriter();
-
-    const themeToggle = document.getElementById("themeToggle");
-    themeToggle.addEventListener("click", () => {
-      const current = document.documentElement.getAttribute("data-theme");
-      const next = current === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("theme", next);
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
     });
 
-    const savedTheme = localStorage.getItem("theme");
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
-      document.documentElement.setAttribute("data-theme", savedTheme);
+      html.setAttribute('data-theme', savedTheme);
     }
+
+    // Typewriter effect
+    const messages = [
+      "Welcome to The Little Info",
+      "Your gateway to knowledge",
+      "Explore trending and traditional topics",
+    ];
+    let messageIndex = 0;
+    let charIndex = 0;
+    const typewriterElement = document.getElementById('typewriterText');
+
+    function typeMessage() {
+      if (charIndex < messages[messageIndex].length) {
+        typewriterElement.textContent += messages[messageIndex].charAt(charIndex);
+        charIndex++;
+        setTimeout(typeMessage, 80);
+      } else {
+        setTimeout(eraseMessage, 1800);
+      }
+    }
+
+    function eraseMessage() {
+      if (charIndex > 0) {
+        typewriterElement.textContent = messages[messageIndex].substring(0, charIndex - 1);
+        charIndex--;
+        setTimeout(eraseMessage, 50);
+      } else {
+        messageIndex = (messageIndex + 1) % messages.length;
+        setTimeout(typeMessage, 500);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(typeMessage, 800);
+    });
   </script>
-<footer class="site-footer">
-  <div class="footer-content">
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
-    <a href="ai-chatbot.html">AI Chatbot 🤖</a>
-  </div>
-</footer>
-
-<style>
-  .site-footer {
-    text-align: center;
-    padding: 1.5rem;
-    font-size: 0.95rem;
-    background: var(--footer-bg, transparent);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 3rem;
-  }
-
-  .footer-content a {
-    margin: 0 12px;
-    color: var(--text-color);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
-  }
-
-  .footer-content a:hover {
-    color: #4fc3f7;
-  }
-
-  /* Theme support */
-  [data-theme="dark"] .site-footer {
-    --text-color: #e0e0e0;
-    --footer-bg: #121212;
-  }
-
-  [data-theme="light"] .site-footer {
-    --text-color: #222;
-    --footer-bg: #f5f5f5;
-  }
-</style>
-  
 </body>
 </html>
