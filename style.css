@@ -431,3 +431,30 @@ nav a:hover, nav button:hover {
     transform: translateX(100%);
   }
 }
+/* === Site-wide Safe Enhancements (Fully Consistent) === */
+
+/* Improve keyboard accessibility for inputs */
+.auth-form-box input:focus-visible,
+.auth-form-box textarea:focus-visible,
+.auth-form-box select:focus-visible {
+  outline: none;
+  border-color: var(--btn-bg);
+  box-shadow: 0 0 5px var(--btn-bg);
+}
+
+/* Fallback font stack and improved readability */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+}
+
+/* Enable smooth scrolling across the site */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optional: Subtle hover highlight for dashboard-style cards */
+.dashboard-card:hover h3,
+.dashboard-card:hover p {
+  color: var(--primary);
+}
