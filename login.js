@@ -11,6 +11,7 @@ import {
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+  console.log("Login form submitted");
 
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
@@ -31,24 +32,21 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
     if (userDocSnap.exists()) {
       const userData = userDocSnap.data();
-      const role = (userData.role || '').toLowerCase();
+      const role = userData.role;
+      console.log("Logged in user role:", role);
 
-      console.log("✅ Logged in User UID:", user.uid);
-      console.log("✅ Retrieved role from Firestore:", role);
-
-      // Don't use alert here to avoid blocking redirect
+      // Success indicator
       console.log('Login successful!');
 
-      if (role === 'admin') {
-        console.log('🔁 Redirecting to admin-dashboard.html');
+      // ✅ Role-based redirection
+      if (role?.toLowerCase() === 'admin') {
         window.location.href = 'admin-dashboard.html';
       } else {
-        console.log('🔁 Redirecting to dashboard.html');
         window.location.href = 'dashboard.html';
       }
+
     } else {
-      console.warn("❌ User data not found in Firestore for UID:", user.uid);
-      alert("User data not found. Please contact support.");
+      alert("User data not found in Firestore.");
     }
 
   } catch (error) {
