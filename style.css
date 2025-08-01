@@ -470,3 +470,33 @@ html {
 .dashboard-card:hover p {
   color: var(--primary);
 }
+.admin-card-box {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.admin-card-button {
+  background-color: var(--primary);
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 201, 167, 0.2);
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.admin-card-button:hover {
+  background-color: rgba(0, 201, 167, 0.9);
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 201, 167, 0.3);
+}
+
+.admin-card-button .box-icon {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
