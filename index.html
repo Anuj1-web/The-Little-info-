@@ -175,37 +175,35 @@
       <a href="traditional.html">📖 Traditional Topics</a>
     </div>
   <!-- ✅ Recent Videos Section -->
-<section id="recent-videos-section" class="video-carousel-section fade-in-up">
-  <h2 class="section-title">📺 Recent Video Uploads</h2>
-  <div class="carousel-container">
-    <button class="carousel-arrow left">&#9664;</button>
-    <div class="carousel-track">
-      <!-- Mock Entries Start -->
-      <div class="carousel-card">
-        <video controls src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
-        <p>Sample Video 1</p>
+<section class="video-slider-section">
+  <h2 class="section-title">🎥 Latest Videos</h2>
+  <div class="slider-container">
+    <div class="video-slider">
+      <!-- Slide 1 -->
+      <div class="slide active">
+        <video src="videos/video1.mp4" controls></video>
+        <p class="video-title">Sample Video 1</p>
       </div>
-      <div class="carousel-card">
-        <img src="https://via.placeholder.com/320x180.png?text=Sample+Image+1" alt="Sample Image">
-        <p>Sample Image Preview</p>
+      <!-- Slide 2 -->
+      <div class="slide">
+        <video src="videos/video2.mp4" controls></video>
+        <p class="video-title">Sample Video 2</p>
       </div>
-      <div class="carousel-card text-card">
-        <blockquote>“This is a sample text preview to test how text content appears in the slider.”</blockquote>
+      <!-- Slide 3 -->
+      <div class="slide">
+        <video src="videos/video3.mp4" controls></video>
+        <p class="video-title">Sample Video 3</p>
       </div>
-      <div class="carousel-card">
-        <video controls src="https://www.w3schools.com/html/movie.mp4"></video>
-        <p>Sample Video 2</p>
-      </div>
-      <div class="carousel-card">
-        <img src="https://via.placeholder.com/320x180.png?text=Sample+Image+2" alt="Sample Image">
-        <p>Sample Image Preview 2</p>
-      </div>
-      <!-- Mock Entries End -->
+      <!-- Add more slides as needed -->
     </div>
-    <button class="carousel-arrow right">&#9654;</button>
+    <!-- Navigation buttons -->
+    <button class="slider-btn prev">◀</button>
+    <button class="slider-btn next">▶</button>
+    <!-- Dots -->
+    <div class="slider-dots"></div>
   </div>
-  <div class="carousel-dots"></div>
 </section>
+
 
 
   <footer>
@@ -321,56 +319,76 @@
   }
 </style>
 <script src="recent-videos.js" type="module"></script>
- <script>
-  const track = document.querySelector('.carousel-track');
-  const slides = Array.from(track.children);
-  const nextBtn = document.querySelector('.carousel-arrow.right');
-  const prevBtn = document.querySelector('.carousel-arrow.left');
-  const dotNav = document.querySelector('.carousel-dots');
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.querySelector('.slider-btn.prev');
+  const nextBtn = document.querySelector('.slider-btn.next');
+  const dotsContainer = document.querySelector('.slider-dots');
+  let currentIndex = 0;
+  let autoSlide;
 
-  let currentSlide = 0;
+  function updateSlider(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
+    });
 
-  function updateCarousel() {
-    const slideWidth = slides[0].getBoundingClientRect().width;
-    track.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
 
-    Array.from(dotNav.children).forEach(dot => dot.classList.remove('active'));
-    if (dotNav.children[currentSlide]) {
-      dotNav.children[currentSlide].classList.add('active');
-    }
+    currentIndex = index;
   }
 
   function createDots() {
-    slides.forEach((_, i) => {
-      const dot = document.createElement('button');
-      if (i === 0) dot.classList.add('active');
+    slides.forEach((_, index) => {
+      const dot = document.createElement('span');
+      dot.classList.add('dot');
+      if (index === 0) dot.classList.add('active');
       dot.addEventListener('click', () => {
-        currentSlide = i;
-        updateCarousel();
+        stopAutoSlide();
+        updateSlider(index);
+        startAutoSlide();
       });
-      dotNav.appendChild(dot);
+      dotsContainer.appendChild(dot);
     });
   }
 
+  function nextSlide() {
+    let next = (currentIndex + 1) % slides.length;
+    updateSlider(next);
+  }
+
+  function prevSlide() {
+    let prev = (currentIndex - 1 + slides.length) % slides.length;
+    updateSlider(prev);
+  }
+
+  function startAutoSlide() {
+    autoSlide = setInterval(nextSlide, 5000);
+  }
+
+  function stopAutoSlide() {
+    clearInterval(autoSlide);
+  }
+
   prevBtn.addEventListener('click', () => {
-    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-    updateCarousel();
+    stopAutoSlide();
+    prevSlide();
+    startAutoSlide();
   });
 
   nextBtn.addEventListener('click', () => {
-    currentSlide = (currentSlide + 1) % slides.length;
-    updateCarousel();
+    stopAutoSlide();
+    nextSlide();
+    startAutoSlide();
   });
 
-  // Auto slide every 6 seconds
-  setInterval(() => {
-    currentSlide = (currentSlide + 1) % slides.length;
-    updateCarousel();
-  }, 6000);
-
   createDots();
-  updateCarousel();
+  updateSlider(currentIndex);
+  startAutoSlide();
 </script>
+
  
 </body>
 </html>
