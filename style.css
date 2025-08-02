@@ -978,6 +978,32 @@ html {
   transform: translateY(-5px);
   box-shadow: var(--hover-shadow);
 }
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.dashboard-box {
+  background-color: var(--box-bg, #1e1e1e);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 255, 170, 0.05);
+}
+
+.dashboard-box:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 20px rgba(0, 255, 170, 0.3);
+}
+
+.dashboard-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--accent, #00ffaa);
+}
 
 .dashboard-icon svg {
   margin-bottom: 1rem;
