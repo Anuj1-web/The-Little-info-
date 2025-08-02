@@ -1009,3 +1009,33 @@ html {
   margin-bottom: 1rem;
   color: var(--primary);
 }
+.dashboard-button {
+  background-color: var(--box-bg);
+  color: var(--text);
+  padding: 1rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: var(--box-shadow);
+  cursor: pointer;
+  margin: 1rem 0;
+}
+
+.dashboard-button a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+}
+
+.button-icon {
+  font-size: 1.8rem;
+}
+
+.dashboard-button:hover {
+  background-color: var(--box-hover);
+  transform: translateY(-3px);
+}
