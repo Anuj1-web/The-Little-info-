@@ -1,85 +1,55 @@
-// admin-analytics.js
-import { db, auth } from './firebase.js';
-import { collection, getDocs } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { showToast } from './utils.js';
 
-let totalViews = 0;
-let totalLikes = 0;
-let totalComments = 0;
-let totalBookmarks = 0;
-const viewsPerVideo = {};
-const likesPerVideo = {};
-
-const checkAdmin = async (user) => {
-  const tokenResult = await user.getIdTokenResult();
-  return !!tokenResult.claims.admin;
+const firebaseConfig = {
+  apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
+  authDomain: "the-little-info.firebaseapp.com",
+  projectId: "the-little-info",
+  storageBucket: "the-little-info.appspot.com",
+  messagingSenderId: "165711417682",
+  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
 };
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    document.getElementById('admin-only-message').classList.remove('hidden');
-    return;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function loadAnalytics() {
+  try {
+    const userSnap = await getDocs(collection(db, "users"));
+    const uploadSnap = await getDocs(collection(db, "content"));
+
+    const userCount = userSnap.size;
+    const uploadCount = uploadSnap.size;
+
+    document.getElementById('userCount').textContent = userCount;
+    document.getElementById('uploadCount').textContent = uploadCount;
+
+    renderChart(userCount, uploadCount);
+  } catch (error) {
+    showToast("Error loading analytics", "error");
   }
+}
 
-  const isAdmin = await checkAdmin(user);
-  if (!isAdmin) {
-    document.getElementById('admin-only-message').classList.remove('hidden');
-    return;
-  }
-
-  document.getElementById('analytics-dashboard').classList.remove('hidden');
-
-  const contentSnapshot = await getDocs(collection(db, 'content'));
-  contentSnapshot.forEach((doc) => {
-    const data = doc.data();
-    const id = doc.id;
-
-    totalViews += data.views || 0;
-    totalLikes += data.likes || 0;
-    totalComments += data.commentsCount || 0;
-    totalBookmarks += data.bookmarksCount || 0;
-
-    viewsPerVideo[data.title] = data.views || 0;
-    likesPerVideo[data.title] = data.likes || 0;
-  });
-
-  document.getElementById('totalViews').textContent = `Total Views: ${totalViews}`;
-  document.getElementById('totalLikes').textContent = `Total Likes: ${totalLikes}`;
-  document.getElementById('totalComments').textContent = `Total Comments: ${totalComments}`;
-  document.getElementById('totalBookmarks').textContent = `Total Bookmarks: ${totalBookmarks}`;
-
-  renderChart('viewsChart', 'Views per Video', viewsPerVideo);
-  renderChart('likesChart', 'Likes per Video', likesPerVideo);
-});
-
-function renderChart(canvasId, label, dataMap) {
-  const ctx = document.getElementById(canvasId);
-  const labels = Object.keys(dataMap);
-  const data = Object.values(dataMap);
-
+function renderChart(users, uploads) {
+  const ctx = document.getElementById('analyticsChart').getContext('2d');
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels,
+      labels: ['Users', 'Uploads'],
       datasets: [{
-        label,
-        data,
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1
+        label: 'Counts',
+        data: [users, uploads],
+        backgroundColor: ['#4CAF50', '#2196F3']
       }]
     },
     options: {
       responsive: true,
-      animation: {
-        duration: 1000,
-        easing: 'easeInOutQuart'
-      },
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
+      maintainAspectRatio: false
     }
   });
 }
+
+window.addEventListener('DOMContentLoaded', loadAnalytics);
