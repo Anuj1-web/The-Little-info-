@@ -722,3 +722,52 @@ html {
     padding-bottom: 40px;
   }
 </style>
+/* Video slider wrapper */
+#video-slider {
+  margin: 2rem auto;
+  max-width: 1000px;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+/* Each video slide/card */
+.video-card.full-width {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #1c1c1c;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 0.6s ease both;
+}
+
+/* Video container for responsiveness */
+.video-wrapper video,
+.video-wrapper iframe {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+}
+
+/* Optional: title below video */
+.video-title {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+/* Smooth fade-in animation (reused across site) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
