@@ -1,11 +1,12 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+// explore.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
 import {
   getFirestore,
   collection,
   getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
-// Firebase config (use your actual config here)
+// ✅ Your actual Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
   authDomain: "the-little-info.firebaseapp.com",
@@ -15,44 +16,43 @@ const firebaseConfig = {
   appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
 };
 
-// Initialize Firebase
+// ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// DOM Target
+// ✅ Main container to load content into
 const container = document.getElementById("exploreContainer");
 
-// Load videos
-async function loadVideos() {
+// ✅ Load explore content from Firestore
+async function loadExploreContent() {
   try {
-    const querySnapshot = await getDocs(collection(db, "explore"));
+    const snapshot = await getDocs(collection(db, "explore"));
 
-    if (querySnapshot.empty) {
-      container.innerHTML = "<p class='text-center text-lg'>No videos found.</p>";
+    if (snapshot.empty) {
+      container.innerHTML = "<p>No content available.</p>";
       return;
     }
 
-    querySnapshot.forEach((doc) => {
+    snapshot.forEach((doc) => {
       const data = doc.data();
       const card = document.createElement("div");
-      card.className = "topic-card";
-
+      card.className = "topic-card fade-in";
       card.innerHTML = `
-        <video
-          src="${data.videoUrl}"
-          controls
-          poster="${data.thumbnail || ''}"
-          class="w-full rounded-xl shadow-md hover:shadow-xl transition duration-300"
-        ></video>
-        <h3 class="mt-2 text-lg font-semibold">${data.title}</h3>
+        <h3>${data.title || "Untitled"}</h3>
+        <div class="video-wrapper">
+          <video controls playsinline>
+            <source src="${data.videoUrl}" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
       `;
-
       container.appendChild(card);
     });
   } catch (error) {
-    console.error("Error loading videos:", error);
-    container.innerHTML = "<p class='text-red-500'>Error loading explore content.</p>";
+    console.error("Error loading explore content:", error);
+    container.innerHTML = "<p>Failed to load content.</p>";
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadVideos);
+// ✅ Run when the page is ready
+document.addEventListener("DOMContentLoaded", loadExploreContent);
