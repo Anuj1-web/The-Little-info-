@@ -175,14 +175,38 @@
       <a href="traditional.html">📖 Traditional Topics</a>
     </div>
   <!-- ✅ Recent Videos Section -->
-<section class="recent-videos-section">
-  <h3 class="section-title">🎬 Recent Video Uploads</h3>
-  <div class="video-slider" id="videoSlider">
-    <!-- Videos will be dynamically loaded -->
+<section id="recent-videos-section" class="video-carousel-section fade-in-up">
+  <h2 class="section-title">📺 Recent Video Uploads</h2>
+  <div class="carousel-container">
+    <button class="carousel-arrow left">&#9664;</button>
+    <div class="carousel-track">
+      <!-- Mock Entries Start -->
+      <div class="carousel-card">
+        <video controls src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
+        <p>Sample Video 1</p>
+      </div>
+      <div class="carousel-card">
+        <img src="https://via.placeholder.com/320x180.png?text=Sample+Image+1" alt="Sample Image">
+        <p>Sample Image Preview</p>
+      </div>
+      <div class="carousel-card text-card">
+        <blockquote>“This is a sample text preview to test how text content appears in the slider.”</blockquote>
+      </div>
+      <div class="carousel-card">
+        <video controls src="https://www.w3schools.com/html/movie.mp4"></video>
+        <p>Sample Video 2</p>
+      </div>
+      <div class="carousel-card">
+        <img src="https://via.placeholder.com/320x180.png?text=Sample+Image+2" alt="Sample Image">
+        <p>Sample Image Preview 2</p>
+      </div>
+      <!-- Mock Entries End -->
+    </div>
+    <button class="carousel-arrow right">&#9654;</button>
   </div>
+  <div class="carousel-dots"></div>
 </section>
 
-  </main>
 
   <footer>
     <a href="about.html">About</a>
