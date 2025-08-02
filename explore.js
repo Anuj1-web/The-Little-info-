@@ -1,12 +1,12 @@
-// explore.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
 import {
   getFirestore,
   collection,
-  getDocs
+  getDocs,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
-// ✅ Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
   authDomain: "the-little-info.firebaseapp.com",
@@ -19,13 +19,16 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const container = document.getElementById("exploreContainer");
+const trendingRow = document.getElementById("trendingRow");
+const traditionalRow = document.getElementById("traditionalRow");
 
-async function loadExploreContent() {
+async function loadCategory(categoryName, container) {
   try {
-    const snapshot = await getDocs(collection(db, "explore"));
+    const q = query(collection(db, "explore"), where("category", "==", categoryName));
+    const snapshot = await getDocs(q);
+
     if (snapshot.empty) {
-      container.innerHTML = "<p>No explore videos yet.</p>";
+      container.innerHTML = `<p>No ${categoryName} videos available.</p>`;
       return;
     }
 
@@ -33,7 +36,6 @@ async function loadExploreContent() {
       const data = doc.data();
       const card = document.createElement("div");
       card.className = "topic-card fade-in";
-
       card.innerHTML = `
         <h3>${data.title || "Untitled"}</h3>
         <div class="video-wrapper">
@@ -42,14 +44,17 @@ async function loadExploreContent() {
             Your browser does not support the video tag.
           </video>
         </div>
+        <p>${data.description || ""}</p>
       `;
-
       container.appendChild(card);
     });
   } catch (err) {
-    console.error("Failed to load explore videos:", err);
-    container.innerHTML = "<p>Failed to load content.</p>";
+    console.error(`Error loading ${categoryName}:`, err);
+    container.innerHTML = `<p>Failed to load ${categoryName} videos.</p>`;
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadExploreContent);
+document.addEventListener("DOMContentLoaded", () => {
+  loadCategory("trending", trendingRow);
+  loadCategory("traditional", traditionalRow);
+});
