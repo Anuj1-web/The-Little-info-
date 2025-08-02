@@ -321,6 +321,56 @@
   }
 </style>
 <script src="recent-videos.js" type="module"></script>
-  
+ <script>
+  const track = document.querySelector('.carousel-track');
+  const slides = Array.from(track.children);
+  const nextBtn = document.querySelector('.carousel-arrow.right');
+  const prevBtn = document.querySelector('.carousel-arrow.left');
+  const dotNav = document.querySelector('.carousel-dots');
+
+  let currentSlide = 0;
+
+  function updateCarousel() {
+    const slideWidth = slides[0].getBoundingClientRect().width;
+    track.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+
+    Array.from(dotNav.children).forEach(dot => dot.classList.remove('active'));
+    if (dotNav.children[currentSlide]) {
+      dotNav.children[currentSlide].classList.add('active');
+    }
+  }
+
+  function createDots() {
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      if (i === 0) dot.classList.add('active');
+      dot.addEventListener('click', () => {
+        currentSlide = i;
+        updateCarousel();
+      });
+      dotNav.appendChild(dot);
+    });
+  }
+
+  prevBtn.addEventListener('click', () => {
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    updateCarousel();
+  });
+
+  nextBtn.addEventListener('click', () => {
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateCarousel();
+  });
+
+  // Auto slide every 6 seconds
+  setInterval(() => {
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateCarousel();
+  }, 6000);
+
+  createDots();
+  updateCarousel();
+</script>
+ 
 </body>
 </html>
