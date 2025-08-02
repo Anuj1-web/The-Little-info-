@@ -1,31 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Create Quiz | Admin</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Admin Quiz</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <a href="index.html"><img src="Green and White Modern Computer Service Repair Logo_20250710_113545_0000.png" alt="Logo" class="logo"></a>
-    <h1>Create Quiz</h1>
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#" id="logoutBtn" class="btn">Logout</a>
+        <button id="themeToggle">🌓</button>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <form id="quizForm">
-      <input type="text" id="quizTitle" placeholder="Quiz Title" required />
-      <div id="questionsContainer"></div>
-      <button type="button" onclick="addQuestion()">Add Question</button>
-      <button type="submit">Save Quiz</button>
-    </form>
+  <main class="section-container">
+    <div class="auth-form-box animate fade-in">
+      <h2>📝 Manage Quizzes</h2>
+      <form id="quizForm">
+        <input type="text" id="quizTitle" placeholder="Quiz Title" required />
+        <textarea id="quizQuestion" placeholder="Question text" required></textarea>
+        <input type="text" id="optionA" placeholder="Option A" required />
+        <input type="text" id="optionB" placeholder="Option B" required />
+        <input type="text" id="optionC" placeholder="Option C" required />
+        <input type="text" id="optionD" placeholder="Option D" required />
+        <input type="text" id="correctAnswer" placeholder="Correct Answer (A/B/C/D)" required />
+        <button type="submit" class="btn">Add Quiz</button>
+      </form>
+      <div id="quizList"></div>
+    </div>
   </main>
 
-  <footer><p>&copy; 2025 The Little Info</p></footer>
-
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="admin-quiz.js"></script>
+  <script src="theme-toggle.js"></script>
+  <script src="admin-quiz.js"></script>
 </body>
 </html>
