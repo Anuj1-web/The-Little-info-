@@ -901,3 +901,37 @@ html {
   color: white;
   cursor: pointer;
 }
+.video-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.topic-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  width: calc(50% - 1rem); /* two per row */
+  transition: transform 0.3s ease;
+}
+.topic-card:hover {
+  transform: scale(1.02);
+}
+
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+}
+.video-wrapper video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
