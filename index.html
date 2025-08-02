@@ -186,41 +186,19 @@
     🎥 Latest Videos
   </h2>
 
-  <div class="swiper videoSwiper">
-    <div class="swiper-wrapper">
-      <!-- Video Slide 1 -->
-      <div class="swiper-slide">
-        <video controls width="100%" style="max-width: 600px; margin: 0 auto; display: block;">
-          <source src="sample1.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <p class="video-caption">Sample Video 1</p>
-      </div>
-
-      <!-- Video Slide 2 -->
-      <div class="swiper-slide">
-        <video controls width="100%" style="max-width: 600px; margin: 0 auto; display: block;">
-          <source src="sample2.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <p class="video-caption">Sample Video 2</p>
-      </div>
-
-      <!-- Video Slide 3 -->
-      <div class="swiper-slide">
-        <video controls width="100%" style="max-width: 600px; margin: 0 auto; display: block;">
-          <source src="sample3.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <p class="video-caption">Sample Video 3</p>
-      </div>
+  <!-- 🎥 Latest Videos Slider -->
+<div class="video-slider-section">
+  <h2 class="video-slider-heading">🎥 Latest Videos</h2>
+  <div class="swiper mySwiper">
+    <div class="swiper-wrapper" id="videoSliderWrapper">
+      <!-- Slides will be injected here dynamically -->
     </div>
-
-    <!-- Navigation -->
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div>
     <div class="swiper-pagination"></div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
   </div>
+</div>
+
 </section>
 
 
@@ -412,25 +390,72 @@
 <!-- Swiper JS -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-<script>
-  const swiper = new Swiper(".videoSwiper", {
-    slidesPerView: 1,
-    spaceBetween: 20,
-    loop: true,
-    autoplay: {
-      delay: 4000,
-      disableOnInteraction: false,
-    },
-    pagination: {
-      el: ".swiper-pagination",
-      clickable: true,
-    },
-    navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev",
-    },
-  });
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    query,
+    orderBy,
+    limit
+  } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    // 🔁 YOUR EXISTING FIREBASE CONFIG GOES HERE
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const videoWrapper = document.getElementById("videoSliderWrapper");
+
+  async function loadLatestVideos() {
+    const q = query(collection(db, "videos"), orderBy("timestamp", "desc"), limit(5));
+    const snapshot = await getDocs(q);
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const videoUrl = data.url;         // 🔁 Must match your Firestore field
+      const title = data.title || "Untitled Video";
+
+      const slide = document.createElement("div");
+      slide.className = "swiper-slide";
+      slide.innerHTML = `
+        <div class="video-card">
+          <video controls>
+            <source src="${videoUrl}" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div class="video-title">${title}</div>
+        </div>
+      `;
+      videoWrapper.appendChild(slide);
+    });
+
+    // ✅ Initialize Swiper after content is loaded
+    new Swiper(".mySwiper", {
+      slidesPerView: 1,
+      spaceBetween: 20,
+      loop: true,
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+    });
+  }
+
+  loadLatestVideos();
 </script>
+
  
 </body>
 </html>
