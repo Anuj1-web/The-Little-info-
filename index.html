@@ -422,15 +422,17 @@
       const slide = document.createElement("div");
       slide.className = "swiper-slide";
       slide.innerHTML = `
-        slide.innerHTML = `
-  <div class="video-wrapper">
-    <video controls>
-      <source src="${videoUrl}" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
+  <div class="video-card full-width">
+    <div class="video-wrapper">
+      <video controls>
+        <source src="${videoUrl}" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <div class="video-title">${title}</div>
   </div>
-  <div class="video-title">${title}</div>
 `;
+
       videoWrapper.appendChild(slide);
     });
 
