@@ -3,13 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Explore</title>
+  <title>Explore Topics</title>
   <link rel="stylesheet" href="style.css" />
+  <script defer src="explore.js" type="module"></script>
   <script defer src="theme-toggle.js"></script>
-  <script type="module" src="explore.js"></script>
+  <style>
+    .section-container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem;
+    }
 
+    h2 {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+    }
+
+    .video-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .topic-card {
+      background: var(--card-bg, #f9f9f9);
+      color: var(--text, #000);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: calc(50% - 1rem);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .topic-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      margin-bottom: 0.8rem;
+    }
+
+    .video-wrapper video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .topic-card {
+        width: 100%;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Reuse header styling */
+    .site-header {
+      background: var(--header-bg, #0f1a2c);
+      color: #fff;
+      padding: 0.8rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .site-logo-small {
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    nav a {
+      color: #fff;
+      margin-right: 1rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    #themeToggle {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
+  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -25,19 +132,17 @@
     </div>
   </header>
 
+  <!-- Main Content -->
   <main class="section-container">
-    <h2 class="section-title">Explore Videos</h2>
-    <div id="video-gallery" class="video-gallery">
-      <!-- Video cards will be injected by explore.js -->
+    <h2>Trending</h2>
+    <div class="video-row" id="trendingRow">
+      <!-- Filled by explore.js -->
+    </div>
+
+    <h2>Traditional</h2>
+    <div class="video-row" id="traditionalRow">
+      <!-- Filled by explore.js -->
     </div>
   </main>
-
-  <!-- Modal (for optional fullscreen or overlay play, if needed later) -->
-  <div id="video-modal" class="modal hidden">
-    <div class="modal-content">
-      <span id="modal-close" class="modal-close">&times;</span>
-      <video id="modal-video" controls autoplay></video>
-    </div>
-  </div>
 </body>
 </html>
