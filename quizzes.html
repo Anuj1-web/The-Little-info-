@@ -1,30 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quizzes | The Little Info</title>
+  <title>Quizzes - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="Green and White Modern Computer Service Repair Logo_20250710_113545_0000.png" />
 </head>
 <body>
-  <header>
-    <a href="index.html"><img src="Green and White Modern Computer Service Repair Logo_20250710_113545_0000.png" alt="Logo" class="logo"></a>
-    <h1>Quizzes</h1>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#" id="logoutBtn" class="btn">Logout</a>
+        <button id="themeToggle">🌓</button>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <section id="quizList" class="content-section">
-      <h2>Available Quizzes</h2>
-      <div id="quizzesContainer"></div>
-    </section>
+  <!-- Main Section -->
+  <main class="section-container">
+    <h2 class="animated-text">📝 Practice Quizzes by Admin</h2>
+    <p class="animated-subtext">Test your knowledge with curated quizzes.</p>
+
+    <div class="card-container" id="quizContainer">
+      <!-- Admin-created quizzes will be injected here -->
+    </div>
   </main>
 
-  <footer><p>&copy; 2025 The Little Info</p></footer>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="ai-chatbot.html">🤖</a>
+    </div>
+  </footer>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="quizzes.js"></script>
+  <!-- Firebase & Theme Toggle -->
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        alert('You must be logged in to view quizzes.');
+        window.location.href = 'login.html';
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = 'login.html';
+    });
+  </script>
+  <script src="theme-toggle.js"></script>
+  <script src="quizzes.js" type="module"></script>
 </body>
 </html>
