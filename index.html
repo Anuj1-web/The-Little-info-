@@ -181,28 +181,17 @@
       <a href="traditional.html">📖 Traditional Topics</a>
     </div>
   <!-- ✅ Recent Videos Section -->
-<section class="latest-videos-section">
-  <h2 style="text-align: center; margin-top: 40px; font-size: 1.8rem;">
-    🎥 Latest Videos
-  </h2>
-
-  <!-- 🎥 Latest Videos Slider -->
-<div class="video-slider-section">
- 
-  <div class="swiper mySwiper">
+<section id="video-slider-section">
+  <h2 class="slider-heading">🎥 Latest Videos</h2>
+  <div class="video-slider swiper mySwiper">
     <div class="swiper-wrapper" id="videoSliderWrapper">
-      <!-- Slides will be injected here dynamically -->
+      <!-- JS will insert video slides here -->
     </div>
     <div class="swiper-pagination"></div>
     <div class="swiper-button-next"></div>
     <div class="swiper-button-prev"></div>
   </div>
-</div>
-
 </section>
-
-
-
 
   <footer>
     <a href="about.html">About</a>
@@ -468,6 +457,12 @@
     allowfullscreen
   ></iframe>
 </div>
+<!-- SwiperJS CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<!-- Video slider logic -->
+<script type="module" src="video-slider.js"></script>
 
 </body>
 </html>
