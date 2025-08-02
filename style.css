@@ -954,3 +954,32 @@ html {
   margin-bottom: 1rem;
   color: var(--primary);
 }
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.dashboard-box {
+  background: var(--card-bg);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  color: var(--text);
+}
+
+.dashboard-box:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--hover-shadow);
+}
+
+.dashboard-icon svg {
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
