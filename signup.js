@@ -1,48 +1,73 @@
-// signup.js
 import { auth } from './firebase.js';
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
-  signOut
+  signInWithEmailAndPassword,
+  deleteUser
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-const signupForm = document.getElementById('signupForm');
-const messageBox = document.getElementById('message');
-const resendBtn = document.getElementById('resendVerification');
-
-signupForm.addEventListener('submit', async (e) => {
+// Signup form submit
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const email = document.getElementById('signupEmail').value.trim();
-  const password = document.getElementById('signupPassword').value;
+  const password = document.getElementById('signupPassword').value.trim();
+
+  if (!email || !password) {
+    showToast('Please fill all fields.', false);
+    return;
+  }
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     await sendEmailVerification(user);
-
-    messageBox.innerHTML = `
-      ✅ Signup successful! A verification email has been sent to <strong>${email}</strong>.
-      Please verify your email before logging in.
-    `;
-    resendBtn.style.display = 'block';
-
-    // Optional: Sign out the user immediately to force verification on login
-    await signOut(auth);
+    showToast('Signup successful. Verification email sent. Please verify before login.', true);
+    document.getElementById('signupForm').reset();
   } catch (error) {
-    messageBox.innerHTML = `❌ Error: ${error.message}`;
-    console.error(error);
+    showToast(error.message, false);
   }
 });
 
-resendBtn.addEventListener('click', async () => {
-  const user = auth.currentUser;
+// Email verification button logic
+document.getElementById('sendVerificationBtn').addEventListener('click', async () => {
+  const email = document.getElementById('verifyEmail').value.trim();
+  const password = 'TempPass123@'; // temporary password
 
-  if (user) {
-    await sendEmailVerification(user);
-    messageBox.innerHTML = `📨 Verification email re-sent to <strong>${user.email}</strong>.`;
-  } else {
-    messageBox.innerHTML = `❌ Please sign up again or log in to resend verification.`;
+  if (!email) {
+    showVerifyStatus('Please enter an email first.', false);
+    return;
+  }
+
+  try {
+    const tempCredential = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(tempCredential.user);
+    showVerifyStatus('Verification email sent. Check your inbox.', true);
+
+    // Immediately delete temp user to prevent conflicts
+    await deleteUser(tempCredential.user);
+  } catch (err) {
+    if (err.code === 'auth/email-already-in-use') {
+      showVerifyStatus('Email already registered. Try logging in.', false);
+    } else {
+      showVerifyStatus(err.message, false);
+    }
   }
 });
+
+// Toast for signup result
+function showToast(message, success = true) {
+  const toast = document.createElement('div');
+  toast.textContent = message;
+  toast.className = `toast ${success ? 'toast-success' : 'toast-error'}`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// Email verify inline status
+function showVerifyStatus(message, success) {
+  const status = document.getElementById('verifyStatus');
+  status.textContent = message;
+  status.style.color = success ? 'lightgreen' : 'salmon';
+}
