@@ -1,37 +1,40 @@
-import { db } from "./firebase.js";
+import { db } from './firebase.js';
+import {
+  collection,
+  query,
+  getDocs,
+  where
+} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-const container = document.getElementById("quizzesContainer");
+const container = document.getElementById('quizContainer');
 
 async function loadQuizzes() {
-  const snapshot = await db.collection("quizzes").get();
-  container.innerHTML = "";
-  snapshot.forEach(doc => {
-    const quiz = doc.data();
-    const div = document.createElement("div");
-    div.className = "quiz-card";
-    div.innerHTML = `
-      <h3>${quiz.title}</h3>
-      <button onclick="attemptQuiz('${doc.id}')">Start Quiz</button>
-    `;
-    container.appendChild(div);
-  });
-}
+  try {
+    const q = query(collection(db, 'quizzes'), where('status', '==', 'public'));
+    const querySnapshot = await getDocs(q);
 
-window.attemptQuiz = async function (quizId) {
-  const doc = await db.collection("quizzes").doc(quizId).get();
-  const quiz = doc.data();
-  const questions = quiz.questions;
-  let score = 0;
-
-  for (let i = 0; i < questions.length; i++) {
-    const q = questions[i];
-    const userAnswer = prompt(`${q.question}\n${q.options.join("\n")}`);
-    if (userAnswer?.trim().toLowerCase() === q.answer.trim().toLowerCase()) {
-      score++;
+    if (querySnapshot.empty) {
+      container.innerHTML = '<p class="animated-subtext">No quizzes available.</p>';
+      return;
     }
-  }
 
-  alert(`You scored ${score} out of ${questions.length}`);
-};
+    querySnapshot.forEach(doc => {
+      const data = doc.data();
+
+      const card = document.createElement('div');
+      card.className = 'topic-card';
+      card.innerHTML = `
+        <h3>📝 ${data.title}</h3>
+        <p>${data.description || 'Challenge yourself with this quiz.'}</p>
+        <a href="${data.link}" target="_blank" class="btn">Start Quiz</a>
+      `;
+
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error('Error loading quizzes:', error);
+    container.innerHTML = '<p class="animated-subtext error">Failed to load quizzes.</p>';
+  }
+}
 
 loadQuizzes();
