@@ -7,12 +7,12 @@ import {
 
 // Firebase config (use your actual config here)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
+  authDomain: "the-little-info.firebaseapp.com",
+  projectId: "the-little-info",
+  storageBucket: "the-little-info.firebasestorage.app",
+  messagingSenderId: "165711417682",
+  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
 };
 
 // Initialize Firebase
