@@ -702,6 +702,20 @@ html {
   object-fit: cover;
   border: 0;
 }
+.video-card.full-width {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.video-wrapper video,
+.video-wrapper iframe {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+}
 
   .latest-videos-section {
     margin-top: 40px;
