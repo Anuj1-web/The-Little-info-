@@ -6,6 +6,25 @@
   <title>Sign Up - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
+  <style>
+    .btn-verify {
+      background-color: #22c55e; /* green-500 */
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      margin-top: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .btn-verify:hover {
+      background-color: #16a34a; /* green-600 */
+    }
+    .verify-status {
+      margin-top: 6px;
+      font-size: 0.9em;
+    }
+  </style>
 </head>
 <body>
   <!-- Header -->
@@ -28,15 +47,18 @@
   <main class="section-container">
     <div class="auth-form-box">
       <h2 style="color: var(--primary);">Create an Account</h2>
+
+      <!-- Email Verification Section -->
+      <div class="form-group">
+        <input type="email" id="verifyEmail" placeholder="Enter your email to verify" required />
+        <button type="button" id="sendVerificationBtn" class="btn-verify">Send Verification Email</button>
+        <p id="verifyStatus" class="verify-status"></p>
+      </div>
+
+      <!-- Signup Form -->
       <form id="signupForm">
         <label for="email">Email</label>
-    <input type="email" id="email" placeholder="Enter your email" required />
-
-        <div class="form-group">
-  <input type="email" id="verifyEmail" placeholder="Enter email to verify" required />
-  <button type="button" id="sendVerificationBtn" class="btn-verify">Send Verification Email</button>
-  <p id="verifyStatus" class="verify-status"></p>
-</div>
+        <input type="email" id="email" placeholder="Enter verified email" required />
 
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="Enter your password" required />
@@ -46,16 +68,53 @@
 
         <button type="submit" class="btn-primary">Sign Up</button>
       </form>
+
       <p class="auth-redirect">Already have an account? <a href="login.html">Login here</a></p>
     </div>
   </main>
 
-  <!-- Firebase Signup Logic -->
+  <!-- Firebase Signup + Email Verification -->
   <script type="module">
     import { auth } from './firebase.js';
-    import { createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+    import {
+      createUserWithEmailAndPassword,
+      fetchSignInMethodsForEmail,
+      sendSignInLinkToEmail,
+      isSignInWithEmailLink,
+      sendEmailVerification,
+      signInWithEmailAndPassword
+    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
     const signupForm = document.getElementById('signupForm');
+    const sendVerificationBtn = document.getElementById('sendVerificationBtn');
+    const verifyEmailInput = document.getElementById('verifyEmail');
+    const verifyStatus = document.getElementById('verifyStatus');
+
+    let verifiedEmail = "";
+
+    sendVerificationBtn.addEventListener('click', async () => {
+      const email = verifyEmailInput.value.trim();
+      if (!email) {
+        verifyStatus.textContent = "Please enter your email.";
+        return;
+      }
+
+      try {
+        const tempPassword = Math.random().toString(36).slice(-8);
+        const userCred = await createUserWithEmailAndPassword(auth, email, tempPassword);
+        await sendEmailVerification(userCred.user);
+        await auth.currentUser.delete(); // Delete temp user
+
+        verifiedEmail = email;
+        verifyStatus.style.color = 'green';
+        verifyStatus.textContent = `Verification email sent to ${email}. Please check inbox or spam.`;
+
+      } catch (error) {
+        console.error(error);
+        verifyStatus.style.color = 'red';
+        verifyStatus.textContent = "Failed to send verification: " + error.message;
+      }
+    });
 
     signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -68,9 +127,14 @@
         return;
       }
 
+      if (email !== verifiedEmail) {
+        alert("Please verify your email before signing up.");
+        return;
+      }
+
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert("Signup successful!");
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        alert("Signup successful! Please check your email to verify.");
         window.location.href = "dashboard.html";
       } catch (error) {
         alert("Signup failed: " + error.message);
