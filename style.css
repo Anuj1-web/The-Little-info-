@@ -771,3 +771,26 @@ html {
     transform: translateY(0);
   }
 }
+#video-slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  margin: 0;
+  padding: 0;
+}
+
+.video-card.fullscreen {
+  flex: 0 0 100vw;
+  scroll-snap-align: center;
+  position: relative;
+}
+
+.video-card.fullscreen video,
+.video-card.fullscreen iframe {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  border: none;
+  margin: 0;
+  display: block;
+}
