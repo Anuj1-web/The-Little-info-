@@ -1,85 +1,58 @@
-// Firebase Initialization (make sure firebase.js is imported before this script)
-import { db } from './firebase.js';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
+  getFirestore,
   collection,
-  query,
-  where,
-  orderBy,
-  getDocs,
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-lite.js';
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// DOM Elements
-const gallery = document.getElementById('video-gallery');
-const modal = document.getElementById('video-modal');
-const modalVideo = document.getElementById('modal-video');
-const modalClose = document.getElementById('modal-close');
+// Firebase config (use your actual config here)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
 
-// Create and return a video card element
-function createVideoCard(data) {
-  const card = document.createElement('div');
-  card.className = 'video-card';
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  const video = document.createElement('video');
-  video.src = data.videoUrl;
-  video.muted = true;
-  video.playsInline = true;
-  video.autoplay = true;
-  video.loop = true;
+// DOM Target
+const container = document.getElementById("exploreContainer");
 
-  const title = document.createElement('div');
-  title.className = 'video-title';
-  title.textContent = data.title || 'Untitled Video';
-
-  card.appendChild(video);
-  card.appendChild(title);
-
-  // Open modal on click
-  card.addEventListener('click', () => {
-    modal.classList.remove('hidden');
-    modalVideo.src = data.videoUrl;
-    modalVideo.play();
-  });
-
-  return card;
-}
-
-// Load videos from Firestore
-async function loadExploreVideos() {
+// Load videos
+async function loadVideos() {
   try {
-    const q = query(
-      collection(db, 'content'),
-      where('category', '==', 'Explore'),
-      orderBy('timestamp', 'desc')
-    );
+    const querySnapshot = await getDocs(collection(db, "explore"));
 
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
-      gallery.innerHTML = '<p>No explore videos available.</p>';
-    } else {
-      gallery.innerHTML = '';
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        if (data.videoUrl) {
-          const card = createVideoCard(data);
-          gallery.appendChild(card);
-        }
-      });
+    if (querySnapshot.empty) {
+      container.innerHTML = "<p class='text-center text-lg'>No videos found.</p>";
+      return;
     }
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const card = document.createElement("div");
+      card.className = "topic-card";
+
+      card.innerHTML = `
+        <video
+          src="${data.videoUrl}"
+          controls
+          poster="${data.thumbnail || ''}"
+          class="w-full rounded-xl shadow-md hover:shadow-xl transition duration-300"
+        ></video>
+        <h3 class="mt-2 text-lg font-semibold">${data.title}</h3>
+      `;
+
+      container.appendChild(card);
+    });
   } catch (error) {
-    console.error('Failed to load explore videos:', error);
-    gallery.innerHTML = '<p>Error loading videos. Try again later.</p>';
+    console.error("Error loading videos:", error);
+    container.innerHTML = "<p class='text-red-500'>Error loading explore content.</p>";
   }
 }
 
-// Close modal
-modalClose.addEventListener('click', () => {
-  modal.classList.add('hidden');
-  modalVideo.pause();
-  modalVideo.src = '';
-});
-
-// Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
-  loadExploreVideos();
-});
+document.addEventListener("DOMContentLoaded", loadVideos);
