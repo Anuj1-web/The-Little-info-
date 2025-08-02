@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Playlist</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
+  <script defer src="admin-playlist.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+        <button id="themeToggle">🌓</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section-container fade-in">
+    <div class="auth-form-box">
+      <h2>🎬 Admin Playlist</h2>
+      <p>Upload and manage playlist resources.</p>
+
+      <form id="playlistForm">
+        <input type="text" placeholder="Playlist Title" id="playlistTitle" required />
+        <input type="url" placeholder="Playlist URL (YouTube or other)" id="playlistURL" required />
+        <button type="submit" class="btn">Add Playlist</button>
+      </form>
+
+      <div id="playlistList" class="card-list"></div>
+    </div>
+  </main>
+
+  <div id="toastContainer"></div>
+</body>
+</html>
