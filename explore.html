@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Explore</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
+  <script defer src="explore.js" type="module"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+        <button id="themeToggle">🌓</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section-container">
+    <h2 class="section-title">Explore Videos</h2>
+    <div id="video-gallery" class="video-gallery">
+      <!-- Video cards will be injected by explore.js -->
+    </div>
+  </main>
+
+  <!-- Modal (for optional fullscreen or overlay play, if needed later) -->
+  <div id="video-modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="modal-close" class="modal-close">&times;</span>
+      <video id="modal-video" controls autoplay></video>
+    </div>
+  </div>
+</body>
+</html>
