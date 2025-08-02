@@ -12,20 +12,23 @@ import {
 const trendingSection = document.getElementById('trending-content');
 const traditionalSection = document.getElementById('traditional-content');
 
-// Utility to create a content card
+// 🔧 Utility to create a consistent content card
 function createContentCard(doc) {
   const data = doc.data();
   const card = document.createElement('div');
-  card.classList.add('content-card');
+  card.className = 'content-card fade-in'; // Add animation class
 
   card.innerHTML = `
-    <h3>${data.title || 'Untitled'}</h3>
-    <p>${data.description || 'No description available.'}</p>
+    <div class="card-inner">
+      <h3 class="card-title">${data.title || 'Untitled'}</h3>
+      <p class="card-description">${data.description || 'No description available.'}</p>
+    </div>
   `;
+
   return card;
 }
 
-// Load content by category
+// 🚀 Load content by category
 async function loadContentByCategory(category, container) {
   try {
     const q = query(
@@ -35,10 +38,11 @@ async function loadContentByCategory(category, container) {
     );
 
     const querySnapshot = await getDocs(q);
+    container.innerHTML = '';
+
     if (querySnapshot.empty) {
-      container.innerHTML = '<p>No content found in this category.</p>';
+      container.innerHTML = '<p class="no-content">No content found in this category.</p>';
     } else {
-      container.innerHTML = '';
       querySnapshot.forEach((doc) => {
         const card = createContentCard(doc);
         container.appendChild(card);
@@ -46,11 +50,11 @@ async function loadContentByCategory(category, container) {
     }
   } catch (error) {
     console.error(`Error loading ${category} content:`, error);
-    container.innerHTML = '<p>Failed to load content. Try again later.</p>';
+    container.innerHTML = '<p class="error-text">Failed to load content. Try again later.</p>';
   }
 }
 
-// Initialize homepage content
+// 🧠 Initialize homepage content
 function initHomePage() {
   if (trendingSection && traditionalSection) {
     loadContentByCategory('Trending', trendingSection);
@@ -58,7 +62,7 @@ function initHomePage() {
   }
 }
 
-// Navigation handler
+// 🔗 Navigation handler
 function setupNavigation() {
   const loginBtn = document.getElementById('login-btn');
   const signupBtn = document.getElementById('signup-btn');
@@ -71,7 +75,7 @@ function setupNavigation() {
   if (contactLink) contactLink.addEventListener('click', () => window.location.href = 'contact.html');
 }
 
-// Run on load
+// 🟢 Run on load
 document.addEventListener('DOMContentLoaded', () => {
   setupNavigation();
   initHomePage();
