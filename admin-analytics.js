@@ -1,55 +1,64 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { db, auth } from './firebase-config.js';
+import { showToast } from './ui-utils.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
-  getFirestore, collection, getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { showToast } from './utils.js';
+  collection,
+  getDocs,
+  query,
+  where
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
-  authDomain: "the-little-info.firebaseapp.com",
-  projectId: "the-little-info",
-  storageBucket: "the-little-info.appspot.com",
-  messagingSenderId: "165711417682",
-  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
-};
+const statsContainer = document.getElementById('adminStats');
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+onAuthStateChanged(auth, async user => {
+  if (!user) {
+    showToast('Please log in first.', 'error');
+    window.location.href = 'login.html';
+    return;
+  }
+
+  const tokenResult = await user.getIdTokenResult();
+  if (!tokenResult.claims.admin) {
+    showToast('Admins only.', 'error');
+    window.location.href = 'dashboard.html';
+    return;
+  }
+
+  loadAnalytics();
+});
 
 async function loadAnalytics() {
   try {
-    const userSnap = await getDocs(collection(db, "users"));
-    const uploadSnap = await getDocs(collection(db, "content"));
+    const usersSnap = await getDocs(collection(db, 'users'));
+    const topicsSnap = await getDocs(collection(db, 'topics'));
+    const playlistsSnap = await getDocs(collection(db, 'admin_playlists'));
+    const quizzesSnap = await getDocs(collection(db, 'admin_quizzes'));
 
-    const userCount = userSnap.size;
-    const uploadCount = uploadSnap.size;
+    const totalUsers = usersSnap.size;
+    const totalTopics = topicsSnap.size;
+    const totalPlaylists = playlistsSnap.size;
+    const totalQuizzes = quizzesSnap.size;
 
-    document.getElementById('userCount').textContent = userCount;
-    document.getElementById('uploadCount').textContent = uploadCount;
-
-    renderChart(userCount, uploadCount);
+    statsContainer.innerHTML = `
+      <div class="stat-card fade-in">
+        <h3>👥 Total Users</h3>
+        <p>${totalUsers}</p>
+      </div>
+      <div class="stat-card fade-in">
+        <h3>📚 Total Topics</h3>
+        <p>${totalTopics}</p>
+      </div>
+      <div class="stat-card fade-in">
+        <h3>🎵 Total Playlists</h3>
+        <p>${totalPlaylists}</p>
+      </div>
+      <div class="stat-card fade-in">
+        <h3>🧠 Total Quizzes</h3>
+        <p>${totalQuizzes}</p>
+      </div>
+    `;
   } catch (error) {
-    showToast("Error loading analytics", "error");
+    console.error(error);
+    showToast('Failed to load analytics.', 'error');
   }
 }
-
-function renderChart(users, uploads) {
-  const ctx = document.getElementById('analyticsChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Users', 'Uploads'],
-      datasets: [{
-        label: 'Counts',
-        data: [users, uploads],
-        backgroundColor: ['#4CAF50', '#2196F3']
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
-  });
-}
-
-window.addEventListener('DOMContentLoaded', loadAnalytics);
