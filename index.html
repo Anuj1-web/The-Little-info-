@@ -422,14 +422,15 @@
       const slide = document.createElement("div");
       slide.className = "swiper-slide";
       slide.innerHTML = `
-        <div class="video-card">
-          <video controls>
-            <source src="${videoUrl}" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <div class="video-title">${title}</div>
-        </div>
-      `;
+        slide.innerHTML = `
+  <div class="video-wrapper">
+    <video controls>
+      <source src="${videoUrl}" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  <div class="video-title">${title}</div>
+`;
       videoWrapper.appendChild(slide);
     });
 
@@ -456,11 +457,10 @@
   loadLatestVideos();
 </script>
 
-<!-- Temporary YouTube Test Embed -->
-<div style="width: 100%; max-width: 800px; margin: 40px auto;">
+<div class="video-wrapper" style="max-width: 100%; margin: 40px auto;">
   <iframe
     width="100%"
-    height="450"
+    height="100%"
     src="https://www.youtube.com/embed/0PZn1RicSM0?autoplay=1&mute=1&loop=1&playlist=0PZn1RicSM0&controls=0&showinfo=0&modestbranding=1"
     title="Think Video"
     frameborder="0"
@@ -468,7 +468,6 @@
     allowfullscreen
   ></iframe>
 </div>
-<!-- End of temporary video -->
- 
+
 </body>
 </html>
