@@ -1,71 +1,69 @@
-import { auth, db } from './firebase.js';
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  signOut,
-  onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-import { doc, setDoc } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const signupForm = document.getElementById('signupForm');
-const verifyBox = document.getElementById('verifyBox');
-const verifyStatus = document.getElementById('verifyStatus');
+const auth = getAuth();
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const confirmPasswordInput = document.getElementById('confirmPassword');
+const signupBtn = document.getElementById('signupBtn');
+const sendVerificationBtn = document.getElementById('sendVerificationBtn');
+const messageBox = document.getElementById('signupMessage');
 
-signupForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
+signupBtn.addEventListener('click', async () => {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  const confirmPassword = confirmPasswordInput.value.trim();
 
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const confirmPassword = document.getElementById('confirmPassword').value;
+  if (!email || !password || !confirmPassword) {
+    return showMessage('Please fill in all fields.');
+  }
 
   if (password.length < 6) {
-    alert('Password must be at least 6 characters.');
-    return;
+    return showMessage('Password must be at least 6 characters.');
   }
 
   if (password !== confirmPassword) {
-    alert('Passwords do not match.');
-    return;
+    return showMessage('Passwords do not match.');
   }
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(userCred.user);
+    showMessage('✅ Account created. Please verify your email to log in.');
+    sendVerificationBtn.style.display = 'inline-block';
 
-    await setDoc(doc(db, 'users', user.uid), {
-      email: user.email,
-      uid: user.uid,
-      createdAt: new Date()
-    });
-
-    await sendEmailVerification(user);
-    verifyStatus.innerHTML = `📩 A verification link has been sent to <b>${email}</b>. Please verify within 3 minutes.`;
-    verifyBox.style.display = 'block';
-
-    // Check every 10 seconds for 3 minutes
-    const checkInterval = 10000; // 10 sec
-    const timeout = 180000; // 3 min
-    const startTime = Date.now();
-
-    const intervalId = setInterval(async () => {
-      await user.reload();
-
-      if (user.emailVerified) {
-        clearInterval(intervalId);
-        verifyStatus.innerHTML = "✅ Email verified successfully. Redirecting...";
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 1500);
-      } else if (Date.now() - startTime > timeout) {
-        clearInterval(intervalId);
-        alert('Email not verified in time. You are now signed out.');
-        await signOut(auth);
-        location.reload();
+    // Start checking if user verified email every 10 seconds for 3 minutes
+    let elapsed = 0;
+    const interval = setInterval(async () => {
+      await userCred.user.reload();
+      if (userCred.user.emailVerified) {
+        clearInterval(interval);
+        showMessage('✅ Email verified! You can now log in.');
+        setTimeout(() => window.location.href = 'login.html', 2000);
       }
-    }, checkInterval);
-
+      elapsed += 10;
+      if (elapsed >= 180) {
+        clearInterval(interval);
+        showMessage('⏰ Link expired or email not verified. Please try again.');
+      }
+    }, 10000);
   } catch (err) {
-    console.error('Signup error:', err.message);
-    alert('Signup failed: ' + err.message);
+    showMessage(`❌ ${err.message}`);
   }
 });
+
+sendVerificationBtn.addEventListener('click', async () => {
+  const user = auth.currentUser;
+  if (user && !user.emailVerified) {
+    try {
+      await sendEmailVerification(user);
+      showMessage('📩 Verification link sent again. Please check your inbox.');
+    } catch (err) {
+      showMessage(`❌ ${err.message}`);
+    }
+  }
+});
+
+function showMessage(msg) {
+  messageBox.textContent = msg;
+  messageBox.style.opacity = '1';
+}
