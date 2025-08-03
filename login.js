@@ -1,18 +1,17 @@
-// login.js
 import { auth, db } from './firebase.js';
 import {
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  sendPasswordResetEmail
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 import {
   doc,
   getDoc
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+import { showToast } from './toast.js'; // ✅ Make sure you have this
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  console.log("Login form submitted");
 
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
@@ -21,72 +20,55 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // ⛔ Unverified email check
     if (!user.emailVerified) {
-      alert('Please verify your email before logging in.');
+      showToast('Please verify your email before logging in.', 'error');
       await signOut(auth);
       return;
     }
 
-    // ✅ Fetch user role from Firestore
-    const userDocRef = doc(db, 'users', user.uid);
-    const userDocSnap = await getDoc(userDocRef);
+    // ✅ Fetch user document
+    const userDocSnap = await getDoc(doc(db, 'users', user.uid));
+    if (!userDocSnap.exists()) {
+      showToast('User data not found in Firestore.', 'error');
+      await signOut(auth);
+      return;
+    }
 
-    if (userDocSnap.exists()) {
-      const userData = userDocSnap.data();
-      const role = userData.role;
-      console.log("Logged in user role:", role);
+    const userData = userDocSnap.data();
+    const role = userData.role?.toLowerCase() || 'user';
 
-      // Success indicator
-      console.log('Login successful!');
+    showToast('Login successful!', 'success');
 
-      // ✅ Role-based redirection
-      if (role?.toLowerCase() === 'admin') {
+    setTimeout(() => {
+      if (role === 'admin') {
         window.location.href = 'admin-dashboard.html';
       } else {
         window.location.href = 'dashboard.html';
       }
-
-    } else {
-      alert("User data not found in Firestore.");
-    }
+    }, 1000);
 
   } catch (error) {
-    console.error('Login error:', error);
-    alert(error.message || 'Login failed. Please check your credentials.');
+    console.error('Login Error:', error);
+    showToast(error.message || 'Login failed. Please check your credentials.', 'error');
   }
 });
-// Password Reset
+
+// ✅ Password Reset Handler
 document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
   e.preventDefault();
   const email = document.getElementById('loginEmail').value.trim();
 
   if (!email) {
-    alert("Please enter your email above to reset your password.");
+    showToast('Please enter your email above to reset your password.', 'error');
     return;
   }
 
   try {
     await sendPasswordResetEmail(auth, email);
-    alert("Password reset email sent!");
+    showToast('Password reset email sent!', 'success');
   } catch (error) {
     console.error("Password reset error:", error);
-    alert(error.message || "Failed to send reset email.");
+    showToast(error.message || "Failed to send reset email.", 'error');
   }
 });
-signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    const user = userCredential.user;
-
-    // ⛔️ Block unverified users
-    if (!user.emailVerified) {
-      alert("Please verify your email before logging in.");
-      signOut(auth);
-      return;
-    }
-
-    // ✅ Allow access
-    window.location.href = 'dashboard.html';
-  })
-  .catch((error) => {
-    alert('Login failed: ' + error.message);
-  });
