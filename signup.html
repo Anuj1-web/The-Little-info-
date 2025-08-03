@@ -1,33 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign Up - The Little Info</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="theme-toggle.js"></script>
-  <style>
-    .btn-verify {
-      background-color: #22c55e;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      margin-top: 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .btn-verify:hover {
-      background-color: #16a34a;
-    }
-    .verify-status {
-      margin-top: 6px;
-      font-size: 0.9em;
-    }
-  </style>
+  <title>Signup</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="theme-toggle.js" defer></script>
+  <script type="module" src="signup.js" defer></script>
 </head>
 <body>
-  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -36,132 +17,109 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="profile.html">Profile</a>
         <a href="ai-chatbot.html">AI Chatbot</a>
-        <a href="login.html" class="btn">Login</a>
-        <a href="signup.html" class="btn">Signup</a>
-        <button id="themeToggle">🌙</button>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+        <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <!-- Signup Section -->
-  <main class="section-container">
+  <section class="section-container">
     <div class="auth-form-box">
-      <h2 style="color: var(--primary);">Create an Account</h2>
-
-      <!-- Email Verification -->
-      <div class="form-group">
-        <input type="email" id="verifyEmail" placeholder="Enter your email" required />
-        <button type="button" id="sendOtpBtn" class="btn-verify">Send OTP</button>
-        <input type="text" id="otpInput" placeholder="Enter OTP" maxlength="6" style="margin-top: 10px;" />
-        <p id="verifyStatus" class="verify-status"></p>
-      </div>
-
-      <!-- Signup Form -->
+      <h2>Create Account</h2>
       <form id="signupForm">
-        <label for="email">Email</label>
-        <input type="email" id="email" placeholder="Verified email only" required readonly />
-
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Enter password" required />
-
-        <label for="confirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword" placeholder="Re-enter password" required />
-
-        <button type="submit" class="btn-primary">Sign Up</button>
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password (min 6 chars)" required />
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+        <button type="submit" class="primary-btn">Sign Up</button>
       </form>
 
-      <p class="auth-redirect">Already have an account? <a href="login.html">Login here</a></p>
+      <!-- Verification Box -->
+      <div id="verifyBox" class="verify-box" style="display: none;">
+        <p>📧 Please verify your email address to continue.</p>
+        <button id="sendVerificationBtn" class="green-btn">Resend Verification Link</button>
+      </div>
     </div>
-  </main>
+  </section>
 
-  <!-- Firebase OTP Email Verification Logic -->
-  <script type="module">
-    import { auth, db } from './firebase.js';
-    import {
-      createUserWithEmailAndPassword,
-    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-    import {
-      collection, doc, setDoc
-    } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-
-    let generatedOTP = '';
-    let otpExpiry = null;
-    let verifiedEmail = '';
-
-    const sendOtpBtn = document.getElementById('sendOtpBtn');
-    const verifyEmailInput = document.getElementById('verifyEmail');
-    const otpInput = document.getElementById('otpInput');
-    const verifyStatus = document.getElementById('verifyStatus');
-    const signupForm = document.getElementById('signupForm');
-
-    function generateOTP() {
-      return Math.floor(100000 + Math.random() * 900000).toString();
+  <style>
+    .section-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      padding: 20px;
     }
 
-    sendOtpBtn.addEventListener('click', async () => {
-      const email = verifyEmailInput.value.trim();
-      if (!email.includes('@')) {
-        verifyStatus.style.color = 'red';
-        verifyStatus.textContent = 'Please enter a valid email.';
-        return;
-      }
+    .auth-form-box {
+      background: var(--card);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+      animation: fadeIn 0.5s ease;
+    }
 
-      generatedOTP = generateOTP();
-      otpExpiry = Date.now() + 3 * 60 * 1000;
+    .auth-form-box h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
 
-      // Send the OTP via Firebase (via Firestore collection to be picked by backend to mail, or emailJS, or Mailgun)
-      try {
-        await setDoc(doc(collection(db, "emailOtps"), email), {
-          otp: generatedOTP,
-          createdAt: Date.now()
-        });
-        verifyStatus.style.color = 'green';
-        verifyStatus.textContent = `OTP sent to ${email}. Valid for 3 minutes.`;
-      } catch (err) {
-        verifyStatus.style.color = 'red';
-        verifyStatus.textContent = 'Error sending OTP. Try again.';
-        console.error(err);
-      }
-    });
+    .auth-form-box input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--input);
+      color: var(--text);
+    }
 
-    otpInput.addEventListener('input', () => {
-      const enteredOTP = otpInput.value.trim();
-      if (enteredOTP === generatedOTP && Date.now() <= otpExpiry) {
-        verifiedEmail = verifyEmailInput.value.trim();
-        document.getElementById('email').value = verifiedEmail;
-        verifyStatus.style.color = 'green';
-        verifyStatus.textContent = 'Email verified successfully!';
-      } else if (Date.now() > otpExpiry) {
-        verifyStatus.style.color = 'red';
-        verifyStatus.textContent = 'OTP expired. Please resend.';
-      }
-    });
+    .primary-btn {
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
 
-    signupForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    .primary-btn:hover {
+      background-color: #0056b3;
+    }
 
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
+    .green-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
 
-      if (!verifiedEmail || email !== verifiedEmail) {
-        alert("Email not verified. Please complete OTP verification first.");
-        return;
-      }
+    .green-btn:hover {
+      background-color: #218838;
+    }
 
-      if (password !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
+    .verify-box {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 20px;
+      animation: fadeIn 0.4s ease;
+    }
 
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert("Signup successful!");
-        window.location.href = "dashboard.html";
-      } catch (err) {
-        alert("Signup failed: " + err.message);
-      }
-    });
-  </script>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </body>
 </html>
