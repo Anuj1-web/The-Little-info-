@@ -1250,3 +1250,47 @@ html {
 .toast-error {
   background-color: #ff4444;
 }
+/* Primary green button */
+.btn-primary {
+  background-color: #00cc88;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #00b377;
+}
+
+/* Secondary button */
+.btn-secondary {
+  margin-top: 1rem;
+  background-color: transparent;
+  border: 1px solid #00cc88;
+  color: #00cc88;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #00cc88;
+  color: white;
+}
+
+/* Fix default <a> links inside .auth-links */
+.auth-links a {
+  color: #00cc88;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+}
