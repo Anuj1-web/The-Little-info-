@@ -1,74 +1,103 @@
-import { auth, db } from './firebase.js';
-import {
-  signInWithEmailAndPassword,
-  signOut,
-  sendPasswordResetEmail
-} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-import {
-  doc,
-  getDoc
-} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
-import { showToast } from './toast.js'; // ✅ Make sure you have this
+// Firebase Auth Login Script with Toast + Password Reset
 
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+// ✅ Your Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
+  authDomain: "the-little-info.firebaseapp.com",
+  projectId: "the-little-info",
+  storageBucket: "the-little-info.firebasestorage.app",
+  messagingSenderId: "165711417682",
+  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// ✅ Inject toast CSS if not already present
+function injectToastCSS() {
+  const style = document.createElement("style");
+  style.textContent = `
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #323232;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 5px;
+      opacity: 0;
+      transition: opacity 0.5s ease, bottom 0.5s ease;
+      z-index: 9999;
+      font-size: 14px;
+    }
+    .toast.show {
+      opacity: 1;
+      bottom: 30px;
+    }
+    .toast.success { background-color: #4CAF50; }
+    .toast.error { background-color: #f44336; }
+  `;
+  document.head.appendChild(style);
+}
+
+injectToastCSS();
+
+// ✅ Toast function
+function showToast(message, type = "success") {
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.classList.add("show"), 100);
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 500);
+  }, 3500);
+}
+
+// ✅ Handle Login
+document.getElementById("login-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
 
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // ⛔ Unverified email check
     if (!user.emailVerified) {
-      showToast('Please verify your email before logging in.', 'error');
-      await signOut(auth);
+      showToast("Please verify your email before logging in.", "error");
       return;
     }
 
-    // ✅ Fetch user document
-    const userDocSnap = await getDoc(doc(db, 'users', user.uid));
-    if (!userDocSnap.exists()) {
-      showToast('User data not found in Firestore.', 'error');
-      await signOut(auth);
-      return;
-    }
-
-    const userData = userDocSnap.data();
-    const role = userData.role?.toLowerCase() || 'user';
-
-    showToast('Login successful!', 'success');
-
+    showToast("Login successful!", "success");
     setTimeout(() => {
-      if (role === 'admin') {
-        window.location.href = 'admin-dashboard.html';
-      } else {
-        window.location.href = 'dashboard.html';
-      }
-    }, 1000);
-
+      window.location.href = "index.html";
+    }, 1500);
   } catch (error) {
-    console.error('Login Error:', error);
-    showToast(error.message || 'Login failed. Please check your credentials.', 'error');
+    showToast("Login failed: " + error.message, "error");
+    console.error(error);
   }
 });
 
-// ✅ Password Reset Handler
-document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
+// ✅ Handle Forgot Password
+document.getElementById("forgot-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim();
 
-  if (!email) {
-    showToast('Please enter your email above to reset your password.', 'error');
-    return;
-  }
-
+  const email = document.getElementById("forgot-email").value;
   try {
     await sendPasswordResetEmail(auth, email);
-    showToast('Password reset email sent!', 'success');
+    showToast("Password reset email sent!", "success");
   } catch (error) {
-    console.error("Password reset error:", error);
-    showToast(error.message || "Failed to send reset email.", 'error');
+    showToast("Error: " + error.message, "error");
+    console.error(error);
   }
 });
