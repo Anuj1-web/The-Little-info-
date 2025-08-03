@@ -1,73 +1,99 @@
-import { auth } from './firebase.js';
+// signup.js
+
+import { auth, db } from './firebase.js';
 import {
   createUserWithEmailAndPassword,
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-  deleteUser
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+import {
+  collection, doc, setDoc
+} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-// Signup form submit
-document.getElementById('signupForm').addEventListener('submit', async (e) => {
+const sendOtpBtn = document.getElementById('sendOtpBtn');
+const verifyEmailInput = document.getElementById('verifyEmail');
+const otpInput = document.getElementById('otpInput');
+const verifyStatus = document.getElementById('verifyStatus');
+const signupForm = document.getElementById('signupForm');
+const finalEmailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const confirmPasswordInput = document.getElementById('confirmPassword');
+
+let generatedOTP = '';
+let otpExpiry = null;
+let verifiedEmail = '';
+
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+sendOtpBtn.addEventListener('click', async () => {
+  const email = verifyEmailInput.value.trim();
+  if (!email || !email.includes('@')) {
+    verifyStatus.style.color = 'red';
+    verifyStatus.textContent = 'Please enter a valid email address.';
+    return;
+  }
+
+  generatedOTP = generateOTP();
+  otpExpiry = Date.now() + 3 * 60 * 1000;
+
+  try {
+    await setDoc(doc(collection(db, 'emailOtps'), email), {
+      otp: generatedOTP,
+      createdAt: Date.now()
+    });
+
+    verifyStatus.style.color = 'green';
+    verifyStatus.textContent = `OTP sent to ${email}. Valid for 3 minutes.`;
+
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    verifyStatus.style.color = 'red';
+    verifyStatus.textContent = 'Failed to send OTP. Try again later.';
+  }
+});
+
+otpInput.addEventListener('input', () => {
+  const enteredOTP = otpInput.value.trim();
+  if (enteredOTP === generatedOTP && Date.now() <= otpExpiry) {
+    verifiedEmail = verifyEmailInput.value.trim();
+    finalEmailInput.value = verifiedEmail;
+    verifyStatus.style.color = 'green';
+    verifyStatus.textContent = '✅ Email verified!';
+    finalEmailInput.readOnly = true;
+  } else if (Date.now() > otpExpiry) {
+    verifyStatus.style.color = 'red';
+    verifyStatus.textContent = '❌ OTP expired. Please resend.';
+  }
+});
+
+signupForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById('signupEmail').value.trim();
-  const password = document.getElementById('signupPassword').value.trim();
+  const email = finalEmailInput.value.trim();
+  const password = passwordInput.value;
+  const confirmPassword = confirmPasswordInput.value;
 
-  if (!email || !password) {
-    showToast('Please fill all fields.', false);
+  if (!verifiedEmail || email !== verifiedEmail) {
+    alert('Email not verified. Please verify via OTP first.');
+    return;
+  }
+
+  if (password.length < 6) {
+    alert('Password must be at least 6 characters.');
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert('Passwords do not match.');
     return;
   }
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-
-    await sendEmailVerification(user);
-    showToast('Signup successful. Verification email sent. Please verify before login.', true);
-    document.getElementById('signupForm').reset();
-  } catch (error) {
-    showToast(error.message, false);
-  }
-});
-
-// Email verification button logic
-document.getElementById('sendVerificationBtn').addEventListener('click', async () => {
-  const email = document.getElementById('verifyEmail').value.trim();
-  const password = 'TempPass123@'; // temporary password
-
-  if (!email) {
-    showVerifyStatus('Please enter an email first.', false);
-    return;
-  }
-
-  try {
-    const tempCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(tempCredential.user);
-    showVerifyStatus('Verification email sent. Check your inbox.', true);
-
-    // Immediately delete temp user to prevent conflicts
-    await deleteUser(tempCredential.user);
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert('Signup successful!');
+    window.location.href = 'dashboard.html';
   } catch (err) {
-    if (err.code === 'auth/email-already-in-use') {
-      showVerifyStatus('Email already registered. Try logging in.', false);
-    } else {
-      showVerifyStatus(err.message, false);
-    }
+    console.error('Signup error:', err.message);
+    alert('Signup failed: ' + err.message);
   }
 });
-
-// Toast for signup result
-function showToast(message, success = true) {
-  const toast = document.createElement('div');
-  toast.textContent = message;
-  toast.className = `toast ${success ? 'toast-success' : 'toast-error'}`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 4000);
-}
-
-// Email verify inline status
-function showVerifyStatus(message, success) {
-  const status = document.getElementById('verifyStatus');
-  status.textContent = message;
-  status.style.color = success ? 'lightgreen' : 'salmon';
-}
