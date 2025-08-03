@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Signup</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="style.css">
   <script defer src="theme-toggle.js"></script>
-  <script defer src="firebase-init.js"></script>
   <script defer src="signup.js"></script>
 </head>
 <body>
-  <!-- 🔒 Compact locked header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -24,20 +22,20 @@
     </div>
   </header>
 
-  <!-- ✅ Consistent layout -->
-  <main class="section-container">
-    <div class="auth-form-box">
+  <section class="section-container">
+    <div class="auth-form-box fade-in">
       <h2>Sign Up</h2>
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="password" id="password" placeholder="Password (min 6 chars)" required />
-      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
-      <button id="signupBtn" class="green-btn">Sign Up</button>
-
-      <!-- Shown only after signup -->
-      <button id="sendVerificationBtn" class="green-btn" style="display: none;">📩 Send Verification Link</button>
-      <p id="signupMessage" class="info-msg"></p>
+      <form id="signupForm">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password (min 6 chars)" required minlength="6"/>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+        
+        <button type="button" id="sendVerificationBtn" class="btn-green">Send Verification Email</button>
+        <button type="submit" class="btn">Sign Up</button>
+      </form>
+      <p id="verificationStatus" class="status-text"></p>
     </div>
-  </main>
+  </section>
 
   <div id="toastContainer"></div>
 </body>
