@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="logo.png" type="image/png" />
   <style>
+    :root {
+      --accent: #4caf50;
+      --accent-hover: #45a049;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
@@ -52,57 +57,76 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-top: 50px;
+      padding-top: 60px;
     }
 
     .auth-form-box {
-      background: var(--box-bg, #fff);
+      background: var(--box-bg);
       padding: 2rem;
       border-radius: 1rem;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
       width: 100%;
       max-width: 400px;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .auth-form-box:hover {
       transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
     }
 
     .auth-form-box h2 {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .auth-form-box label {
       display: block;
       margin-top: 1rem;
-      font-weight: bold;
+      font-weight: 600;
     }
 
     .auth-form-box input {
       width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.25rem;
+      padding: 0.6rem;
+      margin-top: 0.4rem;
       border-radius: 0.5rem;
       border: 1px solid #ccc;
+      background: var(--input-bg, #fff);
+      color: var(--text);
+    }
+
+    .auth-form-box input:focus {
+      outline: none;
+      border-color: var(--accent);
     }
 
     .auth-form-box button[type="submit"],
     #resendBtn {
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.8rem;
       margin-top: 1.5rem;
       border: none;
       border-radius: 0.5rem;
-      background-color: var(--accent, #4caf50);
+      background-color: var(--accent);
       color: white;
       font-weight: bold;
+      font-size: 1rem;
       cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .auth-form-box button:hover,
+    #resendBtn:hover {
+      background-color: var(--accent-hover);
     }
 
     #resendBtn {
       background-color: #2196f3;
+    }
+
+    #resendBtn:hover {
+      background-color: #1e88e5;
     }
 
     .toast {
@@ -125,6 +149,7 @@
       --text: #eee;
       --box-bg: #1e1e1e;
       --bg-alt: #1a1a1a;
+      --input-bg: #2a2a2a;
     }
 
     [data-theme="light"] {
@@ -132,10 +157,12 @@
       --text: #111;
       --box-bg: #ffffff;
       --bg-alt: #e9e9e9;
+      --input-bg: #ffffff;
     }
   </style>
 </head>
 <body>
+  <!-- ✅ Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -145,12 +172,13 @@
         <a href="profile.html">Profile</a>
         <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html">Login</a>
-        <a href="signup.html">Signup</a>
-        <button id="themeToggle">🌓</button>
+        <a href="signup.html" class="active">Signup</a>
+        <button id="themeToggle">🌙</button>
       </nav>
     </div>
   </header>
 
+  <!-- ✅ Form Box -->
   <main class="section-container">
     <div class="auth-form-box">
       <h2>Create Account</h2>
@@ -173,6 +201,7 @@
     </div>
   </main>
 
+  <!-- ✅ Scripts -->
   <script src="theme-toggle.js"></script>
   <script type="module" src="signup.js"></script>
 </body>
