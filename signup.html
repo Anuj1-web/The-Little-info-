@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Signup</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script type="module" src="theme-toggle.js" defer></script>
-  <script type="module" src="signup.js" defer></script>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
+  <!-- Finalized Compact Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -18,12 +20,13 @@
         <a href="profile.html">Profile</a>
         <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html">Login</a>
-        <a href="signup.html">Signup</a>
+        <a href="signup.html" class="active">Signup</a>
         <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
+  <!-- Signup Form Box -->
   <section class="section-container">
     <div class="auth-form-box">
       <h2>Create Account</h2>
@@ -31,95 +34,21 @@
         <input type="email" id="email" placeholder="Email" required />
         <input type="password" id="password" placeholder="Password (min 6 chars)" required />
         <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
-        <button type="submit" class="primary-btn">Sign Up</button>
-      </form>
 
-      <!-- Verification Box -->
-      <div id="verifyBox" class="verify-box" style="display: none;">
-        <p>📧 Please verify your email address to continue.</p>
-        <button id="sendVerificationBtn" class="green-btn">Resend Verification Link</button>
-      </div>
+        <button type="submit" class="primary-btn">Sign Up</button>
+        <p id="emailVerificationNotice" style="display:none;" class="info-text">
+          📩 A verification link has been sent. Please verify your email to login.
+        </p>
+      </form>
     </div>
   </section>
 
-  <style>
-    .section-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 80vh;
-      padding: 20px;
-    }
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
 
-    .auth-form-box {
-      background: var(--card);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
-      animation: fadeIn 0.5s ease;
-    }
-
-    .auth-form-box h2 {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .auth-form-box input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 14px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--input);
-      color: var(--text);
-    }
-
-    .primary-btn {
-      width: 100%;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .primary-btn:hover {
-      background-color: #0056b3;
-    }
-
-    .green-btn {
-      background-color: #28a745;
-      color: white;
-      padding: 8px 16px;
-      border: none;
-      margin-top: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .green-btn:hover {
-      background-color: #218838;
-    }
-
-    .verify-box {
-      background: var(--card);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 16px;
-      border-radius: 8px;
-      margin-top: 20px;
-      animation: fadeIn 0.4s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <!-- Scripts -->
+  <script src="firebase-config.js"></script>
+  <script src="theme-toggle.js"></script>
+  <script src="signup.js"></script>
 </body>
 </html>
