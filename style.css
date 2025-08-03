@@ -1188,6 +1188,7 @@ html {
   transition: background 0.3s ease;
 }
 
+
 .btn-primary:hover {
   background: linear-gradient(to right, #3b82f6, #2563eb);
 }
