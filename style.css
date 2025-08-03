@@ -1313,3 +1313,12 @@ section::before {
   position: relative;
   z-index: 3;
 }
+.section-container {
+  position: relative;
+  z-index: 10;
+}
+
+.auth-form-box {
+  position: relative;
+  z-index: 20;
+}
