@@ -1,25 +1,21 @@
-// signup2.js
-import { auth } from './firebase-config.js';
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification
-} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
-
 const form = document.getElementById("signupForm2");
 const toast = document.getElementById("toastContainer");
 const resendBtn = document.getElementById("resendVerificationBtn");
+
 let cooldown = false;
+let currentUser = null;
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(userCredential.user);
+    const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+    currentUser = userCredential.user;
+    await currentUser.updateProfile({ displayName: name });
+    await currentUser.sendEmailVerification();
 
     showToast(`Verification email sent to ${email}`, true);
     resendBtn.disabled = false;
@@ -30,19 +26,14 @@ form.addEventListener("submit", async (e) => {
 });
 
 resendBtn.addEventListener("click", async () => {
-  if (cooldown) return;
+  if (cooldown || !currentUser) return;
 
-  const user = auth.currentUser;
-  if (user) {
-    try {
-      await sendEmailVerification(user);
-      showToast("Verification email resent.", true);
-      startCooldown();
-    } catch (error) {
-      showToast("Failed to resend email: " + error.message, false);
-    }
-  } else {
-    showToast("Please sign up or login first.", false);
+  try {
+    await currentUser.sendEmailVerification();
+    showToast("Verification email resent.", true);
+    startCooldown();
+  } catch (error) {
+    showToast("Failed to resend email: " + error.message, false);
   }
 });
 
