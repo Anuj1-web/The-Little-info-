@@ -73,3 +73,20 @@ document.getElementById('forgotPasswordLink').addEventListener('click', async (e
     alert(error.message || "Failed to send reset email.");
   }
 });
+signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    const user = userCredential.user;
+
+    // ⛔️ Block unverified users
+    if (!user.emailVerified) {
+      alert("Please verify your email before logging in.");
+      signOut(auth);
+      return;
+    }
+
+    // ✅ Allow access
+    window.location.href = 'dashboard.html';
+  })
+  .catch((error) => {
+    alert('Login failed: ' + error.message);
+  });
