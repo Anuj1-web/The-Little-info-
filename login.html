@@ -24,25 +24,26 @@
     </div>
   </header>
 
-  <!-- ✅ Auth Form -->
+  <!-- ✅ Login Form -->
   <section class="section-container">
     <div class="auth-form-box animate-fade-in">
       <h2>Login</h2>
       <form id="loginForm">
         <input type="email" id="loginEmail" placeholder="Email" required />
         <input type="password" id="loginPassword" placeholder="Password" required />
-        <button type="submit" class="btn-primary">Login</button>
+        <button type="submit" class="btn">Login</button>
       </form>
 
-      <!-- ✅ Additional Actions -->
+      <!-- ✅ Auth Actions -->
       <div class="auth-links">
         <a href="#" id="forgotPasswordLink">Forgot Password?</a>
-        <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+        <p>Don’t have an account? <a href="signup.html">Sign up</a></p>
       </div>
     </div>
   </section>
 
-  <div id="toast-container"></div>
+  <!-- ✅ Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
 
   <!-- ✅ Scripts -->
   <script type="module" src="firebase.js"></script>
