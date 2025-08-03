@@ -1,168 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Signup</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="logo.png" type="image/png" />
-  <style>
-    :root {
-      --accent: #4caf50;
-      --accent-hover: #45a049;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    header.site-header {
-      background: var(--bg-alt);
-      padding: 0.5rem 1rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .header-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .site-logo-small {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-    }
-
-    nav a, nav button {
-      margin-left: 1rem;
-      text-decoration: none;
-      color: var(--text);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-
-    nav a:hover, nav button:hover {
-      text-decoration: underline;
-    }
-
-    .section-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding-top: 60px;
-    }
-
-    .auth-form-box {
-      background: var(--box-bg);
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-      width: 100%;
-      max-width: 400px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .auth-form-box:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .auth-form-box h2 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .auth-form-box label {
-      display: block;
-      margin-top: 1rem;
-      font-weight: 600;
-    }
-
-    .auth-form-box input {
-      width: 100%;
-      padding: 0.6rem;
-      margin-top: 0.4rem;
-      border-radius: 0.5rem;
-      border: 1px solid #ccc;
-      background: var(--input-bg, #fff);
-      color: var(--text);
-    }
-
-    .auth-form-box input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .auth-form-box button[type="submit"],
-    #resendBtn {
-      width: 100%;
-      padding: 0.8rem;
-      margin-top: 1.5rem;
-      border: none;
-      border-radius: 0.5rem;
-      background-color: var(--accent);
-      color: white;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .auth-form-box button:hover,
-    #resendBtn:hover {
-      background-color: var(--accent-hover);
-    }
-
-    #resendBtn {
-      background-color: #2196f3;
-    }
-
-    #resendBtn:hover {
-      background-color: #1e88e5;
-    }
-
-    .toast {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      background-color: #333;
-      color: #fff;
-      z-index: 9999;
-      opacity: 0.9;
-    }
-
-    .toast.success { background-color: #4caf50; }
-    .toast.error { background-color: #f44336; }
-
-    [data-theme="dark"] {
-      --bg: #121212;
-      --text: #eee;
-      --box-bg: #1e1e1e;
-      --bg-alt: #1a1a1a;
-      --input-bg: #2a2a2a;
-    }
-
-    [data-theme="light"] {
-      --bg: #f5f5f5;
-      --text: #111;
-      --box-bg: #ffffff;
-      --bg-alt: #e9e9e9;
-      --input-bg: #ffffff;
-    }
-  </style>
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
+  <script defer src="signup.js"></script>
 </head>
 <body>
-  <!-- ✅ Header -->
+  <!-- ✅ Compact Finalized Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -173,29 +20,28 @@
         <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html">Login</a>
         <a href="signup.html" class="active">Signup</a>
-        <button id="themeToggle">🌙</button>
+        <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <!-- ✅ Form Box -->
- <section class="section-container">
-  <div class="auth-form-box animate-fade-in">
-    <h2>Create Account</h2>
-    <form id="signupForm">
-      <input type="text" id="signupName" placeholder="Your full name" required />
-      <input type="email" id="signupEmail" placeholder="your@email.com" required />
-      <input type="password" id="signupPassword" placeholder="At least 6 characters" required />
-      <button type="submit" class="btn-primary">Sign Up</button>
-    </form>
-    <div class="auth-links">
-      <p>Already have an account? <a href="login.html">Login</a></p>
+  <!-- ✅ Signup Form -->
+  <section class="section-container">
+    <div class="auth-form-box animate-fade-in">
+      <h2>Create Account</h2>
+      <form id="signupForm">
+        <input type="text" id="signupName" placeholder="Your full name" required />
+        <input type="email" id="signupEmail" placeholder="your@email.com" required />
+        <input type="password" id="signupPassword" placeholder="At least 6 characters" required />
+        <button type="submit" class="btn-primary">Sign Up</button>
+      </form>
+      <div class="auth-links">
+        <p>Already have an account? <a href="login.html">Login</a></p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-  <!-- ✅ Scripts -->
-  <script src="theme-toggle.js"></script>
-  <script type="module" src="signup.js"></script>
+  <!-- ✅ Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
 </body>
 </html>
