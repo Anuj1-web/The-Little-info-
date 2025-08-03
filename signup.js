@@ -1,92 +1,60 @@
-import { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { app } from "./firebase.js";
+// signup.js
+import { auth } from "./firebase.js";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
-const auth = getAuth(app);
+// Wait for DOM to load
+document.addEventListener("DOMContentLoaded", () => {
+  const signupForm = document.getElementById("signup-form");
 
-// Elements
-const signupForm = document.getElementById("signupForm");
-const resendBtn = document.getElementById("resendBtn");
-const resendSection = document.getElementById("resendSection");
-const toastContainer = document.getElementById("toastContainer");
-
-// Toast function
-function showToast(message, isError = false) {
-  const toast = document.createElement("div");
-  toast.className = `toast ${isError ? "error" : "success"}`;
-  toast.innerText = message;
-  toastContainer.appendChild(toast);
-  setTimeout(() => toast.remove(), 4000);
-}
-
-// Handle Signup
-signupForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const name = document.getElementById("signupName").value.trim();
-  const email = document.getElementById("signupEmail").value.trim();
-  const password = document.getElementById("signupPassword").value;
-
-  if (name.length < 3) {
-    showToast("Full name must be at least 3 characters", true);
+  if (!signupForm) {
+    console.error("Signup form not found. Make sure your form has id='signup-form'");
     return;
   }
 
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+  signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    await updateProfile(user, { displayName: name });
-    await sendEmailVerification(user);
+    // Extract form fields
+    const email = document.getElementById("signup-email").value.trim();
+    const password = document.getElementById("signup-password").value.trim();
+    const username = document.getElementById("signup-username")?.value.trim(); // Optional username field
 
-    showToast("Verification email sent. Please check your inbox.");
-
-    // Show resend section
-    resendSection.classList.remove("hidden");
-    resendBtn.disabled = true;
-    resendBtn.innerText = "Resend in 30s";
-
-    // Countdown to enable resend
-    let countdown = 30;
-    const interval = setInterval(() => {
-      countdown--;
-      resendBtn.innerText = `Resend in ${countdown}s`;
-      if (countdown <= 0) {
-        clearInterval(interval);
-        resendBtn.disabled = false;
-        resendBtn.innerText = "Resend Verification Email";
-      }
-    }, 1000);
-  } catch (error) {
-    const msg = error.message.includes("email-already-in-use")
-      ? "Email already in use. Try logging in."
-      : "Signup failed. Please try again.";
-    showToast(msg, true);
-  }
-});
-
-// Resend email logic
-resendBtn.addEventListener("click", async () => {
-  const user = auth.currentUser;
-  if (user) {
-    try {
-      await sendEmailVerification(user);
-      showToast("Verification email resent.");
-      resendBtn.disabled = true;
-      resendBtn.innerText = "Resend in 30s";
-
-      // Repeat countdown
-      let countdown = 30;
-      const interval = setInterval(() => {
-        countdown--;
-        resendBtn.innerText = `Resend in ${countdown}s`;
-        if (countdown <= 0) {
-          clearInterval(interval);
-          resendBtn.disabled = false;
-          resendBtn.innerText = "Resend Verification Email";
-        }
-      }, 1000);
-    } catch {
-      showToast("Could not resend email. Try again.", true);
+    // Basic validation
+    if (!email || !password) {
+      alert("Please fill in all required fields.");
+      return;
     }
-  }
+
+    try {
+      // Create user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Optional: update profile with display name
+      if (username) {
+        await updateProfile(user, { displayName: username });
+      }
+
+      alert("Signup successful! Welcome, " + (username || user.email));
+      window.location.href = "index.html"; // Redirect to homepage or dashboard
+    } catch (error) {
+      // Handle errors with meaningful messages
+      let message = "Signup failed.";
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          message = "This email is already registered.";
+          break;
+        case "auth/invalid-email":
+          message = "Invalid email address.";
+          break;
+        case "auth/weak-password":
+          message = "Password should be at least 6 characters.";
+          break;
+        default:
+          message = error.message;
+      }
+      console.error("Signup Error:", error);
+      alert(message);
+    }
+  });
 });
