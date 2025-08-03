@@ -1,16 +1,15 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { firebaseConfig } from './firebase.js';
+import { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { app } from "./firebase.js";
 
-// ✅ Init Firebase
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// ✅ Elements
+// Elements
 const signupForm = document.getElementById("signupForm");
-const resendBtn = document.getElementById("resendVerifyBtn");
+const resendBtn = document.getElementById("resendBtn");
+const resendSection = document.getElementById("resendSection");
 const toastContainer = document.getElementById("toastContainer");
 
+// Toast function
 function showToast(message, isError = false) {
   const toast = document.createElement("div");
   toast.className = `toast ${isError ? "error" : "success"}`;
@@ -19,42 +18,53 @@ function showToast(message, isError = false) {
   setTimeout(() => toast.remove(), 4000);
 }
 
-// ✅ Signup Flow
+// Handle Signup
 signupForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  const name = document.getElementById("signupName").value.trim();
   const email = document.getElementById("signupEmail").value.trim();
-  const password = document.getElementById("signupPassword").value.trim();
+  const password = document.getElementById("signupPassword").value;
+
+  if (name.length < 3) {
+    showToast("Full name must be at least 3 characters", true);
+    return;
+  }
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // ✅ Send email verification
+    await updateProfile(user, { displayName: name });
     await sendEmailVerification(user);
+
     showToast("Verification email sent. Please check your inbox.");
 
-    // ✅ Show resend option after 30 seconds
-    resendBtn.style.display = "inline-block";
+    // Show resend section
+    resendSection.classList.remove("hidden");
     resendBtn.disabled = true;
     resendBtn.innerText = "Resend in 30s";
 
+    // Countdown to enable resend
     let countdown = 30;
     const interval = setInterval(() => {
       countdown--;
       resendBtn.innerText = `Resend in ${countdown}s`;
-      if (countdown === 0) {
+      if (countdown <= 0) {
         clearInterval(interval);
         resendBtn.disabled = false;
-        resendBtn.innerText = "Resend Verification";
+        resendBtn.innerText = "Resend Verification Email";
       }
     }, 1000);
   } catch (error) {
-    console.error(error);
-    showToast(error.message, true);
+    const msg = error.message.includes("email-already-in-use")
+      ? "Email already in use. Try logging in."
+      : "Signup failed. Please try again.";
+    showToast(msg, true);
   }
 });
 
-// ✅ Resend Email
+// Resend email logic
 resendBtn.addEventListener("click", async () => {
   const user = auth.currentUser;
   if (user) {
@@ -63,21 +73,20 @@ resendBtn.addEventListener("click", async () => {
       showToast("Verification email resent.");
       resendBtn.disabled = true;
       resendBtn.innerText = "Resend in 30s";
+
+      // Repeat countdown
       let countdown = 30;
       const interval = setInterval(() => {
         countdown--;
         resendBtn.innerText = `Resend in ${countdown}s`;
-        if (countdown === 0) {
+        if (countdown <= 0) {
           clearInterval(interval);
           resendBtn.disabled = false;
-          resendBtn.innerText = "Resend Verification";
+          resendBtn.innerText = "Resend Verification Email";
         }
       }, 1000);
-    } catch (error) {
-      console.error(error);
-      showToast("Error resending verification email.", true);
+    } catch {
+      showToast("Could not resend email. Try again.", true);
     }
-  } else {
-    showToast("No user found. Please sign up again.", true);
   }
 });
