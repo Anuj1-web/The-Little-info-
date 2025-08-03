@@ -1,33 +1,28 @@
+// signup2.js
+import { auth } from './firebase-config.js';
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification
-} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-import { app } from "./firebase-config.js";
+} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-const auth = getAuth(app);
 const form = document.getElementById("signupForm2");
 const toast = document.getElementById("toastContainer");
-const resendBtn = document.getElementById("resendBtn");
-const resendContainer = document.getElementById("resendContainer");
-
-let currentUser = null;
-let resendTimer = null;
-let countdown = 30;
+const resendBtn = document.getElementById("resendVerificationBtn");
+let cooldown = false;
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    currentUser = userCredential.user;
-    await sendEmailVerification(currentUser);
-    showToast(`Account created. Verification email sent to ${email}`, true);
-    resendContainer.style.display = "block";
-    startCountdown();
+    await sendEmailVerification(userCredential.user);
+
+    showToast(`Verification email sent to ${email}`, true);
+    resendBtn.disabled = false;
     form.reset();
   } catch (error) {
     showToast(error.message, false);
@@ -35,27 +30,36 @@ form.addEventListener("submit", async (e) => {
 });
 
 resendBtn.addEventListener("click", async () => {
-  if (!currentUser) return;
-  try {
-    await sendEmailVerification(currentUser);
-    showToast("Verification email resent.", true);
-    startCountdown();
-  } catch (error) {
-    showToast(error.message, false);
+  if (cooldown) return;
+
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      await sendEmailVerification(user);
+      showToast("Verification email resent.", true);
+      startCooldown();
+    } catch (error) {
+      showToast("Failed to resend email: " + error.message, false);
+    }
+  } else {
+    showToast("Please sign up or login first.", false);
   }
 });
 
-function startCountdown() {
+function startCooldown() {
+  cooldown = true;
   resendBtn.disabled = true;
-  countdown = 30;
-  resendBtn.textContent = `Resend in ${countdown}s`;
-  clearInterval(resendTimer);
-  resendTimer = setInterval(() => {
-    countdown--;
-    resendBtn.textContent = countdown > 0 ? `Resend in ${countdown}s` : "Resend Email";
-    if (countdown <= 0) {
-      clearInterval(resendTimer);
+  let timer = 30;
+  resendBtn.textContent = `Wait ${timer}s`;
+
+  const interval = setInterval(() => {
+    timer--;
+    resendBtn.textContent = `Wait ${timer}s`;
+    if (timer <= 0) {
+      clearInterval(interval);
+      cooldown = false;
       resendBtn.disabled = false;
+      resendBtn.textContent = "Resend Verification";
     }
   }, 1000);
 }
