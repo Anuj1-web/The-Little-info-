@@ -1,8 +1,13 @@
-// Firebase setup (make sure firebase is initialized in your project)
+// signup.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signOut,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+// ✅ Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
   authDomain: "the-little-info.firebaseapp.com",
@@ -11,104 +16,67 @@ const firebaseConfig = {
   messagingSenderId: "165711417682",
   appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
 };
+
+// ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
 
-// Toast function (already built into your site)
-function toast(message, type = "success") {
+// ✅ Toast Helper
+function showToast(message, type = "success") {
+  const container = document.getElementById("toastContainer");
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
   toast.innerText = message;
-  document.getElementById("toastContainer").appendChild(toast);
-  setTimeout(() => toast.remove(), 5000);
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
 }
 
-// Elements
-const signupForm = document.getElementById("signupForm");
-const resendBtn = document.getElementById("resendVerificationBtn");
+// ✅ Resend Verification Setup
+let resendBtn = document.getElementById("resendVerificationBtn");
+let currentUser = null;
 
-let verificationInterval = null;
+function enableResendButton() {
+  resendBtn.style.display = "block";
+  resendBtn.disabled = false;
+}
 
-// Signup form submission
-signupForm.addEventListener("submit", async (e) => {
+resendBtn.addEventListener("click", async () => {
+  if (currentUser) {
+    resendBtn.disabled = true;
+    try {
+      await sendEmailVerification(currentUser);
+      showToast("Verification email resent!", "success");
+      setTimeout(() => (resendBtn.disabled = false), 30000);
+    } catch (err) {
+      showToast("Error resending email", "error");
+    }
+  }
+});
+
+// ✅ Signup Handler
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const name = document.getElementById("signupName").value.trim();
   const email = document.getElementById("signupEmail").value.trim();
   const password = document.getElementById("signupPassword").value;
 
   if (!name || !email || password.length < 6) {
-    toast("Please fill all fields correctly.", "error");
+    showToast("Please fill all fields correctly.", "error");
     return;
   }
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+    currentUser = userCredential.user;
 
-    // Save user profile in Firestore
-    await setDoc(doc(db, "users", user.uid), {
-      name,
-      email,
-      createdAt: new Date(),
-      role: "user",
-      twoStepAuth: false,
-    });
+    await sendEmailVerification(currentUser);
+    showToast("Account created! Verification email sent.", "success");
 
-    // Send verification email
-    await sendEmailVerification(user);
-    toast("Verification email sent. Please check your inbox.", "success");
+    await signOut(auth);
 
-    resendBtn.style.display = "none";
-    clearInterval(verificationInterval);
-    startResendTimer();
-
-    // Monitor if user verifies
-    monitorVerification();
+    setTimeout(enableResendButton, 30000);
   } catch (error) {
-    toast(error.message, "error");
+    showToast(error.message, "error");
   }
 });
-
-// Resend email
-resendBtn.addEventListener("click", async () => {
-  const user = auth.currentUser;
-  if (user && !user.emailVerified) {
-    try {
-      await sendEmailVerification(user);
-      toast("Verification email resent.", "success");
-      resendBtn.style.display = "none";
-      startResendTimer();
-    } catch (error) {
-      toast("Failed to resend email. Try again later.", "error");
-    }
-  }
-});
-
-// 30 sec resend delay
-function startResendTimer() {
-  let seconds = 30;
-  verificationInterval = setInterval(() => {
-    seconds--;
-    if (seconds <= 0) {
-      clearInterval(verificationInterval);
-      resendBtn.style.display = "inline-block";
-    }
-  }, 1000);
-}
-
-// Check if user verified their email
-function monitorVerification() {
-  const interval = setInterval(async () => {
-    const user = auth.currentUser;
-    if (!user) return;
-    await user.reload();
-    if (user.emailVerified) {
-      clearInterval(interval);
-      toast("Email verified successfully!", "success");
-      setTimeout(() => {
-        window.location.href = "dashboard.html";
-      }, 2000);
-    }
-  }, 3000);
-}
