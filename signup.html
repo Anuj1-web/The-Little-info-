@@ -34,12 +34,11 @@
         <button type="submit" class="btn">Create Account</button>
       </form>
 
-      <!-- ✅ Resend Section (Hidden initially) -->
+      <!-- ✅ Resend Section -->
       <div id="resendSection" class="hidden" style="margin-top: 1rem;">
         <button id="resendBtn" class="btn small">Resend Verification Email</button>
       </div>
 
-      <!-- ✅ Toast Messages -->
       <div id="toastContainer" class="toast-container"></div>
 
       <p style="margin-top: 1rem; font-size: 0.9rem;">
@@ -48,6 +47,18 @@
       </p>
     </div>
   </section>
+
+  <!-- ✅ Force buttons to be clickable -->
+  <style>
+    .auth-form-box button,
+    .auth-form-box #resendBtn {
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      opacity: 1 !important;
+      z-index: 10 !important;
+      position: relative;
+    }
+  </style>
 
   <script src="theme-toggle.js"></script>
   <script type="module" src="signup.js"></script>
