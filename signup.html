@@ -26,15 +26,14 @@
     <div class="auth-form-box fade-in">
       <h2>Sign Up</h2>
       <form id="signupForm">
-        <input type="email" id="email" placeholder="Email" required />
-        <input type="password" id="password" placeholder="Password (min 6 chars)" required minlength="6"/>
-        <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
-        
-        <button type="button" id="sendVerificationBtn" class="btn-green">Send Verification Email</button>
-        <button type="submit" class="btn">Sign Up</button>
-      </form>
-      <p id="verificationStatus" class="status-text"></p>
-    </div>
+  <input type="email" id="email" required />
+  <input type="password" id="password" required />
+  <input type="password" id="confirmPassword" required />
+  <button type="submit">Sign Up</button>
+</form>
+
+<div id="toastContainer"></div>
+
   </section>
 
   <div id="toastContainer"></div>
