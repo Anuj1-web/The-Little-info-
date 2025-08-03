@@ -1,103 +1,71 @@
-// Firebase Auth Login Script with Toast + Password Reset
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import {
   getAuth,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+  sendPasswordResetEmail,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-// ✅ Your Firebase config
+// ✅ Your Firebase Config (already finalized)
 const firebaseConfig = {
   apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
   authDomain: "the-little-info.firebaseapp.com",
   projectId: "the-little-info",
-  storageBucket: "the-little-info.firebasestorage.app",
+  storageBucket: "the-little-info.appspot.com",
   messagingSenderId: "165711417682",
   appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
 };
 
+// ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// ✅ Inject toast CSS if not already present
-function injectToastCSS() {
-  const style = document.createElement("style");
-  style.textContent = `
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #323232;
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: 5px;
-      opacity: 0;
-      transition: opacity 0.5s ease, bottom 0.5s ease;
-      z-index: 9999;
-      font-size: 14px;
-    }
-    .toast.show {
-      opacity: 1;
-      bottom: 30px;
-    }
-    .toast.success { background-color: #4CAF50; }
-    .toast.error { background-color: #f44336; }
-  `;
-  document.head.appendChild(style);
-}
-
-injectToastCSS();
-
-// ✅ Toast function
-function showToast(message, type = "success") {
-  const toast = document.createElement("div");
-  toast.className = `toast ${type}`;
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.classList.add("show"), 100);
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 500);
-  }, 3500);
-}
-
-// ✅ Handle Login
-document.getElementById("login-form")?.addEventListener("submit", async (e) => {
+// ✅ Login form handler
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     if (!user.emailVerified) {
-      showToast("Please verify your email before logging in.", "error");
-      return;
+      showToast("Please verify your email before logging in.", true);
+    } else {
+      showToast("Login successful!");
+      // ✅ Redirect to dashboard after login
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1000);
     }
-
-    showToast("Login successful!", "success");
-    setTimeout(() => {
-      window.location.href = "index.html";
-    }, 1500);
   } catch (error) {
-    showToast("Login failed: " + error.message, "error");
-    console.error(error);
+    showToast(error.message, true);
   }
 });
 
-// ✅ Handle Forgot Password
-document.getElementById("forgot-form")?.addEventListener("submit", async (e) => {
+// ✅ Forgot password handler
+document.getElementById("forgotPasswordLink").addEventListener("click", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("forgot-email").value;
+  const email = document.getElementById("loginEmail").value;
+  if (!email) {
+    showToast("Please enter your email above before clicking forgot password.", true);
+    return;
+  }
+
   try {
     await sendPasswordResetEmail(auth, email);
-    showToast("Password reset email sent!", "success");
+    showToast("Password reset link sent to your email.");
   } catch (error) {
-    showToast("Error: " + error.message, "error");
-    console.error(error);
+    showToast(error.message, true);
   }
 });
+
+// ✅ Toast notification function
+function showToast(message, isError = false) {
+  const toast = document.createElement("div");
+  toast.className = `toast ${isError ? "error" : "success"}`;
+  toast.textContent = message;
+  document.getElementById("toast-container").appendChild(toast);
+  setTimeout(() => toast.remove(), 5000);
+}
