@@ -45,3 +45,21 @@ export function protectPage(redirectTo = 'login.html') {
     }
   });
 }
+import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+// Forgot password handling
+const forgotPasswordForm = document.getElementById("forgot-password-form");
+if (forgotPasswordForm) {
+  forgotPasswordForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("forgot-email").value;
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showToast("Password reset email sent. Check your inbox.", "success");
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      showToast(error.message, "error");
+    }
+  });
+}
