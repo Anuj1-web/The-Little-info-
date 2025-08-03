@@ -1,16 +1,10 @@
-// signup.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
-  signOut
+  signOut,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
@@ -23,13 +17,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
 
-const signupForm = document.getElementById("signupForm");
-const resendBtn = document.getElementById("resendBtn");
-let currentUser = null;
-
-function showToast(message, type = "success") {
+// Toast function
+function showToast(message, type = "info") {
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
   toast.textContent = message;
@@ -37,54 +27,67 @@ function showToast(message, type = "success") {
   setTimeout(() => toast.remove(), 4000);
 }
 
-signupForm.addEventListener("submit", async (e) => {
+// Handle Sign Up
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("emailInput").value.trim();
-  const password = document.getElementById("passwordInput").value.trim();
-  const username = document.getElementById("usernameInput").value.trim();
+  const emailVal = document.getElementById("email").value.trim();
+  const passVal = document.getElementById("password").value.trim();
+  const nameVal = document.getElementById("name").value.trim();
 
-  if (!email || !password || !username) {
-    showToast("All fields are required", "error");
+  if (!emailVal || !passVal || !nameVal) {
+    showToast("Please fill in all fields", "error");
     return;
   }
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    currentUser = user;
+    const userCred = await createUserWithEmailAndPassword(auth, emailVal, passVal);
+    await sendEmailVerification(userCred.user);
 
-    // 🔥 Create Firestore user doc (FIX FOR LOGIN ISSUE)
-    await setDoc(doc(db, "users", user.uid), {
-      email: email,
-      username: username,
-      createdAt: Date.now(),
-      role: "user",
-      twoStepEnabled: false
-    });
+    showToast("Account created! Verification email sent.", "success");
 
-    await sendEmailVerification(user);
-    showToast("Verification email sent ✔️");
-    resendBtn.style.display = "inline-block";
+    // Show Resend button
+    document.getElementById("resendBtnContainer").style.display = "block";
 
+    // Resend handler
+    const resendBtn = document.getElementById("resendBtn");
+    resendBtn.onclick = async () => {
+      resendBtn.disabled = true;
+      resendBtn.textContent = "Sending...";
+      try {
+        await sendEmailVerification(userCred.user);
+        showToast("Verification email resent.", "success");
+      } catch (err) {
+        showToast("Failed to resend verification email.", "error");
+      }
+      setTimeout(() => {
+        resendBtn.disabled = false;
+        resendBtn.textContent = "Resend Verification Email";
+      }, 30000); // 30 seconds cooldown
+    };
+
+    // Check verification for 3 minutes
+    const interval = setInterval(async () => {
+      await userCred.user.reload();
+      const refreshedUser = auth.currentUser;
+
+      if (refreshedUser.emailVerified) {
+        clearInterval(interval);
+        showToast("Email verified! Redirecting...", "success");
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1500);
+      }
+    }, 10000);
+
+    // Auto signout after 3 minutes
     setTimeout(() => {
+      clearInterval(interval);
       signOut(auth);
-      showToast("Signed out. Verify your email and login.");
-    }, 3000);
-  } catch (error) {
-    showToast(error.message, "error");
-  }
-});
+      showToast("Verification timeout. Please try again.", "error");
+    }, 180000);
 
-resendBtn.addEventListener("click", async () => {
-  if (!currentUser) {
-    showToast("No user to resend to", "error");
-    return;
-  }
-  try {
-    await sendEmailVerification(currentUser);
-    showToast("Verification link resent");
   } catch (err) {
-    showToast("Error resending email", "error");
+    showToast(err.message, "error");
   }
 });
