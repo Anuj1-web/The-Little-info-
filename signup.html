@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Signup</title>
   <link rel="stylesheet" href="styles.css" />
+  <script defer src="theme-toggle.js"></script>
   <script defer src="firebase-init.js"></script>
   <script defer src="signup.js"></script>
 </head>
 <body>
+  <!-- 🔒 Compact locked header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -22,14 +24,16 @@
     </div>
   </header>
 
+  <!-- ✅ Consistent layout -->
   <main class="section-container">
     <div class="auth-form-box">
-      <h2>Create Account</h2>
-      <input type="email" id="email" placeholder="Email" />
-      <input type="password" id="password" placeholder="Password (min 6 chars)" />
-      <input type="password" id="confirmPassword" placeholder="Confirm Password" />
+      <h2>Sign Up</h2>
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password (min 6 chars)" required />
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
       <button id="signupBtn" class="green-btn">Sign Up</button>
 
+      <!-- Shown only after signup -->
       <button id="sendVerificationBtn" class="green-btn" style="display: none;">📩 Send Verification Link</button>
       <p id="signupMessage" class="info-msg"></p>
     </div>
