@@ -33,8 +33,12 @@
         <input type="text" id="signupName" placeholder="Your full name" required />
         <input type="email" id="signupEmail" placeholder="your@email.com" required />
         <input type="password" id="signupPassword" placeholder="At least 6 characters" required />
-        <button type="submit" class="btn-primary">Sign Up</button>
+        <button type="submit" class="btn">Sign Up</button>
       </form>
+      <div id="resendSection" class="hidden resend-verification">
+        <p>Didn't receive the email?</p>
+        <button id="resendBtn" class="btn-secondary">Resend Verification Email</button>
+      </div>
       <div class="auth-links">
         <p>Already have an account? <a href="login.html">Login</a></p>
       </div>
