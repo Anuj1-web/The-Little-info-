@@ -6,7 +6,7 @@
   <title>Sign Up (New)</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
-  <script type="module" src="signup2.js"></script> <!-- FIXED HERE -->
+  <script defer src="signup2.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -16,7 +16,7 @@
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
         <a href="login.html">Login</a>
-        <a href="signup2.html" class="active">Signup (New)</a>
+        <a href="signup2.html" class="active">Signup</a>
         <button id="themeToggle">🌓</button>
       </nav>
     </div>
@@ -24,7 +24,7 @@
 
   <section class="section-container">
     <div class="auth-form-box animate-fade-in">
-      <h2>Sign Up (New Version)</h2>
+      <h2>Sign Up</h2>
       <form id="signupForm2">
         <input type="text" id="name" placeholder="Full Name" required />
         <input type="email" id="email" placeholder="Email" required />
@@ -33,6 +33,10 @@
       </form>
       <div class="auth-links">
         <p>Already registered? <a href="login.html">Login here</a></p>
+        <p id="resendContainer" style="display: none;">
+          Didn't get the email? 
+          <button id="resendBtn" class="btn small-btn" disabled>Resend in 30s</button>
+        </p>
       </div>
     </div>
   </section>
