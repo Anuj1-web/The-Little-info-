@@ -1,54 +1,40 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Signup</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore-compat.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="firebase-init.js"></script>
+  <script defer src="signup.js"></script>
 </head>
 <body>
-  <!-- Finalized Compact Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="profile.html">Profile</a>
-        <a href="ai-chatbot.html">AI Chatbot</a>
         <a href="login.html">Login</a>
-        <a href="signup.html" class="active">Signup</a>
+        <a href="signup.html">Signup</a>
         <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <!-- Signup Form Box -->
-  <section class="section-container">
+  <main class="section-container">
     <div class="auth-form-box">
       <h2>Create Account</h2>
-      <form id="signupForm">
-        <input type="email" id="email" placeholder="Email" required />
-        <input type="password" id="password" placeholder="Password (min 6 chars)" required />
-        <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password (min 6 chars)" />
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" />
+      <button id="signupBtn" class="green-btn">Sign Up</button>
 
-        <button type="submit" class="primary-btn">Sign Up</button>
-        <p id="emailVerificationNotice" style="display:none;" class="info-text">
-          📩 A verification link has been sent. Please verify your email to login.
-        </p>
-      </form>
+      <button id="sendVerificationBtn" class="green-btn" style="display: none;">📩 Send Verification Link</button>
+      <p id="signupMessage" class="info-msg"></p>
     </div>
-  </section>
+  </main>
 
-  <!-- Toast Container -->
-  <div id="toastContainer" class="toast-container"></div>
-
-  <!-- Scripts -->
-  <script src="firebase-config.js"></script>
-  <script src="theme-toggle.js"></script>
-  <script src="signup.js"></script>
+  <div id="toastContainer"></div>
 </body>
 </html>
