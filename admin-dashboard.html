@@ -1,25 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Theme toggle -->
-  <script defer src="theme-toggle.js"></script>
-
-  <!-- Firebase SDKs (required before firebase-init.js) -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-  <script src="firebase-init.js"></script>
-
-  <!-- Admin JS -->
-  <script defer src="admin-dashboard.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/png" href="logo.png" />
 </head>
 <body>
-  <!-- Header -->
+  <!-- Compact Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -28,14 +17,13 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="profile.html">Profile</a>
         <a href="ai-chatbot.html">AI Chatbot</a>
-        <a href="login.html">Login</a>
-        <a href="signup.html">Signup</a>
+        <a href="#" id="logoutBtn" class="btn">Logout</a>
         <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <!-- Main Section -->
+ <!-- Main Section -->
   <main class="section-container fade-in">
     <!-- Admin title box -->
     <div class="auth-form-box">
@@ -75,7 +63,15 @@
     </div>
   </main>
 
-  <!-- Toast container -->
-  <div id="toastContainer"></div>
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="theme-toggle.js"></script>
+  <script src="admin-dashboard.js"></script>
 </body>
 </html>
