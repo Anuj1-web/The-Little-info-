@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Settings</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
-  <script type="module" defer src="settings.js"></script>
+  <script defer src="settings.js"></script>
 </head>
 <body>
+  <!-- Compact Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -21,49 +22,49 @@
     </div>
   </header>
 
-  <main class="section-container">
-    <div class="auth-form-box animate-slide-in">
-      <h2>⚙️ Settings</h2>
-      <form id="settingsForm">
-        <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Enter your username" required />
+  <!-- Settings Section -->
+  <main>
+    <section class="section-container">
+      <div class="auth-form-box fade-in">
+        <h2>⚙️ Settings</h2>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" placeholder="Your email address" disabled style="opacity: 0.7; cursor: not-allowed;" />
+        <label>Username</label>
+        <input type="text" id="usernameInput" placeholder="Enter your username" />
 
-        <label for="new-password">New Password</label>
-        <input type="password" id="new-password" placeholder="Enter new password (optional)" />
+        <label>Email</label>
+        <input type="email" id="emailInput" placeholder="Your email address" disabled />
 
-        <div class="form-group">
-          <label for="twoStepToggle">
-            <input type="checkbox" id="twoStepToggle" />
-            Enable Two-Step Authentication
-          </label>
+        <label>New Password</label>
+        <input type="password" id="newPasswordInput" placeholder="Enter new password (optional)" />
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="twoStepToggle" />
+          <label for="twoStepToggle">Enable Two-Step Authentication</label>
         </div>
 
-        <div class="form-group">
-          <p><strong>Role:</strong> <span id="role">user</span></p>
-        </div>
+        <div id="roleDisplay">Role: user</div>
 
-        <div class="form-actions">
-          <button type="button" id="verifyEmailBtn" class="btn">Verify Email</button>
-          <button type="submit" id="updateProfileBtn" class="btn">Update Profile</button>
-          <button type="button" id="deleteAccountBtn" class="btn danger">Delete Account</button>
+        <div class="btn-group">
+          <button class="btn" id="verifyEmailBtn">Verify Email</button>
+          <button class="btn" id="updateProfileBtn">Update Profile</button>
+          <button class="btn danger" id="deleteAccountBtn">Delete Account</button>
         </div>
-      </form>
-    </div>
+      </div>
+    </section>
   </main>
 
-  <!-- Modal for confirmations -->
+  <!-- Confirmation Modal -->
   <div id="confirmationModal" class="modal hidden">
-    <div class="modal-content">
-      <p id="modalMessage">Are you sure?</p>
-      <button id="confirmBtn" class="btn">Yes</button>
-      <button id="cancelBtn" class="btn danger">Cancel</button>
+    <div class="modal-box">
+      <p>Are you sure you want to delete your account?</p>
+      <div class="modal-actions">
+        <button class="btn danger" id="confirmDeleteBtn">Yes, Delete</button>
+        <button class="btn" id="cancelDeleteBtn">Cancel</button>
+      </div>
     </div>
   </div>
 
-  <!-- Toast notification container -->
+  <!-- Toast Container -->
   <div id="toastContainer"></div>
 </body>
 </html>
