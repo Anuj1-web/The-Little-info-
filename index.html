@@ -465,6 +465,55 @@
 
 <!-- Video slider logic -->
 <script type="module" src="video-slider.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    query,
+    where
+  } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
+    authDomain: "the-little-info.firebaseapp.com",
+    projectId: "the-little-info",
+    storageBucket: "the-little-info.appspot.com",
+    messagingSenderId: "165711417682",
+    appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Helper: create a card
+  function createCard(data) {
+    return `
+      <div class="content-card">
+        <img src="${data.thumbnailUrl}" alt="${data.title}" class="card-thumbnail" />
+        <h3>${data.title}</h3>
+        <p>${data.description}</p>
+      </div>
+    `;
+  }
+
+  // Load for one tag
+  async function loadContentByTag(tag, containerId) {
+    const q = query(collection(db, "contents"), where("tag", "==", tag));
+    const snapshot = await getDocs(q);
+
+    const container = document.getElementById(containerId);
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      container.innerHTML += createCard(data);
+    });
+  }
+
+  // Call both
+  loadContentByTag("Trending", "trending-content");
+  loadContentByTag("Traditional", "traditional-content");
+</script>
 
 </body>
 </html>
