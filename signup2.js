@@ -96,3 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => (toast.innerHTML = ""), 4000);
   }
 });
+document.getElementById("goToLoginBtn").addEventListener("click", () => {
+  window.location.href = "login.html"; // Make sure this is the correct login page URL
+});
