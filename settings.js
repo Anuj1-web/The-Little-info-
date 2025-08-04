@@ -1,86 +1,77 @@
-import { auth, db } from './firebase.js';
-import { updateProfile, updateEmail, deleteUser, sendEmailVerification } from 'firebase/auth';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-const settingsForm = document.getElementById('settingsForm');
-const deleteBtn = document.getElementById('deleteAccount');
-const confirmModal = document.getElementById('confirmModal');
-const cancelDelete = document.getElementById('cancelDelete');
-const confirmDelete = document.getElementById('confirmDelete');
-const verifyEmailBtn = document.getElementById('verifyEmail');
+const usernameInput = document.getElementById("username");
+const emailInput = document.getElementById("email");
+const newPasswordInput = document.getElementById("newPassword");
+const enable2FA = document.getElementById("enable2FA");
+const roleInput = document.getElementById("role");
 
-window.addEventListener('DOMContentLoaded', async () => {
-  const user = auth.currentUser;
+const verifyEmailBtn = document.getElementById("verifyEmail");
+const settingsForm = document.getElementById("settingsForm");
+const deleteAccountBtn = document.getElementById("deleteAccount");
+const confirmModal = document.getElementById("confirmModal");
+const cancelDelete = document.getElementById("cancelDelete");
+const confirmDelete = document.getElementById("confirmDelete");
+
+auth.onAuthStateChanged(async (user) => {
   if (!user) {
-    window.location.href = 'login.html';
+    alert("You must be logged in.");
+    window.location.href = "login.html";
     return;
   }
 
-  document.getElementById('username').value = user.displayName || '';
-  document.getElementById('email').value = user.email || '';
-  document.getElementById('role').value = (await getDoc(doc(db, 'users', user.uid))).data().role || 'user';
-});
-
-settingsForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const user = auth.currentUser;
-  if (!user) return;
-
-  const newUsername = document.getElementById('username').value;
-  const newEmail = document.getElementById('email').value;
-  const newPassword = document.getElementById('newPassword').value;
-  const enable2FA = document.getElementById('enable2FA').checked;
-
-  try {
-    if (newUsername !== user.displayName) {
-      await updateProfile(user, { displayName: newUsername });
-    }
-
-    if (newEmail !== user.email) {
-      await updateEmail(user, newEmail);
-    }
-
-    if (newPassword.length >= 6) {
-      await user.updatePassword(newPassword);
-    }
-
-    await updateDoc(doc(db, 'users', user.uid), {
-      displayName: newUsername,
-      email: newEmail,
-      twoFactorEnabled: enable2FA,
-    });
-
-    alert('Settings updated successfully!');
-  } catch (error) {
-    alert('Error updating settings: ' + error.message);
+  const doc = await db.collection("users").doc(user.uid).get();
+  const userData = doc.data();
+  if (userData) {
+    usernameInput.value = userData.username || "";
+    emailInput.value = user.email;
+    roleInput.value = userData.role || "user";
+    enable2FA.checked = userData.twoStepEnabled || false;
   }
-});
 
-deleteBtn.addEventListener('click', () => {
-  confirmModal.classList.remove('hidden');
-});
+  verifyEmailBtn.onclick = () => {
+    if (!user.emailVerified) {
+      user.sendEmailVerification().then(() => {
+        alert("Verification email sent.");
+      });
+    } else {
+      alert("Email is already verified.");
+    }
+  };
 
-cancelDelete.addEventListener('click', () => {
-  confirmModal.classList.add('hidden');
-});
+  settingsForm.onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const username = usernameInput.value.trim();
+      const email = emailInput.value.trim();
+      const newPassword = newPasswordInput.value.trim();
+      const twoStep = enable2FA.checked;
 
-confirmDelete.addEventListener('click', async () => {
-  const user = auth.currentUser;
-  try {
-    await deleteUser(user);
-    alert('Account deleted.');
-    window.location.href = 'signup.html';
-  } catch (error) {
-    alert('Error deleting account: ' + error.message);
-  }
-});
+      if (email && email !== user.email) await user.updateEmail(email);
+      if (newPassword) await user.updatePassword(newPassword);
+      await db.collection("users").doc(user.uid).update({
+        username,
+        twoStepEnabled: twoStep
+      });
 
-verifyEmailBtn.addEventListener('click', async () => {
-  const user = auth.currentUser;
-  try {
-    await sendEmailVerification(user);
-    alert('Verification email sent.');
-  } catch (error) {
-    alert('Error sending verification: ' + error.message);
-  }
+      alert("Settings updated successfully.");
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  };
+
+  deleteAccountBtn.onclick = () => confirmModal.classList.remove("hidden");
+  cancelDelete.onclick = () => confirmModal.classList.add("hidden");
+
+  confirmDelete.onclick = async () => {
+    try {
+      await db.collection("users").doc(user.uid).delete();
+      await user.delete();
+      alert("Account deleted.");
+      window.location.href = "signup.html";
+    } catch (err) {
+      alert("Re-authentication may be required: " + err.message);
+    }
+  };
 });
