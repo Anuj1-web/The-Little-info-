@@ -11,6 +11,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const resendBtn = document.getElementById("resendVerificationBtn");
   let cooldown = false;
 
+  // Apply consistent site-wide button style
+  function styleButton(btn) {
+    btn.style.padding = "10px 20px";
+    btn.style.borderRadius = "10px";
+    btn.style.border = "none";
+    btn.style.cursor = "pointer";
+    btn.style.fontWeight = "600";
+    btn.style.marginTop = "12px";
+    btn.style.transition = "all 0.3s ease";
+    btn.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+    btn.style.fontSize = "15px";
+    btn.style.background = "var(--accent)";
+    btn.style.color = "var(--btnText)";
+  }
+
+  styleButton(resendBtn); // initial styling
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -24,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       showToast(`Verification email sent to ${email}`, true);
       resendBtn.disabled = false;
+      resendBtn.textContent = "Resend Verification";
+      styleButton(resendBtn);
       form.reset();
     } catch (error) {
       showToast(error.message, false);
@@ -40,7 +59,12 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast("Verification email resent.", true);
         startCooldown();
       } catch (error) {
-        showToast("Failed to resend email: " + error.message, false);
+        if (error.code === "auth/too-many-requests") {
+          showToast("Too many requests. Please wait before retrying.", false);
+          startCooldown();
+        } else {
+          showToast("Failed to resend email: " + error.message, false);
+        }
       }
     } else {
       showToast("Please sign up or login first.", false);
@@ -52,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resendBtn.disabled = true;
     let timer = 30;
     resendBtn.textContent = `Wait ${timer}s`;
+    resendBtn.style.background = "gray";
 
     const interval = setInterval(() => {
       timer--;
@@ -61,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cooldown = false;
         resendBtn.disabled = false;
         resendBtn.textContent = "Resend Verification";
+        styleButton(resendBtn);
       }
     }, 1000);
   }
