@@ -24,7 +24,7 @@
     </div>
   </header>
 
-  <!-- ✅ Settings Box -->
+  <!-- ✅ Settings Form -->
   <main class="section-container">
     <div class="auth-form-box">
       <h2 style="color: var(--primary);">Account Settings</h2>
@@ -54,20 +54,39 @@
           <button type="button" id="deleteAccount" class="btn-danger">Delete Account</button>
         </div>
       </form>
+
+      <!-- ✅ Confirmation Modal -->
+      <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+          <p>Are you sure you want to delete your account?</p>
+          <div class="modal-buttons">
+            <button id="cancelDelete" class="btn-secondary">Cancel</button>
+            <button id="confirmDelete" class="btn-danger">Confirm</button>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 
-  <!-- ✅ Modal OUTSIDE Form -->
-  <div id="confirmModal" class="modal hidden">
-    <div class="modal-content">
-      <p>Are you sure you want to delete your account?</p>
-      <div class="modal-buttons">
-        <button id="cancelDelete" class="btn-secondary">Cancel</button>
-        <button id="confirmDelete" class="btn-danger">Confirm</button>
-      </div>
-    </div>
-  </div>
+  <!-- ✅ Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
+  <!-- ✅ Firebase Init -->
+  <script>
+    const firebaseConfig = {
+  apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
+  authDomain: "the-little-info.firebaseapp.com",
+  projectId: "the-little-info",
+  storageBucket: "the-little-info.firebasestorage.app",
+  messagingSenderId: "165711417682",
+  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
+};
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <!-- ✅ Logic -->
   <script type="module" src="settings.js"></script>
 </body>
 </html>
