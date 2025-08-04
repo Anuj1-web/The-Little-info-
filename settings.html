@@ -1,74 +1,73 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Settings</title>
+  <title>Settings - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
-  <script defer src="firebase-config.js"></script>
-  <script defer type="module" src="settings.js"></script>
 </head>
 <body>
+  <!-- ✅ Consistent Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
-        <a href="#" id="logoutBtn" class="btn">Logout</a>
-        <button id="themeToggle">🌓</button>
+        <a href="profile.html">Profile</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle">🌙</button>
       </nav>
     </div>
   </header>
 
-  <section class="section-container">
+  <!-- ✅ Settings Box -->
+  <main class="section-container">
     <div class="auth-form-box">
-      <h2>Account Settings</h2>
-
-      <div class="form-group">
+      <h2 style="color: var(--primary);">Account Settings</h2>
+      <form id="settingsForm">
         <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Update your username" required />
-      </div>
+        <input type="text" id="username" placeholder="Enter new username" />
 
-      <div class="form-group">
-        <label for="email">Email (read-only)</label>
-        <input type="email" id="email" readonly />
-        <small class="note">Email cannot be changed. Verify before updating sensitive data.</small>
-      </div>
+        <label for="email">Email</label>
+        <div class="email-verify-group">
+          <input type="email" id="email" placeholder="Enter new email" />
+          <button type="button" id="verifyEmail" class="btn-secondary">Verify Email</button>
+        </div>
 
-      <div class="form-group">
-        <label for="new-password">New Password</label>
-        <input type="password" id="new-password" placeholder="Enter new password (optional)" />
-      </div>
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" placeholder="Enter new password" />
 
-      <div class="form-group">
-        <label><input type="checkbox" id="twoStepToggle" /> Enable Two-Step Authentication</label>
-      </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="enable2FA" />
+          <label for="enable2FA">Enable Two-Step Authentication</label>
+        </div>
 
-      <div class="form-group">
         <label for="role">Role</label>
-        <input type="text" id="role" readonly />
-      </div>
+        <input type="text" id="role" disabled />
 
-      <button id="updateBtn" class="btn">Update Profile</button>
-      <button id="deleteBtn" class="btn danger">Delete Account</button>
+        <div class="button-group">
+          <button type="submit" class="btn-primary">Update Settings</button>
+          <button type="button" id="deleteAccount" class="btn-danger">Delete Account</button>
+        </div>
+      </form>
     </div>
-  </section>
+  </main>
 
-  <div id="toast-container"></div>
-
-  <!-- Confirm Modal -->
-  <div class="modal" id="confirmModal">
+  <!-- ✅ Modal OUTSIDE Form -->
+  <div id="confirmModal" class="modal hidden">
     <div class="modal-content">
-      <h3>Are you sure?</h3>
-      <p>This action is irreversible. Confirm account deletion.</p>
-      <input type="password" id="confirmPassword" placeholder="Enter your password to confirm" />
-      <div class="modal-actions">
-        <button id="confirmDeleteBtn" class="btn danger">Yes, Delete</button>
-        <button id="cancelDeleteBtn" class="btn">Cancel</button>
+      <p>Are you sure you want to delete your account?</p>
+      <div class="modal-buttons">
+        <button id="cancelDelete" class="btn-secondary">Cancel</button>
+        <button id="confirmDelete" class="btn-danger">Confirm</button>
       </div>
     </div>
   </div>
+
+  <script type="module" src="settings.js"></script>
 </body>
 </html>
