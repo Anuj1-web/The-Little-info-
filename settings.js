@@ -1,9 +1,24 @@
-// settings.js - Fully Integrated with Firebase, Theme, and Site Design
+// settings.js - Final Version with Email Verification Check and Disabled Update Until Verified
 
-import { getAuth, onAuthStateChanged, updateProfile, updatePassword, deleteUser, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { app } from './firebase-config.js'; // Update with your Firebase config import
-import { showToast, showModal, closeModal } from './ui-utils.js'; // Toast/modal utils consistent with your theme
+import {
+  getAuth,
+  onAuthStateChanged,
+  updateProfile,
+  updatePassword,
+  deleteUser,
+  sendEmailVerification,
+  signOut,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  updateDoc,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { app } from './firebase-config.js';
+import { showToast, showModal, closeModal } from './ui-utils.js';
 
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -11,7 +26,6 @@ const db = getFirestore(app);
 let currentUser;
 let isAdmin = false;
 
-// DOM elements
 const form = document.getElementById('settingsForm');
 const nameInput = document.getElementById('username');
 const emailInput = document.getElementById('email');
@@ -22,7 +36,6 @@ const deleteBtn = document.getElementById('deleteAccountBtn');
 const updateBtn = document.getElementById('updateProfileBtn');
 const verifyBtn = document.getElementById('verifyEmailBtn');
 
-// 🔐 Auth State Check
 onAuthStateChanged(auth, async (user) => {
   if (!user) return window.location.href = "/login.html";
   currentUser = user;
@@ -30,16 +43,13 @@ onAuthStateChanged(auth, async (user) => {
   const userDoc = await getDoc(doc(db, "users", user.uid));
   const data = userDoc.data();
 
-  // Show user info
   nameInput.value = data.username || "";
   emailInput.value = user.email || "";
+  emailInput.readOnly = true;
   roleDisplay.textContent = data.role || "user";
   isAdmin = data.role === "admin";
-
-  // Two-step toggle
   twoStepToggle.checked = data.twoStep || false;
 
-  // Disable editing for OAuth users
   if (user.providerData.some(p => p.providerId !== 'password')) {
     emailInput.disabled = true;
     passwordInput.disabled = true;
@@ -47,13 +57,16 @@ onAuthStateChanged(auth, async (user) => {
     showToast("OAuth account detected — email/password changes disabled.", "info");
   }
 
-  // Admin controls
+  if (!user.emailVerified) {
+    updateBtn.disabled = true;
+    updateBtn.title = "Please verify your email to enable this option.";
+  }
+
   if (!isAdmin) {
     document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
   }
 });
 
-// ✅ Email Verification
 verifyBtn.addEventListener('click', () => {
   if (!currentUser.emailVerified) {
     sendEmailVerification(currentUser)
@@ -64,7 +77,6 @@ verifyBtn.addEventListener('click', () => {
   }
 });
 
-// ✅ Form Validation
 function validateForm() {
   const username = nameInput.value.trim();
   const email = emailInput.value.trim();
@@ -81,12 +93,11 @@ function validateForm() {
   return true;
 }
 
-// ✅ Profile Update Handler
 updateBtn.addEventListener('click', async (e) => {
   e.preventDefault();
   if (!validateForm()) return;
 
-  if (currentUser.providerData[0].providerId === 'password' && !currentUser.emailVerified) {
+  if (!currentUser.emailVerified && currentUser.providerData[0].providerId === 'password') {
     showToast("Please verify your email before updating.", "error");
     return;
   }
@@ -95,7 +106,7 @@ updateBtn.addEventListener('click', async (e) => {
     try {
       await updateDoc(doc(db, "users", currentUser.uid), {
         username: nameInput.value,
-        twoStep: twoStepToggle.checked
+        twoStep: twoStepToggle.checked,
       });
 
       await updateProfile(currentUser, { displayName: nameInput.value });
@@ -112,7 +123,6 @@ updateBtn.addEventListener('click', async (e) => {
   });
 });
 
-// ✅ Delete Account
 deleteBtn.addEventListener('click', () => {
   showModal("Are you sure you want to delete your account?", async () => {
     try {
