@@ -5,80 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
-  <script src="theme-toggle.js" defer></script>
-  <style>
-    .dashboard-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
-      max-width: 1100px;
-      margin: 2rem auto;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    .dashboard-box {
-      background: var(--card-bg);
-      border-radius: 1.5rem;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-      padding: 1.8rem 1.2rem;
-      text-align: center;
-      color: var(--text);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .dashboard-box:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
-    }
-
-    .dashboard-icon {
-      font-size: 2.8rem;
-      margin-bottom: 0.8rem;
-    }
-
-    .dashboard-box h3 {
-      font-size: 1.3rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .dashboard-box p {
-      font-size: 0.95rem;
-      opacity: 0.85;
-    }
-
-    .fade-in {
-      animation: fadeInUp 0.6s ease forwards;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-  </style>
+  <script defer src="theme-toggle.js"></script>
 </head>
 <body>
-
-  <!-- ✅ Compact Header -->
+  <!-- Compact Site Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -86,45 +16,45 @@
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
         <a href="#" id="logoutBtn" class="btn">Logout</a>
-        <button id="themeToggle">🌓</button>
+        <button id="themeToggle">🌙</button>
       </nav>
     </div>
   </header>
 
-  <!-- ✅ Admin Dashboard Grid -->
-  <main>
+  <!-- Admin Dashboard Title -->
+  <section class="section-container fade-in">
+    <h1 class="section-title">Admin Dashboard</h1>
+    <p class="section-subtitle">Manage uploads, quizzes, playlists, and insights</p>
+
+    <!-- Dashboard grid with 4 cards -->
     <div class="dashboard-container">
-      <!-- Upload -->
       <a href="upload.html" class="dashboard-box fade-in">
         <div class="dashboard-icon">📤</div>
         <h3>Upload Content</h3>
         <p>Upload videos, images, or text</p>
       </a>
 
-      <!-- Analytics -->
       <a href="admin-analytics.html" class="dashboard-box fade-in">
         <div class="dashboard-icon">📊</div>
         <h3>Admin Analytics</h3>
         <p>View user stats & uploads</p>
       </a>
 
-      <!-- Quiz -->
       <a href="admin-quiz.html" class="dashboard-box fade-in">
         <div class="dashboard-icon">📝</div>
         <h3>Admin Quiz</h3>
         <p>Create or edit quizzes</p>
       </a>
 
-      <!-- Playlist -->
       <a href="admin-playlist.html" class="dashboard-box fade-in">
         <div class="dashboard-icon">🎞️</div>
         <h3>Admin Playlist</h3>
         <p>Manage topic playlists</p>
       </a>
     </div>
-  </main>
+  </section>
 
-  <!-- ✅ Toast Container -->
+  <!-- Toast Container -->
   <div id="toastContainer"></div>
 
 </body>
