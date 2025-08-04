@@ -3,33 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upload Page</title>
-  <!-- Your styles here -->
+  <title>Upload Content</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 </head>
 <body>
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <button id="themeToggle">🌓</button>
+      </nav>
+    </div>
+  </header>
 
-  <!-- Your upload form -->
-  <div class="auth-form-box">
-    <form id="uploadForm">
-      <input type="text" id="mediaTitle" placeholder="Title" required />
-      <textarea id="mediaDescription" placeholder="Description" required></textarea>
-      <select id="category" required>
-        <option value="">Select Category</option>
-        <option value="trending">Trending</option>
-        <option value="traditional">Traditional</option>
-      </select>
-      <select id="mediaType" required>
-        <option value="">Select Type</option>
-        <option value="video">Video</option>
-        <option value="audio">Audio</option>
-        <option value="image">Image</option>
-      </select>
-      <input type="file" id="mediaFile" required />
-      <button type="submit" id="uploadBtn">Upload</button>
-    </form>
-  </div>
+  <section class="section-container">
+    <div class="auth-form-box">
+      <h2 class="form-title">Upload Content</h2>
+      <form id="uploadForm">
+        <input type="text" id="title" placeholder="Title" required />
+        <textarea id="description" placeholder="Description (optional)" rows="3"></textarea>
+        
+        <select id="category" required>
+          <option value="" disabled selected>Select Category</option>
+          <option value="trending">Trending</option>
+          <option value="traditional">Traditional</option>
+        </select>
 
-  <!-- ✅ IMPORTANT: Load upload.js as a module -->
-  <script type="module" src="upload.js"></script>
+        <input type="file" id="mediaFile" accept="video/*,image/*,.txt,.pdf" required />
+
+        <button type="submit" id="uploadBtn" class="btn">Upload</button>
+      </form>
+    </div>
+  </section>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="theme-toggle.js"></script>
+ <!-- In your upload.html or index.html -->
+<script type="module" src="upload.js"></script>
 </body>
 </html>
