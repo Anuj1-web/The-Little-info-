@@ -1,107 +1,67 @@
-const auth = firebase.auth();
-const db = firebase.firestore();
+// settings.js
+document.addEventListener('DOMContentLoaded', () => {
+  const auth = firebase.auth();
+  const form = document.getElementById('passwordUpdateForm');
+  const toastContainer = document.getElementById('toast-container');
 
-const usernameInput = document.getElementById("username");
-const emailInput = document.getElementById("email");
-const newPasswordInput = document.getElementById("newPassword");
-const enable2FA = document.getElementById("enable2FA");
-const roleInput = document.getElementById("role");
-
-const verifyEmailBtn = document.getElementById("verifyEmail");
-const settingsForm = document.getElementById("settingsForm");
-const deleteAccountBtn = document.getElementById("deleteAccount");
-const confirmModal = document.getElementById("confirmModal");
-const cancelDelete = document.getElementById("cancelDelete");
-const confirmDelete = document.getElementById("confirmDelete");
-
-auth.onAuthStateChanged(async (user) => {
-  if (!user) {
-    alert("You must be logged in.");
-    window.location.href = "login.html";
-    return;
+  // Show toast message
+  function showToast(message, isError = false) {
+    const toast = document.createElement('div');
+    toast.className = `toast ${isError ? 'error' : 'success'}`;
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
   }
 
-  // Load existing user data
-  const doc = await db.collection("users").doc(user.uid).get();
-  const userData = doc.data();
-  if (userData) {
-    usernameInput.value = userData.username || "";
-    emailInput.value = user.email;
-    roleInput.value = userData.role || "user";
-    enable2FA.checked = userData.twoStepEnabled || false;
+  // Handle logout (if needed)
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      auth.signOut().then(() => {
+        showToast('Logged out');
+        location.href = 'login.html';
+      });
+    });
   }
 
-  // Manual email verification button
-  verifyEmailBtn.onclick = () => {
-    if (!user.emailVerified) {
-      user.sendEmailVerification()
-        .then(() => alert("Verification email sent."))
-        .catch((e) => alert("Error: " + e.message));
-    } else {
-      alert("Email is already verified.");
-    }
-  };
-
-  // Update form
-  settingsForm.onsubmit = async (e) => {
+  // Form submission
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const newUsername = usernameInput.value.trim();
-    const newEmail = emailInput.value.trim();
-    const newPassword = newPasswordInput.value.trim();
-    const twoStepEnabled = enable2FA.checked;
 
-    const updates = {};
-    let needEmailVerification = false;
+    const email = form.email.value.trim();
+    const newPassword = form.newPassword.value.trim();
+
+    if (!email || !newPassword) {
+      return showToast('Please fill in both fields.', true);
+    }
 
     try {
-      // Username (in Firestore only)
-      if (newUsername && newUsername !== userData.username) {
-        updates.username = newUsername;
+      const user = auth.currentUser;
+
+      if (!user) {
+        return showToast('You must be logged in to update password.', true);
       }
 
-      // Email change
-      if (newEmail && newEmail !== user.email) {
-        await user.updateEmail(newEmail);
-        needEmailVerification = true;
+      if (user.email !== email) {
+        return showToast('Entered email does not match your account.', true);
       }
 
-      // Password change
-      if (newPassword.length > 5) {
-        await user.updatePassword(newPassword);
-        needEmailVerification = true;
-      }
+      await user.sendEmailVerification();
+      showToast('Verification email sent. Please verify before updating.');
 
-      // 2FA toggle (in Firestore only)
-      updates.twoStepEnabled = twoStepEnabled;
+      // Watch for email verification
+      const checkVerified = setInterval(async () => {
+        await user.reload();
+        if (user.emailVerified) {
+          clearInterval(checkVerified);
+          await user.updatePassword(newPassword);
+          showToast('Password updated successfully.');
+        }
+      }, 3000); // check every 3 seconds
 
-      // Apply Firestore updates
-      await db.collection("users").doc(user.uid).update(updates);
-
-      // Send verification only if email or password changed
-      if (needEmailVerification) {
-        await user.sendEmailVerification();
-        alert("Changes saved. Please check your inbox to verify email.");
-      } else {
-        alert("Changes saved successfully.");
-      }
-
-    } catch (err) {
-      alert("Error: " + err.message);
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || 'Error updating password.', true);
     }
-  };
-
-  // Account deletion
-  deleteAccountBtn.onclick = () => confirmModal.classList.remove("hidden");
-  cancelDelete.onclick = () => confirmModal.classList.add("hidden");
-
-  confirmDelete.onclick = async () => {
-    try {
-      await db.collection("users").doc(user.uid).delete();
-      await user.delete();
-      alert("Account deleted.");
-      window.location.href = "signup.html";
-    } catch (err) {
-      alert("Error: " + err.message);
-    }
-  };
+  });
 });
