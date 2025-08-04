@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css">
   <script defer src="theme-toggle.js"></script>
 </head>
 <body>
-  <!-- Compact Site Header -->
+
+  <!-- Compact Site Header (Finalized Design) -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -16,46 +17,47 @@
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
         <a href="#" id="logoutBtn" class="btn">Logout</a>
-        <button id="themeToggle">🌙</button>
+        <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <!-- Admin Dashboard Title -->
-  <section class="section-container fade-in">
-    <h1 class="section-title">Admin Dashboard</h1>
-    <p class="section-subtitle">Manage uploads, quizzes, playlists, and insights</p>
+  <!-- Main Section -->
+  <main class="section-container">
+    <h2 class="section-title fade-in">Admin Dashboard</h2>
+    <p class="section-subtitle fade-in">Manage uploads, quizzes, playlists, and insights</p>
 
-    <!-- Dashboard grid with 4 cards -->
+    <!-- Dashboard Grid -->
     <div class="dashboard-container">
+      <!-- Upload -->
       <a href="upload.html" class="dashboard-box fade-in">
         <div class="dashboard-icon">📤</div>
         <h3>Upload Content</h3>
         <p>Upload videos, images, or text</p>
       </a>
 
+      <!-- Analytics -->
       <a href="admin-analytics.html" class="dashboard-box fade-in">
         <div class="dashboard-icon">📊</div>
         <h3>Admin Analytics</h3>
         <p>View user stats & uploads</p>
       </a>
 
+      <!-- Quiz -->
       <a href="admin-quiz.html" class="dashboard-box fade-in">
         <div class="dashboard-icon">📝</div>
         <h3>Admin Quiz</h3>
         <p>Create or edit quizzes</p>
       </a>
 
+      <!-- Playlist -->
       <a href="admin-playlist.html" class="dashboard-box fade-in">
         <div class="dashboard-icon">🎞️</div>
         <h3>Admin Playlist</h3>
         <p>Manage topic playlists</p>
       </a>
     </div>
-  </section>
-
-  <!-- Toast Container -->
-  <div id="toastContainer"></div>
+  </main>
 
 </body>
 </html>
