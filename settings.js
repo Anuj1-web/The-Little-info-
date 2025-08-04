@@ -1,87 +1,86 @@
-// SETTINGS.JS
 import { auth, db } from './firebase.js';
-import {
-  updateProfile,
-  updatePassword,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  deleteUser,
-} from 'firebase/auth';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { showToast } from './toast.js';
+import { updateProfile, updateEmail, deleteUser, sendEmailVerification } from 'firebase/auth';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 
-const usernameInput = document.getElementById('username');
-const emailInput = document.getElementById('email');
-const newPasswordInput = document.getElementById('new-password');
-const roleInput = document.getElementById('role');
-const updateBtn = document.getElementById('updateBtn');
-const deleteBtn = document.getElementById('deleteBtn');
+const settingsForm = document.getElementById('settingsForm');
+const deleteBtn = document.getElementById('deleteAccount');
 const confirmModal = document.getElementById('confirmModal');
-const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-const confirmPassword = document.getElementById('confirmPassword');
-const twoStepToggle = document.getElementById('twoStepToggle');
-
-let currentUser;
+const cancelDelete = document.getElementById('cancelDelete');
+const confirmDelete = document.getElementById('confirmDelete');
+const verifyEmailBtn = document.getElementById('verifyEmail');
 
 window.addEventListener('DOMContentLoaded', async () => {
-  currentUser = auth.currentUser;
-  if (!currentUser) return;
-
-  const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-  if (userDoc.exists()) {
-    const userData = userDoc.data();
-    usernameInput.value = userData.username || '';
-    emailInput.value = currentUser.email;
-    roleInput.value = userData.role || 'user';
-    twoStepToggle.checked = userData.twoStep || false;
+  const user = auth.currentUser;
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
   }
+
+  document.getElementById('username').value = user.displayName || '';
+  document.getElementById('email').value = user.email || '';
+  document.getElementById('role').value = (await getDoc(doc(db, 'users', user.uid))).data().role || 'user';
 });
 
-updateBtn.addEventListener('click', async () => {
-  const newUsername = usernameInput.value.trim();
-  const newPassword = newPasswordInput.value.trim();
+settingsForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const user = auth.currentUser;
+  if (!user) return;
 
-  const email = currentUser.email;
-  const password = prompt(`Please enter your current password for ${email}`);
-  if (!password) return showToast('Verification cancelled.', 'error');
+  const newUsername = document.getElementById('username').value;
+  const newEmail = document.getElementById('email').value;
+  const newPassword = document.getElementById('newPassword').value;
+  const enable2FA = document.getElementById('enable2FA').checked;
 
   try {
-    const credential = EmailAuthProvider.credential(email, password);
-    await reauthenticateWithCredential(currentUser, credential);
+    if (newUsername !== user.displayName) {
+      await updateProfile(user, { displayName: newUsername });
+    }
 
-    if (newUsername) await updateDoc(doc(db, 'users', currentUser.uid), { username: newUsername });
-    if (newPassword) await updatePassword(currentUser, newPassword);
+    if (newEmail !== user.email) {
+      await updateEmail(user, newEmail);
+    }
 
-    await updateDoc(doc(db, 'users', currentUser.uid), {
-      twoStep: twoStepToggle.checked,
+    if (newPassword.length >= 6) {
+      await user.updatePassword(newPassword);
+    }
+
+    await updateDoc(doc(db, 'users', user.uid), {
+      displayName: newUsername,
+      email: newEmail,
+      twoFactorEnabled: enable2FA,
     });
 
-    showToast('Profile updated successfully!', 'success');
-  } catch (err) {
-    showToast(err.message, 'error');
+    alert('Settings updated successfully!');
+  } catch (error) {
+    alert('Error updating settings: ' + error.message);
   }
 });
 
 deleteBtn.addEventListener('click', () => {
-  confirmModal.classList.add('show');
+  confirmModal.classList.remove('hidden');
 });
 
-cancelDeleteBtn.addEventListener('click', () => {
-  confirmModal.classList.remove('show');
+cancelDelete.addEventListener('click', () => {
+  confirmModal.classList.add('hidden');
 });
 
-confirmDeleteBtn.addEventListener('click', async () => {
-  const password = confirmPassword.value.trim();
-  if (!password) return showToast('Please enter your password.', 'error');
-
+confirmDelete.addEventListener('click', async () => {
+  const user = auth.currentUser;
   try {
-    const credential = EmailAuthProvider.credential(currentUser.email, password);
-    await reauthenticateWithCredential(currentUser, credential);
-    await deleteUser(currentUser);
-    showToast('Account deleted.', 'success');
+    await deleteUser(user);
+    alert('Account deleted.');
     window.location.href = 'signup.html';
-  } catch (err) {
-    showToast(err.message, 'error');
+  } catch (error) {
+    alert('Error deleting account: ' + error.message);
+  }
+});
+
+verifyEmailBtn.addEventListener('click', async () => {
+  const user = auth.currentUser;
+  try {
+    await sendEmailVerification(user);
+    alert('Verification email sent.');
+  } catch (error) {
+    alert('Error sending verification: ' + error.message);
   }
 });
