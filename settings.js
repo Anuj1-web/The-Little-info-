@@ -21,6 +21,7 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
+  // Load existing user data
   const doc = await db.collection("users").doc(user.uid).get();
   const userData = doc.data();
   if (userData) {
@@ -30,37 +31,66 @@ auth.onAuthStateChanged(async (user) => {
     enable2FA.checked = userData.twoStepEnabled || false;
   }
 
+  // Manual email verification button
   verifyEmailBtn.onclick = () => {
     if (!user.emailVerified) {
-      user.sendEmailVerification().then(() => {
-        alert("Verification email sent.");
-      });
+      user.sendEmailVerification()
+        .then(() => alert("Verification email sent."))
+        .catch((e) => alert("Error: " + e.message));
     } else {
       alert("Email is already verified.");
     }
   };
 
+  // Update form
   settingsForm.onsubmit = async (e) => {
     e.preventDefault();
+    const newUsername = usernameInput.value.trim();
+    const newEmail = emailInput.value.trim();
+    const newPassword = newPasswordInput.value.trim();
+    const twoStepEnabled = enable2FA.checked;
+
+    const updates = {};
+    let needEmailVerification = false;
+
     try {
-      const username = usernameInput.value.trim();
-      const email = emailInput.value.trim();
-      const newPassword = newPasswordInput.value.trim();
-      const twoStep = enable2FA.checked;
+      // Username (in Firestore only)
+      if (newUsername && newUsername !== userData.username) {
+        updates.username = newUsername;
+      }
 
-      if (email && email !== user.email) await user.updateEmail(email);
-      if (newPassword) await user.updatePassword(newPassword);
-      await db.collection("users").doc(user.uid).update({
-        username,
-        twoStepEnabled: twoStep
-      });
+      // Email change
+      if (newEmail && newEmail !== user.email) {
+        await user.updateEmail(newEmail);
+        needEmailVerification = true;
+      }
 
-      alert("Settings updated successfully.");
+      // Password change
+      if (newPassword.length > 5) {
+        await user.updatePassword(newPassword);
+        needEmailVerification = true;
+      }
+
+      // 2FA toggle (in Firestore only)
+      updates.twoStepEnabled = twoStepEnabled;
+
+      // Apply Firestore updates
+      await db.collection("users").doc(user.uid).update(updates);
+
+      // Send verification only if email or password changed
+      if (needEmailVerification) {
+        await user.sendEmailVerification();
+        alert("Changes saved. Please check your inbox to verify email.");
+      } else {
+        alert("Changes saved successfully.");
+      }
+
     } catch (err) {
       alert("Error: " + err.message);
     }
   };
 
+  // Account deletion
   deleteAccountBtn.onclick = () => confirmModal.classList.remove("hidden");
   cancelDelete.onclick = () => confirmModal.classList.add("hidden");
 
@@ -71,7 +101,7 @@ auth.onAuthStateChanged(async (user) => {
       alert("Account deleted.");
       window.location.href = "signup.html";
     } catch (err) {
-      alert("Re-authentication may be required: " + err.message);
+      alert("Error: " + err.message);
     }
   };
 });
