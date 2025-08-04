@@ -6,20 +6,20 @@
   <title>Admin Dashboard</title>
   <link rel="stylesheet" href="style.css" />
 
-  <!-- 🔧 Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+  <!-- Theme toggle -->
+  <script defer src="theme-toggle.js"></script>
 
-  <!-- 🔧 Firebase config file -->
+  <!-- Firebase SDKs (required before firebase-init.js) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
   <script src="firebase-init.js"></script>
 
-  <!-- Theme & Page Scripts -->
-  <script defer src="theme-toggle.js"></script>
+  <!-- Admin JS -->
   <script defer src="admin-dashboard.js"></script>
 </head>
-
 <body>
+  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -35,14 +35,17 @@
     </div>
   </header>
 
+  <!-- Main Section -->
   <main class="section-container fade-in">
+    <!-- Admin title box -->
     <div class="auth-form-box">
       <h2>🛠️ Admin Dashboard</h2>
       <p>Manage uploaded topics by category.</p>
-    </div>  
+    </div>
 
+    <!-- Dashboard grid -->
     <div class="dashboard-container">
-      <!-- Upload box -->
+      <!-- Upload -->
       <a href="upload.html" class="dashboard-box fade-in">
         <div class="dashboard-icon">📤</div>
         <h3>Upload Content</h3>
@@ -72,6 +75,7 @@
     </div>
   </main>
 
+  <!-- Toast container -->
   <div id="toastContainer"></div>
 </body>
 </html>
