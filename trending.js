@@ -1,52 +1,48 @@
 // trending.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
-  authDomain: "the-little-info.firebaseapp.com",
-  projectId: "the-little-info",
-  storageBucket: "the-little-info.appspot.com", // ✅ FIXED
-  messagingSenderId: "165711417682",
-  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
-};
+document.addEventListener("DOMContentLoaded", () => {
+  const trendingContainer = document.getElementById("trendingTopics");
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  const db = firebase.firestore();
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const container = document.getElementById("trendingContainer");
+  db.collection("topics").where("category", "==", "trending").get()
+    .then(snapshot => {
+      trendingContainer.innerHTML = ""; // Clear any loading text
 
-  try {
-    const q = query(collection(db, "topics"), where("category", "==", "trending"));
-    const querySnapshot = await getDocs(q);
+      if (snapshot.empty) {
+        trendingContainer.innerHTML = "<p>No trending topics found.</p>";
+        return;
+      }
 
-    if (querySnapshot.empty) {
-      container.innerHTML = "<p>No trending topics found.</p>";
-      return;
-    }
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const card = document.createElement("div");
+        card.className = "topic-card fade-in";
 
-    querySnapshot.forEach(doc => {
-      const data = doc.data();
-      const card = document.createElement("div");
-      card.className = "topic-card fade-in";
+        let contentHTML = `
+          <h3>${data.title || "Untitled"}</h3>
+          <p>${data.description || ""}</p>
+        `;
 
-      card.innerHTML = `
-        <h3>${data.title}</h3>
-        <p>${data.description}</p>
-        <span class="badge">#Trending</span>
-      `;
+        // If videoUrl is present, embed video player
+        if (data.videoUrl) {
+          contentHTML += `
+            <video controls width="100%" poster="${data.imageUrl || ''}">
+              <source src="${data.videoUrl}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          `;
+        } else if (data.imageUrl) {
+          // Fallback to image
+          contentHTML += `<img src="${data.imageUrl}" alt="Thumbnail" style="width:100%; border-radius:10px;" />`;
+        }
 
-      container.appendChild(card);
+        card.innerHTML = contentHTML;
+        trendingContainer.appendChild(card);
+      });
+    })
+    .catch(error => {
+      console.error("Error fetching trending topics:", error);
+      trendingContainer.innerHTML = "<p>Error loading content. Try again later.</p>";
     });
-  } catch (error) {
-    console.error("Error loading trending topics:", error);
-    container.innerHTML = "<p>Error loading trending topics. Try again later.</p>";
-  }
 });
