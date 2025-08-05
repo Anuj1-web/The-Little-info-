@@ -1,43 +1,35 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const topicsContainer = document.getElementById("topicsContainer");
+// trending.js
 
-  // Firebase initialization (must already be included in your base)
-  const firebaseConfig = {
-  apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
-  authDomain: "the-little-info.firebaseapp.com",
-  projectId: "the-little-info",
-  storageBucket: "the-little-info.firebasestorage.app",
-  messagingSenderId: "165711417682",
-  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
-};
+document.addEventListener("DOMContentLoaded", async () => {
+  const container = document.getElementById("trendingContainer");
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+  if (!firebase?.firestore) {
+    console.error("Firebase not initialized correctly.");
+    return;
   }
 
   const db = firebase.firestore();
 
-  function loadTrendingTopics() {
-    db.collection("topics")
-      .where("category", "==", "trending")
-      .get()
-      .then((querySnapshot) => {
-        topicsContainer.innerHTML = "";
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const topicCard = document.createElement("div");
-          topicCard.className = "topic-card animated";
-          topicCard.innerHTML = `
-            <h3>${data.title}</h3>
-            <p>${data.description}</p>
-          `;
-          topicsContainer.appendChild(topicCard);
-        });
-      })
-      .catch((error) => {
-        console.error("Error loading trending topics:", error);
-      });
-  }
+  try {
+    const snapshot = await db.collection("topics").where("category", "==", "trending").get();
+    if (snapshot.empty) {
+      container.innerHTML = `<p>No trending topics found.</p>`;
+      return;
+    }
 
-  loadTrendingTopics();
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const card = document.createElement("div");
+      card.className = "topic-card fade-in";
+      card.innerHTML = `
+        <h3>${data.title || "Untitled Topic"}</h3>
+        <p>${data.description || "No description available."}</p>
+        <span class="badge">🔥 Trending</span>
+      `;
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error("Error loading trending topics:", error);
+    container.innerHTML = `<p class="error">Error loading trending topics.</p>`;
+  }
 });
