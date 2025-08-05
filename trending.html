@@ -3,10 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Trending</title>
-  <link rel="icon" href="favicon.ico" />
+  <title>Trending Topics</title>
+
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+  <!-- Firebase Init -->
+  <script src="firebase-init.js"></script>
+
+  <!-- Trending Logic -->
   <script defer src="trending.js"></script>
 </head>
 <body>
@@ -25,18 +35,14 @@
     </div>
   </header>
 
-  <main>
-    <section class="section-container">
-      <video autoplay muted loop class="background-video">
-        <source src="background.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <div class="topic-card animated">
-        <h2>🔥 Trending Topics</h2>
-        <p>Stay updated with what's going on around the globe.</p>
-      </div>
-      <div id="topicsContainer" class="topics-grid"></div>
-    </section>
+  <main class="section-container fade-in">
+    <div class="auth-form-box">
+      <h2>🔥 Trending Topics</h2>
+      <p>Stay updated with what's going on around the globe.</p>
+      <div id="trendingContainer" class="card-list"></div>
+    </div>
   </main>
+
+  <div id="toastContainer"></div>
 </body>
 </html>
