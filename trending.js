@@ -1,48 +1,59 @@
-// trending.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const trendingContainer = document.getElementById("trendingTopics");
+// Your Firebase config (update if changed)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
 
-  const db = firebase.firestore();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  db.collection("topics").where("category", "==", "trending").get()
-    .then(snapshot => {
-      trendingContainer.innerHTML = ""; // Clear any loading text
+window.addEventListener("DOMContentLoaded", async () => {
+  const container = document.getElementById("trendingContainer");
 
-      if (snapshot.empty) {
-        trendingContainer.innerHTML = "<p>No trending topics found.</p>";
-        return;
-      }
+  if (!container) {
+    console.error("❌ Container with ID 'trendingContainer' not found.");
+    return;
+  }
 
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const card = document.createElement("div");
-        card.className = "topic-card fade-in";
+  try {
+    const q = query(collection(db, "topics"), where("category", "==", "trending"));
+    const querySnapshot = await getDocs(q);
 
-        let contentHTML = `
-          <h3>${data.title || "Untitled"}</h3>
-          <p>${data.description || ""}</p>
-        `;
+    if (querySnapshot.empty) {
+      container.innerHTML = "<p>No trending topics found.</p>";
+      return;
+    }
 
-        // If videoUrl is present, embed video player
-        if (data.videoUrl) {
-          contentHTML += `
-            <video controls width="100%" poster="${data.imageUrl || ''}">
-              <source src="${data.videoUrl}" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-          `;
-        } else if (data.imageUrl) {
-          // Fallback to image
-          contentHTML += `<img src="${data.imageUrl}" alt="Thumbnail" style="width:100%; border-radius:10px;" />`;
-        }
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
 
-        card.innerHTML = contentHTML;
-        trendingContainer.appendChild(card);
-      });
-    })
-    .catch(error => {
-      console.error("Error fetching trending topics:", error);
-      trendingContainer.innerHTML = "<p>Error loading content. Try again later.</p>";
+      const card = document.createElement("div");
+      card.className = "topic-card animate-fade-in";
+      card.innerHTML = `
+        <h3>${data.title || "Untitled Topic"}</h3>
+        <p>${data.description || "No description available."}</p>
+        <span class="tag">${data.category}</span>
+      `;
+
+      container.appendChild(card);
     });
+
+  } catch (error) {
+    console.error("🔥 Error fetching trending topics:", error);
+    container.innerHTML = `<p class="error">Error loading topics. Please try again later.</p>`;
+  }
 });
