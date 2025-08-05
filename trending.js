@@ -1,59 +1,43 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+document.addEventListener("DOMContentLoaded", () => {
+  const topicsContainer = document.getElementById("topicsContainer");
 
-// Your Firebase config (update if changed)
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  // Firebase initialization (must already be included in your base)
+  const firebaseConfig = {
+  apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
+  authDomain: "the-little-info.firebaseapp.com",
+  projectId: "the-little-info",
+  storageBucket: "the-little-info.firebasestorage.app",
+  messagingSenderId: "165711417682",
+  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.addEventListener("DOMContentLoaded", async () => {
-  const container = document.getElementById("trendingContainer");
-
-  if (!container) {
-    console.error("❌ Container with ID 'trendingContainer' not found.");
-    return;
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
   }
 
-  try {
-    const q = query(collection(db, "topics"), where("category", "==", "trending"));
-    const querySnapshot = await getDocs(q);
+  const db = firebase.firestore();
 
-    if (querySnapshot.empty) {
-      container.innerHTML = "<p>No trending topics found.</p>";
-      return;
-    }
-
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-
-      const card = document.createElement("div");
-      card.className = "topic-card animate-fade-in";
-      card.innerHTML = `
-        <h3>${data.title || "Untitled Topic"}</h3>
-        <p>${data.description || "No description available."}</p>
-        <span class="tag">${data.category}</span>
-      `;
-
-      container.appendChild(card);
-    });
-
-  } catch (error) {
-    console.error("🔥 Error fetching trending topics:", error);
-    container.innerHTML = `<p class="error">Error loading topics. Please try again later.</p>`;
+  function loadTrendingTopics() {
+    db.collection("topics")
+      .where("category", "==", "trending")
+      .get()
+      .then((querySnapshot) => {
+        topicsContainer.innerHTML = "";
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const topicCard = document.createElement("div");
+          topicCard.className = "topic-card animated";
+          topicCard.innerHTML = `
+            <h3>${data.title}</h3>
+            <p>${data.description}</p>
+          `;
+          topicsContainer.appendChild(topicCard);
+        });
+      })
+      .catch((error) => {
+        console.error("Error loading trending topics:", error);
+      });
   }
+
+  loadTrendingTopics();
 });
