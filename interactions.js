@@ -1,51 +1,82 @@
+// 🧩 Inject animations and card styles
+const style = document.createElement("style");
+style.textContent = `
+  .interaction-card {
+    background: linear-gradient(to bottom right, #1f1f1f, #2b2b2b);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    animation: fadeIn 0.5s ease;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.1);
+  }
+
+  .interaction-card h3 {
+    margin-bottom: 6px;
+    color: var(--primary);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+`;
+document.head.appendChild(style);
+
+// 🔥 Firebase imports
 import { db, auth } from './firebase.js';
 import {
   collection,
   query,
   where,
   getDocs,
-  onSnapshot,
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+  orderBy
+} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 import {
   onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-// DOM reference
-const interactionsContainer = document.getElementById('interactionsContainer');
+// 🔍 DOM reference
+const container = document.getElementById('interactionContainer');
 
-// Wait for authentication
+// 🧠 Load interactions
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    interactionsContainer.innerHTML = "<p class='animated-subtext error'>Please log in to view your interactions.</p>";
+    container.innerHTML = '<p>Please log in to view your interactions.</p>';
     return;
   }
 
-  const userId = user.uid;
-  const q = query(collection(db, 'interactions'), where('userId', '==', userId));
+  try {
+    const q = query(
+      collection(db, 'interactions'),
+      where('userId', '==', user.uid),
+      orderBy('timestamp', 'desc')
+    );
 
-  // Real-time updates
-  onSnapshot(q, (snapshot) => {
-    interactionsContainer.innerHTML = '';
+    const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-      interactionsContainer.innerHTML = "<p class='animated-subtext'>No interactions found.</p>";
+      container.innerHTML = '<p class="animated-subtext">No interactions yet.</p>';
       return;
     }
 
-    snapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-
+    container.innerHTML = '';
+    snapshot.forEach(doc => {
+      const data = doc.data();
       const card = document.createElement('div');
-      card.className = 'topic-card fade-in';
+      card.className = 'interaction-card';
+
       card.innerHTML = `
-        <h3>${data.title || 'Untitled Interaction'}</h3>
-        <p>${data.description || 'No description'}</p>
-        <small>📅 ${new Date(data.timestamp?.toDate()).toLocaleString()}</small>
+        <h3>💬 ${data.type || 'Interaction'}</h3>
+        <p>${data.message || 'No message available.'}</p>
+        <small>🕒 ${new Date(data.timestamp?.seconds * 1000).toLocaleString()}</small>
       `;
-      interactionsContainer.appendChild(card);
+
+      container.appendChild(card);
     });
-  }, (error) => {
-    console.error('Error loading interactions:', error);
-    interactionsContainer.innerHTML = "<p class='animated-subtext error'>Failed to load interactions.</p>";
-  });
+
+  } catch (err) {
+    console.error('❌ Error loading interactions:', err);
+    container.innerHTML = '<p class="animated-subtext error">Failed to load interactions. Please try again later.</p>';
+  }
 });
