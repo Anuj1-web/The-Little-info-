@@ -5,9 +5,10 @@ import {
   collection,
   getDocs,
   query,
-  where
+  where,
+  doc,
+  getDoc
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const statsContainer = document.getElementById('adminStats');
 
@@ -27,10 +28,7 @@ onAuthStateChanged(auth, async user => {
     return;
   }
 
-  loadAnalytics();
-});
-
-
+  // ✅ User is admin — load analytics
   loadAnalytics();
 });
 
