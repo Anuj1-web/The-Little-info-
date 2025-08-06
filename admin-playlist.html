@@ -6,7 +6,7 @@
   <title>Admin Playlist</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
-  <script defer src="admin-playlist.js"></script>
+  <script type="module" src="admin-playlist.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -27,12 +27,16 @@
   <main class="section-container fade-in">
     <div class="auth-form-box">
       <h2>🎬 Admin Playlist</h2>
-      <p>Upload and manage playlist resources.</p>
+      <p>Select videos from your site to add to the playlist.</p>
 
       <form id="playlistForm">
-        <input type="text" placeholder="Playlist Title" id="playlistTitle" required />
-        <input type="url" placeholder="Playlist URL (YouTube or other)" id="playlistURL" required />
-        <button type="submit" class="btn">Add Playlist</button>
+        <label for="videoSelector">Choose a video:</label>
+        <select id="videoSelector" required>
+          <option value="">-- Select a video --</option>
+          <!-- Options injected by JS -->
+        </select>
+
+        <button type="submit" class="btn">Add to Playlist</button>
       </form>
 
       <div id="playlistList" class="card-list"></div>
