@@ -19,39 +19,25 @@ const quizList = document.getElementById('quizList');
 
 let editingId = null;
 
+// ✅ Admin authentication and check
 onAuthStateChanged(auth, async user => {
   if (!user) {
-    console.log("❌ No user logged in");
     showToast('Please log in to access this page.', 'error');
     window.location.href = 'login.html';
     return;
   }
 
-  console.log("✅ Logged in UID:", user.uid);
-
   try {
     const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
-    if (!userSnap.exists()) {
-      console.log("❌ User document does not exist.");
+    if (!userSnap.exists() || userSnap.data().role !== "admin") {
       showToast('Access denied. Admins only.', 'error');
       window.location.href = 'dashboard.html';
       return;
     }
 
-    const userData = userSnap.data();
-    console.log("🧾 User Data:", userData);
-
-    if (userData.role !== "admin") {
-      console.log("❌ Not an admin. Role is:", userData.role);
-      showToast('Access denied. Admins only.', 'error');
-      window.location.href = 'dashboard.html';
-      return;
-    }
-
-    console.log("✅ Admin verified. Loading quizzes...");
-    loadQuizzes();
+    loadQuizzes(); // ✅ Load quizzes if admin
 
   } catch (error) {
     console.error("🔥 Error during admin check:", error);
@@ -60,31 +46,42 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
+// ✅ Submit handler for Add / Update
 quizForm.addEventListener('submit', async e => {
   e.preventDefault();
 
   const title = document.getElementById('quizTitle').value.trim();
   const question = document.getElementById('quizQuestion').value.trim();
+  const optionA = document.getElementById('optionA').value.trim();
+  const optionB = document.getElementById('optionB').value.trim();
+  const optionC = document.getElementById('optionC').value.trim();
+  const optionD = document.getElementById('optionD').value.trim();
   const answer = document.getElementById('correctAnswer').value.trim();
 
-  if (!title || !question || !answer) {
+  if (!title || !question || !optionA || !optionB || !optionC || !optionD || !answer) {
     showToast('All fields are required.', 'error');
     return;
   }
 
+  const quizData = {
+    title,
+    question,
+    optionA,
+    optionB,
+    optionC,
+    optionD,
+    answer,
+    createdAt: serverTimestamp()
+  };
+
   try {
     if (editingId) {
       const quizRef = doc(db, 'quizzes', editingId);
-      await updateDoc(quizRef, { title, question, answer });
+      await updateDoc(quizRef, quizData);
       showToast('Quiz updated successfully!', 'success');
       editingId = null;
     } else {
-      await addDoc(collection(db, 'quizzes'), {
-        title,
-        question,
-        answer,
-        createdAt: serverTimestamp()
-      });
+      await addDoc(collection(db, 'quizzes'), quizData);
       showToast('Quiz added successfully!', 'success');
     }
 
@@ -95,6 +92,7 @@ quizForm.addEventListener('submit', async e => {
   }
 });
 
+// ✅ Load and display quizzes in real-time
 function loadQuizzes() {
   const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc'));
 
@@ -113,12 +111,18 @@ function loadQuizzes() {
       card.className = 'topic-card fade-in';
 
       card.innerHTML = `
-        <h3>${data.title}</h3>
+        <h3>📝 ${data.title}</h3>
         <p><strong>Q:</strong> ${data.question}</p>
-        <p><strong>Answer:</strong> ${data.answer}</p>
-        <small>Uploaded: ${data.createdAt?.toDate().toLocaleString() || 'Just now'}</small>
+        <ul style="margin: 8px 0;">
+          <li><strong>A:</strong> ${data.optionA}</li>
+          <li><strong>B:</strong> ${data.optionB}</li>
+          <li><strong>C:</strong> ${data.optionC}</li>
+          <li><strong>D:</strong> ${data.optionD}</li>
+        </ul>
+        <p><strong>Correct Answer:</strong> ${data.answer}</p>
+        <small>🕒 ${data.createdAt?.toDate().toLocaleString() || 'Just now'}</small>
         <div style="margin-top: 10px;">
-          <button class="btn" onclick="editQuiz('${quizId}', \`${data.title}\`, \`${data.question}\`, \`${data.answer}\`)">✏️ Edit</button>
+          <button class="btn" onclick="editQuiz('${quizId}', \`${data.title}\`, \`${data.question}\`, \`${data.optionA}\`, \`${data.optionB}\`, \`${data.optionC}\`, \`${data.optionD}\`, \`${data.answer}\`)">✏️ Edit</button>
           <button class="btn" onclick="deleteQuiz('${quizId}')">🗑️ Delete</button>
         </div>
       `;
@@ -128,10 +132,14 @@ function loadQuizzes() {
   });
 }
 
-// Attach these functions globally
-window.editQuiz = (id, title, question, answer) => {
+// ✅ Global functions for editing & deleting
+window.editQuiz = (id, title, question, optionA, optionB, optionC, optionD, answer) => {
   document.getElementById('quizTitle').value = title;
   document.getElementById('quizQuestion').value = question;
+  document.getElementById('optionA').value = optionA;
+  document.getElementById('optionB').value = optionB;
+  document.getElementById('optionC').value = optionC;
+  document.getElementById('optionD').value = optionD;
   document.getElementById('correctAnswer').value = answer;
   editingId = id;
   showToast('Editing quiz...', 'info');
