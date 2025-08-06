@@ -1,12 +1,13 @@
-// 🔧 Inject custom styles for quiz layout, cards, and options
+// 🔧 Inject custom styles for quiz options and feedback + layout
 const style = document.createElement('style');
 style.textContent = `
-  /* Two-column responsive layout */
   #quizContainer.quiz-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    padding: 20px;
+    gap: 0px;
+    padding: 0;
+    margin: 0;
+    width: 100vw;
   }
 
   @media (max-width: 768px) {
@@ -15,24 +16,25 @@ style.textContent = `
     }
   }
 
-  /* Card box styling */
   .topic-card {
     background: linear-gradient(to bottom right, #1f1f1f, #2b2b2b);
-    border-radius: 12px;
     padding: 18px;
+    margin: 0;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .topic-card:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
+    transform: scale(1.01);
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.12);
   }
 
-  /* Quiz options */
   .quiz-option {
     display: block;
-    margin: 5px 0;
+    margin: 6px 0;
     padding: 10px 14px;
     border: none;
     border-radius: 8px;
@@ -68,7 +70,7 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// 📦 Firebase
+// 📦 Firebase imports
 import { db } from './firebase.js';
 import {
   collection,
@@ -77,11 +79,9 @@ import {
   orderBy
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-// 🎯 Target container
 const container = document.getElementById('quizContainer');
-container.classList.add('quiz-columns'); // Apply 2-column layout
+container.classList.add('quiz-columns'); // 🧱 Two-column layout
 
-// 🚀 Load all admin quizzes
 async function loadAdminQuizzes() {
   try {
     const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc'));
