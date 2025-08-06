@@ -2,23 +2,28 @@
 const style = document.createElement('style');
 style.textContent = `
   .quiz-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin: 0;
-    padding: 0 0 30px 0;
-    gap: 0px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100vw;
+    margin-left: -8px;
+    padding: 20px 0;
+  }
+
+  @media (max-width: 768px) {
+    .quiz-grid {
+      grid-template-columns: 1fr;
+      margin-left: 0;
+    }
   }
 
   .quiz-card {
-    flex: 1 1 49%;
-    margin: 0;
     background: #1c1c1c;
     border-radius: 14px;
     padding: 20px;
     box-shadow: 0 0 8px rgba(0,0,0,0.4);
     transition: transform 0.3s ease;
-    min-width: 300px;
+    height: 100%;
   }
 
   .quiz-card:hover {
@@ -67,7 +72,6 @@ style.textContent = `
     font-weight: 500;
     color: #ccc;
   }
-`;
 document.head.appendChild(style);
 
 // 📦 Firebase
