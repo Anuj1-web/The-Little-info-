@@ -17,23 +17,43 @@ const quizList = document.getElementById('quizList');
 
 onAuthStateChanged(auth, async user => {
   if (!user) {
+    console.log("❌ No user logged in");
     showToast('Please log in to access this page.', 'error');
     window.location.href = 'login.html';
     return;
   }
 
-  // 🔥 Firestore-based admin role check
-  const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
+  console.log("✅ Logged in UID:", user.uid);
 
-  if (!userSnap.exists() || userSnap.data().role !== "admin") {
-    showToast('Access denied. Admins only.', 'error');
+  try {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      console.log("❌ User document does not exist.");
+      showToast('Access denied. Admins only.', 'error');
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+    const userData = userSnap.data();
+    console.log("🧾 User Data:", userData);
+
+    if (userData.role !== "admin") {
+      console.log("❌ Not an admin. Role is:", userData.role);
+      showToast('Access denied. Admins only.', 'error');
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+    console.log("✅ Admin verified. Loading quizzes...");
+    loadQuizzes();
+
+  } catch (error) {
+    console.error("🔥 Error during admin check:", error);
+    showToast('Failed to verify admin access.', 'error');
     window.location.href = 'dashboard.html';
-    return;
   }
-
-  // ✅ User is verified admin
-  loadQuizzes();
 });
 
 quizForm.addEventListener('submit', async e => {
@@ -41,7 +61,7 @@ quizForm.addEventListener('submit', async e => {
 
   const title = document.getElementById('quizTitle').value.trim();
   const question = document.getElementById('quizQuestion').value.trim();
-  const answer = document.getElementById('correctAnswer').value.trim(); // fix field id to match HTML
+  const answer = document.getElementById('correctAnswer').value.trim(); // Must match input ID
 
   if (!title || !question || !answer) {
     showToast('All fields are required.', 'error');
@@ -58,7 +78,7 @@ quizForm.addEventListener('submit', async e => {
     showToast('Quiz added successfully!', 'success');
     quizForm.reset();
   } catch (error) {
-    console.error(error);
+    console.error("❌ Failed to add quiz:", error);
     showToast('Failed to add quiz.', 'error');
   }
 });
