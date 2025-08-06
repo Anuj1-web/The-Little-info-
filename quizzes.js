@@ -1,6 +1,35 @@
-// 🔧 Inject custom styles for quiz options and feedback
+// 🔧 Inject custom styles for quiz layout, cards, and options
 const style = document.createElement('style');
 style.textContent = `
+  /* Two-column responsive layout */
+  #quizContainer.quiz-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 20px;
+  }
+
+  @media (max-width: 768px) {
+    #quizContainer.quiz-columns {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Card box styling */
+  .topic-card {
+    background: linear-gradient(to bottom right, #1f1f1f, #2b2b2b);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .topic-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
+  }
+
+  /* Quiz options */
   .quiz-option {
     display: block;
     margin: 5px 0;
@@ -39,7 +68,7 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// 📦 Firebase imports
+// 📦 Firebase
 import { db } from './firebase.js';
 import {
   collection,
@@ -48,11 +77,14 @@ import {
   orderBy
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
+// 🎯 Target container
 const container = document.getElementById('quizContainer');
+container.classList.add('quiz-columns'); // Apply 2-column layout
 
+// 🚀 Load all admin quizzes
 async function loadAdminQuizzes() {
   try {
-    const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc')); // ✅ FIXED collection
+    const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
@@ -62,13 +94,11 @@ async function loadAdminQuizzes() {
 
     querySnapshot.forEach(doc => {
       const data = doc.data();
-
       const { title, question, answer, optionA, optionB, optionC, optionD } = data;
 
       const card = document.createElement('div');
       card.className = 'topic-card fade-in';
 
-      // ✅ Create options dynamically with values
       const optionsHTML = `
         <button class="quiz-option" data-option="A">A: ${optionA}</button>
         <button class="quiz-option" data-option="B">B: ${optionB}</button>
@@ -83,7 +113,6 @@ async function loadAdminQuizzes() {
         <p class="quiz-result" style="display: none;"></p>
       `;
 
-      // Add click events
       const resultPara = card.querySelector('.quiz-result');
       const optionButtons = card.querySelectorAll('.quiz-option');
 
