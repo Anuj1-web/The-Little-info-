@@ -7,6 +7,7 @@ import {
   query,
   where
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const statsContainer = document.getElementById('adminStats');
 
@@ -17,12 +18,18 @@ onAuthStateChanged(auth, async user => {
     return;
   }
 
-  const tokenResult = await user.getIdTokenResult();
-  if (!tokenResult.claims.admin) {
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists() || userSnap.data().role !== "admin") {
     showToast('Admins only.', 'error');
     window.location.href = 'dashboard.html';
     return;
   }
+
+  loadAnalytics();
+});
+
 
   loadAnalytics();
 });
