@@ -1,24 +1,22 @@
 // firebase.js
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+import { getAuth } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-// Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
   authDomain: "the-little-info.firebaseapp.com",
   projectId: "the-little-info",
-  storageBucket: "the-little-info.appspot.com",
+  storageBucket: "the-little-info.firebasestorage.app",
   messagingSenderId: "165711417682",
-  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
+  appId: "1:165711417682:web:cebb205d7d5c1f18802a8b",
+  measurementId: "G-8KTFTYZBSL"
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-// Optional: Initialize services globally if needed
-const auth = firebase.auth();
-const db = firebase.firestore();
-const storage = firebase.storage();
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// Optional: attach to window for global access if needed
-window.firebaseAuth = auth;
-window.firebaseDB = db;
-window.firebaseStorage = storage;
+export { auth, db };
