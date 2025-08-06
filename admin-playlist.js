@@ -1,3 +1,4 @@
+// ✅ Full updated admin-playlist.js
 import { db, auth } from './firebase-config.js';
 import { showToast } from './ui-utils.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
@@ -15,9 +16,8 @@ import {
 
 const form = document.getElementById('playlistForm');
 const playlistList = document.getElementById('playlistList');
-const videoSelect = document.getElementById('videoSelect'); // dropdown
+const videoSelect = document.getElementById('videoSelect');
 
-// ✅ Authenticate user and check if admin
 onAuthStateChanged(auth, async user => {
   if (!user) {
     showToast('Please log in to access this page.', 'error');
@@ -36,7 +36,7 @@ onAuthStateChanged(auth, async user => {
     }
 
     console.log("✅ Admin verified");
-    await populateVideoList(); // Load uploaded videos into dropdown
+    await populateVideoList();
     loadPlaylists();
   } catch (err) {
     console.error("Admin check failed:", err);
@@ -45,9 +45,11 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
-// ✅ Populate dropdown with uploaded videos
+// ✅ Load videos from 'explore' collection into dropdown
 async function populateVideoList() {
   try {
+    if (!videoSelect) return;
+
     const q = query(collection(db, 'explore'), orderBy('uploadedAt', 'desc'));
     const snapshot = await getDocs(q);
 
@@ -66,11 +68,11 @@ async function populateVideoList() {
   }
 }
 
-// ✅ Handle form submission
 form.addEventListener('submit', async e => {
   e.preventDefault();
+
   const title = document.getElementById('playlistTitle').value.trim();
-  const videoUrl = videoSelect.value;
+  const videoUrl = videoSelect?.value;
 
   if (!title || !videoUrl) {
     showToast('Please select a video and enter a title.', 'error');
@@ -81,19 +83,19 @@ form.addEventListener('submit', async e => {
     await addDoc(collection(db, 'admin_playlists'), {
       title,
       url: videoUrl,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+      public: true // ✅ visible to users
     });
 
     showToast('Playlist added successfully!', 'success');
     form.reset();
-    videoSelect.selectedIndex = 0;
+    if (videoSelect) videoSelect.selectedIndex = 0;
   } catch (error) {
     console.error(error);
     showToast('Failed to add playlist.', 'error');
   }
 });
 
-// ✅ Load existing playlists
 function loadPlaylists() {
   const q = query(collection(db, 'admin_playlists'), orderBy('createdAt', 'desc'));
 
@@ -117,5 +119,8 @@ function loadPlaylists() {
 
       playlistList.appendChild(card);
     });
+  }, error => {
+    console.error("Snapshot listener failed:", error);
+    showToast('Permission denied or error loading playlists.', 'error');
   });
 }
