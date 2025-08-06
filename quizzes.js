@@ -84,7 +84,8 @@ container.classList.add('quiz-columns'); // 🧱 Two-column layout
 
 async function loadAdminQuizzes() {
   try {
-    const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc'));
+    // ✅ Fixed: Use 'admin_quizzes' instead of 'quizzes' to match Firestore rules
+    const q = query(collection(db, 'admin_quizzes'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
