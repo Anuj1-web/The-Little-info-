@@ -10,7 +10,8 @@ const container = document.getElementById('quizContainer');
 
 async function loadAdminQuizzes() {
   try {
-    const q = query(collection(db, 'admin_quizzes'), orderBy('createdAt', 'desc'));
+    // ✅ Fetch from public quizzes collection (not admin-only)
+    const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
