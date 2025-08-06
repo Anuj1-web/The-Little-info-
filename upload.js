@@ -2,21 +2,21 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
   getStorage,
   ref,
   uploadBytesResumable,
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Firebase Config
+// 🔧 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
   authDomain: "the-little-info.firebaseapp.com",
@@ -26,25 +26,25 @@ const firebaseConfig = {
   appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
 };
 
-// Initialize Firebase
+// 🚀 Initialize
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const storage = getStorage(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
-// DOM references
+// 📌 DOM Elements
 const form = document.getElementById("uploadForm");
 const uploadBtn = document.getElementById("uploadBtn");
-const progressBar = document.getElementById("uploadProgress"); // <--- NEW
+const progressBar = document.getElementById("uploadProgress");
 const formBox = document.querySelector(".auth-form-box");
 
-// Hide form until admin verified
+// 🔒 Hide until admin check
 formBox.style.display = "none";
 
-// Auth check
-onAuthStateChanged(auth, async (user) => {
+// ✅ Admin Check
+onAuthStateChanged(auth, async user => {
   if (!user) {
-    alert("You must be logged in to access this page.");
+    alert("You must be logged in.");
     window.location.href = "login.html";
     return;
   }
@@ -53,86 +53,84 @@ onAuthStateChanged(auth, async (user) => {
   const userSnap = await getDoc(userRef);
 
   if (!userSnap.exists() || userSnap.data().role !== "admin") {
-    alert("Access denied. You must be an admin to upload content.");
+    alert("Access denied. Admins only.");
     window.location.href = "dashboard.html";
     return;
   }
 
-  formBox.style.display = "block"; // ✅ Show form for admin
+  // ✅ Admin verified
+  formBox.style.display = "block";
 });
 
-// Handle Upload
-form.addEventListener("submit", async (e) => {
+// 🧠 Handle Upload
+form.addEventListener("submit", async e => {
   e.preventDefault();
-  uploadBtn.disabled = true;
-  uploadBtn.textContent = "Uploading...";
 
-  const title = document.getElementById("mediaTitle")?.value.trim();
-  const description = document.getElementById("mediaDescription")?.value.trim();
-  const category = document.getElementById("category")?.value.trim();
-  const type = document.getElementById("mediaType")?.value.trim();
+  const title = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
+  const category = document.getElementById("category").value;
   const fileInput = document.getElementById("mediaFile");
-  const file = fileInput?.files[0];
+  const file = fileInput.files[0];
 
-  if (!title || !description || !category || !type || !file) {
+  if (!title || !category || !file) {
     alert("Please fill in all fields and select a file.");
-    uploadBtn.disabled = false;
-    uploadBtn.textContent = "Upload";
     return;
   }
 
   try {
-    const storageRef = ref(storage, `${category}/${Date.now()}-${file.name}`);
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = "Uploading...";
+    progressBar.style.display = "block";
+    progressBar.value = 0;
+
+    // 🔄 Storage Ref
+    const filePath = `${category}/${Date.now()}-${file.name}`;
+    const storageRef = ref(storage, filePath);
+
     const uploadTask = uploadBytesResumable(storageRef, file);
 
-    // Listen for upload progress
+    // 🔁 Progress Tracker
     uploadTask.on(
       "state_changed",
-      (snapshot) => {
-        const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        if (progressBar) {
-          progressBar.style.display = "block";
-          progressBar.value = percent;
-        }
-        uploadBtn.textContent = `Uploading ${percent}%`;
+      snapshot => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        progressBar.value = progress;
       },
-      (error) => {
-        console.error("Upload error:", error);
-        alert("Upload failed. Please try again.");
+      error => {
+        console.error("Upload failed:", error);
+        alert("Upload failed. Try again.");
         uploadBtn.disabled = false;
         uploadBtn.textContent = "Upload";
-        if (progressBar) progressBar.style.display = "none";
+        progressBar.style.display = "none";
       },
       async () => {
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        const url = await getDownloadURL(uploadTask.snapshot.ref);
 
-        const contentDoc = {
+        const contentData = {
           title,
           description,
-          type,
-          url: downloadURL,
           category,
+          url,
+          type: file.type.startsWith("video/") ? "video" : file.type.startsWith("image/") ? "image" : "document",
           uploadedBy: auth.currentUser.uid,
           createdAt: serverTimestamp()
         };
 
-        await addDoc(collection(db, "content"), contentDoc);
+        await addDoc(collection(db, "content"), contentData);
 
-        alert("✅ Content uploaded successfully!");
+        alert("Content uploaded successfully!");
         form.reset();
+        progressBar.value = 0;
+        progressBar.style.display = "none";
         uploadBtn.disabled = false;
         uploadBtn.textContent = "Upload";
-        if (progressBar) {
-          progressBar.style.display = "none";
-          progressBar.value = 0;
-        }
       }
     );
-  } catch (error) {
-    console.error(error);
-    alert("Upload failed. Please try again.");
+  } catch (err) {
+    console.error("Upload error:", err);
+    alert("Unexpected error occurred.");
     uploadBtn.disabled = false;
     uploadBtn.textContent = "Upload";
-    if (progressBar) progressBar.style.display = "none";
+    progressBar.style.display = "none";
   }
 });
