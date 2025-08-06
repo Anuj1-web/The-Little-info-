@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -19,24 +20,29 @@
     </div>
   </header>
 
+  <!-- Main Section -->
   <main class="section-container">
     <div class="auth-form-box animate fade-in">
-      <h2>📝 Manage Quizzes</h2>
+      <h2 class="animated-text">📝 Manage Quizzes</h2>
       <form id="quizForm">
         <input type="text" id="quizTitle" placeholder="Quiz Title" required />
-        <textarea id="quizQuestion" placeholder="Question text" required></textarea>
+        <textarea id="quizQuestion" placeholder="Enter the question" required></textarea>
         <input type="text" id="optionA" placeholder="Option A" required />
         <input type="text" id="optionB" placeholder="Option B" required />
         <input type="text" id="optionC" placeholder="Option C" required />
         <input type="text" id="optionD" placeholder="Option D" required />
-        <input type="text" id="correctAnswer" placeholder="Correct Answer (A/B/C/D)" required />
-        <button type="submit" class="btn">Add Quiz</button>
+        <input type="text" id="correctAnswer" placeholder="Correct Answer (A/B/C/D or full answer)" required />
+        <button type="submit" class="btn">💾 Save Quiz</button>
       </form>
-      <div id="quizList"></div>
+
+      <div id="quizList" class="quiz-list-container">
+        <!-- Quizzes will be injected here -->
+      </div>
     </div>
   </main>
 
- <script src="theme-toggle.js"></script>
-<script type="module" src="admin-quiz.js"></script>
+  <!-- Scripts -->
+  <script src="theme-toggle.js"></script>
+  <script type="module" src="admin-quiz.js"></script>
 </body>
 </html>
