@@ -1,14 +1,22 @@
 // firebaseInit.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-storage.js";
+
+// ✅ Import the firebaseConfig from firebase.js
 import { firebaseConfig } from './firebase.js';
 
-// Initialize Firebase App
+// ✅ Import the required Firebase modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+// ✅ Initialize Firebase app only once
 const app = initializeApp(firebaseConfig);
 
-// Export initialized services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+// ✅ Initialize services
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// ✅ Optional: log to console for confirmation
+console.log("Firebase initialized successfully.");
+
+// ✅ Export initialized services if other modules need them
+export { db, auth };
