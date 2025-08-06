@@ -1,21 +1,13 @@
-// quizzes.js
-
-// 🔧 Inject custom styles
+// 🔧 Inject custom styles for quiz options and layout
 const style = document.createElement('style');
 style.textContent = `
   #quizContainer.quiz-columns {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0px;
-    padding: 0;
-    margin: 0;
-    width: 100vw;
-  }
-
-  @media (max-width: 768px) {
-    #quizContainer.quiz-columns {
-      grid-template-columns: 1fr;
-    }
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
   }
 
   .topic-card {
@@ -72,7 +64,7 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// ✅ Firebase
+// 🔥 Firebase imports
 import { db } from './firebase.js';
 import {
   collection,
@@ -81,11 +73,11 @@ import {
   orderBy
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
-// ✅ Target container
+// 🎯 Quiz container
 const container = document.getElementById('quizContainer');
-container.classList.add('quiz-columns');
+container.classList.add('quiz-columns'); // Apply layout class
 
-// ✅ Fetch and render quizzes
+// 🚀 Load quizzes from Firestore
 async function loadAdminQuizzes() {
   try {
     const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc'));
