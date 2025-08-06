@@ -26,6 +26,8 @@ const uploadBtn = document.getElementById("uploadBtn");
 const formBox = document.querySelector(".auth-form-box");
 
 // Wait for auth state and check admin
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     alert("You must be logged in to access this page.");
@@ -33,12 +35,15 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  const tokenResult = await user.getIdTokenResult();
-  if (!tokenResult.claims.admin) {
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists() || userSnap.data().role !== "admin") {
     alert("Access denied. You must be an admin to upload content.");
     window.location.href = "dashboard.html";
     return;
   }
+
 
   // Admin confirmed; show form
   formBox.style.display = "block";
