@@ -49,7 +49,7 @@ quizForm.addEventListener('submit', async e => {
   }
 
   try {
-    await addDoc(collection(db, 'admin_quizzes'), {
+    await addDoc(collection(db, 'quizzes'), {
       title,
       question,
       answer,
