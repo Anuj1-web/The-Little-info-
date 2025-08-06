@@ -3,21 +3,23 @@ import { showToast } from './ui-utils.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   collection,
-  getDocs,
   addDoc,
-  serverTimestamp,
   onSnapshot,
+  serverTimestamp,
   query,
   orderBy,
   doc,
-  getDoc
+  getDoc,
+  deleteDoc,
+  updateDoc
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const form = document.getElementById('playlistForm');
-const playlistList = document.getElementById('playlistList');
-const videoSelect = document.getElementById('videoSelect'); // dropdown
+const quizForm = document.getElementById('quizForm');
+const quizList = document.getElementById('quizList');
 
-// ✅ Authenticate user and check if admin
+let editingId = null;
+
+// ✅ Admin authentication and check
 onAuthStateChanged(auth, async user => {
   if (!user) {
     showToast('Please log in to access this page.', 'error');
@@ -26,7 +28,7 @@ onAuthStateChanged(auth, async user => {
   }
 
   try {
-    const userRef = doc(db, 'users', user.uid);
+    const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists() || userSnap.data().role !== "admin") {
@@ -35,87 +37,122 @@ onAuthStateChanged(auth, async user => {
       return;
     }
 
-    console.log("✅ Admin verified");
-    await populateVideoList(); // Load uploaded videos into dropdown
-    loadPlaylists();
-  } catch (err) {
-    console.error("Admin check failed:", err);
-    showToast('Access denied.', 'error');
+    loadQuizzes(); // ✅ Load quizzes if admin
+
+  } catch (error) {
+    console.error("🔥 Error during admin check:", error);
+    showToast('Failed to verify admin access.', 'error');
     window.location.href = 'dashboard.html';
   }
 });
 
-// ✅ Populate dropdown with uploaded videos
-async function populateVideoList() {
-  try {
-    const q = query(collection(db, 'explore'), orderBy('uploadedAt', 'desc'));
-    const snapshot = await getDocs(q);
-
-    videoSelect.innerHTML = '<option value="">-- Select a video --</option>';
-
-    snapshot.forEach(doc => {
-      const video = doc.data();
-      const option = document.createElement('option');
-      option.value = video.videoUrl;
-      option.textContent = video.title || "Untitled Video";
-      videoSelect.appendChild(option);
-    });
-  } catch (err) {
-    console.error("Failed to load videos:", err);
-    showToast("Error loading videos.", "error");
-  }
-}
-
-// ✅ Handle form submission
-form.addEventListener('submit', async e => {
+// ✅ Submit handler for Add / Update
+quizForm.addEventListener('submit', async e => {
   e.preventDefault();
-  const title = document.getElementById('playlistTitle').value.trim();
-  const videoUrl = videoSelect.value;
 
-  if (!title || !videoUrl) {
-    showToast('Please select a video and enter a title.', 'error');
+  const title = document.getElementById('quizTitle').value.trim();
+  const question = document.getElementById('quizQuestion').value.trim();
+  const optionA = document.getElementById('optionA').value.trim();
+  const optionB = document.getElementById('optionB').value.trim();
+  const optionC = document.getElementById('optionC').value.trim();
+  const optionD = document.getElementById('optionD').value.trim();
+  const answer = document.getElementById('correctAnswer').value.trim();
+
+  if (!title || !question || !optionA || !optionB || !optionC || !optionD || !answer) {
+    showToast('All fields are required.', 'error');
     return;
   }
 
-  try {
-    await addDoc(collection(db, 'admin_playlists'), {
-      title,
-      url: videoUrl,
-      createdAt: serverTimestamp()
-    });
+  const quizData = {
+    title,
+    question,
+    optionA,
+    optionB,
+    optionC,
+    optionD,
+    answer,
+    createdAt: serverTimestamp()
+  };
 
-    showToast('Playlist added successfully!', 'success');
-    form.reset();
-    videoSelect.selectedIndex = 0;
+  try {
+    if (editingId) {
+      const quizRef = doc(db, 'quizzes', editingId);
+      await updateDoc(quizRef, quizData);
+      showToast('Quiz updated successfully!', 'success');
+      editingId = null;
+    } else {
+      await addDoc(collection(db, 'quizzes'), quizData);
+      showToast('Quiz added successfully!', 'success');
+    }
+
+    quizForm.reset();
   } catch (error) {
-    console.error(error);
-    showToast('Failed to add playlist.', 'error');
+    console.error("❌ Failed to save quiz:", error);
+    showToast('Failed to save quiz.', 'error');
   }
 });
 
-// ✅ Load existing playlists
-function loadPlaylists() {
-  const q = query(collection(db, 'admin_playlists'), orderBy('createdAt', 'desc'));
+// ✅ Load and display quizzes in real-time
+function loadQuizzes() {
+  const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc'));
 
   onSnapshot(q, snapshot => {
-    playlistList.innerHTML = '';
+    quizList.innerHTML = '';
     if (snapshot.empty) {
-      playlistList.innerHTML = '<p>No playlists uploaded yet.</p>';
+      quizList.innerHTML = '<p>No quizzes uploaded yet.</p>';
       return;
     }
 
-    snapshot.forEach(doc => {
-      const data = doc.data();
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      const quizId = docSnap.id;
+
       const card = document.createElement('div');
       card.className = 'topic-card fade-in';
 
       card.innerHTML = `
-        <h3>${data.title}</h3>
-        <p><a href="${data.url}" target="_blank">${data.url}</a></p>
-        <small>Uploaded: ${data.createdAt?.toDate().toLocaleString() || 'Just now'}</small>
+        <h3>📝 ${data.title}</h3>
+        <p><strong>Q:</strong> ${data.question}</p>
+        <ul style="margin: 8px 0;">
+          <li><strong>A:</strong> ${data.optionA}</li>
+          <li><strong>B:</strong> ${data.optionB}</li>
+          <li><strong>C:</strong> ${data.optionC}</li>
+          <li><strong>D:</strong> ${data.optionD}</li>
+        </ul>
+        <p><strong>Correct Answer:</strong> ${data.answer}</p>
+        <small>🕒 ${data.createdAt?.toDate().toLocaleString() || 'Just now'}</small>
+        <div style="margin-top: 10px;">
+          <button class="btn" onclick="editQuiz('${quizId}', \`${data.title}\`, \`${data.question}\`, \`${data.optionA}\`, \`${data.optionB}\`, \`${data.optionC}\`, \`${data.optionD}\`, \`${data.answer}\`)">✏️ Edit</button>
+          <button class="btn" onclick="deleteQuiz('${quizId}')">🗑️ Delete</button>
+        </div>
       `;
 
-      playlistList.appendChild(card);
+      quizList.appendChild(card);
     });
   });
 }
+
+// ✅ Global functions for editing & deleting
+window.editQuiz = (id, title, question, optionA, optionB, optionC, optionD, answer) => {
+  document.getElementById('quizTitle').value = title;
+  document.getElementById('quizQuestion').value = question;
+  document.getElementById('optionA').value = optionA;
+  document.getElementById('optionB').value = optionB;
+  document.getElementById('optionC').value = optionC;
+  document.getElementById('optionD').value = optionD;
+  document.getElementById('correctAnswer').value = answer;
+  editingId = id;
+  showToast('Editing quiz...', 'info');
+};
+
+window.deleteQuiz = async (id) => {
+  if (!confirm("Are you sure you want to delete this quiz?")) return;
+
+  try {
+    await deleteDoc(doc(db, 'quizzes', id));
+    showToast('Quiz deleted successfully!', 'success');
+  } catch (error) {
+    console.error("❌ Failed to delete quiz:", error);
+    showToast('Failed to delete quiz.', 'error');
+  }
+};
