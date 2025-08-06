@@ -7,28 +7,33 @@ import {
   onSnapshot,
   serverTimestamp,
   query,
-  orderBy
+  orderBy,
+  doc,
+  getDoc
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const quizForm = document.getElementById('quizForm');
 const quizList = document.getElementById('quizList');
 
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
   if (!user) {
     showToast('Please log in to access this page.', 'error');
     window.location.href = 'login.html';
     return;
   }
 
-  user.getIdTokenResult().then(tokenResult => {
-    const isAdmin = tokenResult.claims.admin;
-    if (!isAdmin) {
-      showToast('Access denied. Admins only.', 'error');
-      window.location.href = 'dashboard.html';
-    } else {
-      loadQuizzes();
-    }
-  });
+  // 🔥 Firestore-based admin role check
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists() || userSnap.data().role !== "admin") {
+    showToast('Access denied. Admins only.', 'error');
+    window.location.href = 'dashboard.html';
+    return;
+  }
+
+  // ✅ User is verified admin
+  loadQuizzes();
 });
 
 quizForm.addEventListener('submit', async e => {
@@ -36,7 +41,7 @@ quizForm.addEventListener('submit', async e => {
 
   const title = document.getElementById('quizTitle').value.trim();
   const question = document.getElementById('quizQuestion').value.trim();
-  const answer = document.getElementById('quizAnswer').value.trim();
+  const answer = document.getElementById('correctAnswer').value.trim(); // fix field id to match HTML
 
   if (!title || !question || !answer) {
     showToast('All fields are required.', 'error');
