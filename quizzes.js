@@ -1,7 +1,7 @@
 // 🔧 Inject custom styles for quiz options and feedback
 const style = document.createElement('style');
 style.textContent = `
-  .option-btn {
+  .quiz-option {
     display: block;
     margin: 5px 0;
     padding: 10px 14px;
@@ -15,26 +15,31 @@ style.textContent = `
     text-align: left;
   }
 
-  .option-btn:hover {
+  .quiz-option:hover {
     background-color: #555;
     transform: scale(1.02);
   }
 
-  .option-btn.correct {
+  .quiz-option.correct {
     background-color: #2ecc71 !important;
     color: #000;
     font-weight: bold;
   }
 
-  .option-btn.wrong {
+  .quiz-option.wrong {
     background-color: #e74c3c !important;
     color: #000;
+    font-weight: bold;
+  }
+
+  .quiz-result {
+    margin-top: 10px;
     font-weight: bold;
   }
 `;
 document.head.appendChild(style);
 
-// 📦 Firebase
+// 📦 Firebase imports
 import { db } from './firebase.js';
 import {
   collection,
@@ -47,7 +52,7 @@ const container = document.getElementById('quizContainer');
 
 async function loadAdminQuizzes() {
   try {
-    const q = query(collection(db, 'admin_quizzes'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc')); // ✅ FIXED collection
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
@@ -58,18 +63,22 @@ async function loadAdminQuizzes() {
     querySnapshot.forEach(doc => {
       const data = doc.data();
 
+      const { title, question, answer, optionA, optionB, optionC, optionD } = data;
+
       const card = document.createElement('div');
       card.className = 'topic-card fade-in';
 
-      // Create options
-      const optionsHTML = ['A', 'B', 'C', 'D'].map(letter => {
-        const optionText = data[`option${letter}`];
-        return `<button class="quiz-option" data-option="${letter}">${optionText}</button>`;
-      }).join('');
+      // ✅ Create options dynamically with values
+      const optionsHTML = `
+        <button class="quiz-option" data-option="A">A: ${optionA}</button>
+        <button class="quiz-option" data-option="B">B: ${optionB}</button>
+        <button class="quiz-option" data-option="C">C: ${optionC}</button>
+        <button class="quiz-option" data-option="D">D: ${optionD}</button>
+      `;
 
       card.innerHTML = `
-        <h3>📝 ${data.title}</h3>
-        <p><strong>Q:</strong> ${data.question}</p>
+        <h3>📝 ${title}</h3>
+        <p><strong>Q:</strong> ${question}</p>
         <div class="quiz-options">${optionsHTML}</div>
         <p class="quiz-result" style="display: none;"></p>
       `;
@@ -81,18 +90,23 @@ async function loadAdminQuizzes() {
       optionButtons.forEach(button => {
         button.addEventListener('click', () => {
           const userAnswer = button.getAttribute('data-option');
-          const correctAnswer = data.answer?.toUpperCase();
+          const correctAnswer = answer?.toUpperCase();
 
-          optionButtons.forEach(btn => btn.disabled = true);
+          optionButtons.forEach(btn => {
+            btn.disabled = true;
+            if (btn.getAttribute('data-option') === correctAnswer) {
+              btn.classList.add('correct');
+            }
+          });
 
           if (userAnswer === correctAnswer) {
-            button.style.backgroundColor = '#28a745'; // Green
+            button.classList.add('correct');
             resultPara.innerHTML = '✅ Correct!';
-            resultPara.style.color = '#28a745';
+            resultPara.style.color = '#2ecc71';
           } else {
-            button.style.backgroundColor = '#dc3545'; // Red
+            button.classList.add('wrong');
             resultPara.innerHTML = `❌ Wrong! Correct Answer: ${correctAnswer}`;
-            resultPara.style.color = '#dc3545';
+            resultPara.style.color = '#e74c3c';
           }
 
           resultPara.style.display = 'block';
