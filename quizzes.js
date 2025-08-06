@@ -1,4 +1,6 @@
-// 🔧 Inject custom styles for quiz options and feedback + layout
+// quizzes.js
+
+// 🔧 Inject custom styles
 const style = document.createElement('style');
 style.textContent = `
   #quizContainer.quiz-columns {
@@ -70,7 +72,7 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// 📦 Firebase imports
+// ✅ Firebase
 import { db } from './firebase.js';
 import {
   collection,
@@ -79,13 +81,14 @@ import {
   orderBy
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
+// ✅ Target container
 const container = document.getElementById('quizContainer');
-container.classList.add('quiz-columns'); // 🧱 Two-column layout
+container.classList.add('quiz-columns');
 
+// ✅ Fetch and render quizzes
 async function loadAdminQuizzes() {
   try {
-    // ✅ Fixed: Use 'admin_quizzes' instead of 'quizzes' to match Firestore rules
-    const q = query(collection(db, 'admin_quizzes'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
