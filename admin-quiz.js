@@ -19,43 +19,21 @@ const quizList = document.getElementById('quizList');
 
 onAuthStateChanged(auth, async user => {
   if (!user) {
-    console.log("❌ No user logged in");
     showToast('Please log in to access this page.', 'error');
     window.location.href = 'login.html';
     return;
   }
 
-  console.log("✅ Logged in UID:", user.uid);
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
 
-  try {
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      console.log("❌ User document does not exist.");
-      showToast('Access denied. Admins only.', 'error');
-      window.location.href = 'dashboard.html';
-      return;
-    }
-
-    const userData = userSnap.data();
-    console.log("🧾 User Data:", userData);
-
-    if (userData.role !== "admin") {
-      console.log("❌ Not an admin. Role is:", userData.role);
-      showToast('Access denied. Admins only.', 'error');
-      window.location.href = 'dashboard.html';
-      return;
-    }
-
-    console.log("✅ Admin verified. Loading quizzes...");
-    loadQuizzes();
-
-  } catch (error) {
-    console.error("🔥 Error during admin check:", error);
-    showToast('Failed to verify admin access.', 'error');
+  if (!userSnap.exists() || userSnap.data().role !== "admin") {
+    showToast('Access denied. Admins only.', 'error');
     window.location.href = 'dashboard.html';
+    return;
   }
+
+  loadQuizzes();
 });
 
 quizForm.addEventListener('submit', async e => {
@@ -103,9 +81,9 @@ function loadQuizzes() {
       card.className = 'topic-card fade-in';
 
       card.innerHTML = `
-        <h3 contenteditable="false">${data.title}</h3>
-        <p><strong>Q:</strong> <span contenteditable="false">${data.question}</span></p>
-        <p><strong>Answer:</strong> <span contenteditable="false">${data.answer}</span></p>
+        <h3 class="quiz-title" contenteditable="false">${data.title}</h3>
+        <p><strong>Q:</strong> <span class="quiz-question" contenteditable="false">${data.question}</span></p>
+        <p><strong>Answer:</strong> <span class="quiz-answer" contenteditable="false">${data.answer}</span></p>
         <small>Uploaded: ${data.createdAt?.toDate().toLocaleString() || 'Just now'}</small>
         <div class="quiz-actions">
           <button class="btn edit-btn">✏️ Edit</button>
@@ -116,11 +94,12 @@ function loadQuizzes() {
       const editBtn = card.querySelector('.edit-btn');
       const deleteBtn = card.querySelector('.delete-btn');
 
+      const titleEl = card.querySelector('.quiz-title');
+      const questionEl = card.querySelector('.quiz-question');
+      const answerEl = card.querySelector('.quiz-answer');
+
       editBtn.addEventListener('click', async () => {
         const isEditing = editBtn.textContent === '💾 Save';
-        const titleEl = card.querySelector('h3');
-        const questionEl = card.querySelector('p span:nth-of-type(1)');
-        const answerEl = card.querySelector('p span:nth-of-type(2)');
 
         if (!isEditing) {
           titleEl.contentEditable = true;
