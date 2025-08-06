@@ -119,6 +119,7 @@ function loadPlaylists() {
 
       playlistList.appendChild(card);
     });
+    
   }, error => {
     console.error("Snapshot listener failed:", error);
     showToast('Permission denied or error loading playlists.', 'error');
