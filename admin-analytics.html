@@ -20,15 +20,18 @@
   </header>
 
   <main class="section-container">
-    <div class="auth-form-box animate fade-in">
-      <h2>📊 Site Analytics</h2>
-      <p>Track overall performance, user activity, uploads, views, and more.</p>
-      <div id="analyticsContainer">
-        <!-- Analytics chart or metrics will appear here -->
-        <p class="muted">Coming soon: Live stats from Firebase.</p>
-      </div>
-    </div>
-  </main>
+  <div class="auth-form-box animate fade-in">
+    <h2>📊 Site Analytics</h2>
+    <p>Track overall performance, user activity, uploads, views, and more.</p>
+    
+    <!-- ✅ Add this -->
+    <div id="adminStats"></div>
+
+    <!-- Optional placeholder -->
+    <p class="muted">Coming soon: Live stats from Firebase.</p>
+  </div>
+</main>
+
 
   <script src="theme-toggle.js"></script>
   <script type="module" src="admin-analytics.js"></script>
