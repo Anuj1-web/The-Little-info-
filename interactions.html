@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Interactions - The Little Info</title>
+  <title>Interactions - The Little Info</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="theme-toggle.js"></script>
   <script type="module" defer src="interactions.js"></script>
 </head>
 <body>
-  <!-- Header -->
+
+  <!-- ✅ Site Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
@@ -18,56 +19,23 @@
         <a href="dashboard.html">Dashboard</a>
         <a href="profile.html">Profile</a>
         <a href="ai-chatbot.html">AI Chatbot</a>
-        <a href="login.html" class="btn">Login</a>
-        <a href="signup.html" class="btn">Signup</a>
-        <button id="themeToggle" title="Toggle Light/Dark Mode">🌙</button>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Signup</a>
+        <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="section-container">
-    <h2 style="color: var(--primary); margin-bottom: 1rem;">💬 Your Interactions</h2>
-    <div id="interactions-container" class="interaction-grid">
-      <!-- JS will inject interaction cards here -->
+  <!-- ✅ Main Interactions Section -->
+  <main class="section-container fade-in">
+    <div class="profile-box">
+      <h2 style="color: var(--primary);">📊 Your Interactions</h2>
+      <p class="animated-subtext">See your activity and learning history</p>
+
+      <!-- Container where interaction cards will be injected -->
+      <div id="interactionsContainer" class="dashboard-grid"></div>
     </div>
   </main>
-
-  <!-- Optional Footer -->
-  <footer class="site-footer">
-    <div class="footer-content">
-      <div class="footer-links">
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-      </div>
-      <div class="footer-chatbot">
-        <button title="Open AI Chatbot">🤖</button>
-      </div>
-    </div>
-  </footer>
-<script>
-  const toggleBtn = document.getElementById('themeToggle');
-  const htmlEl = document.documentElement;
-
-  // Load theme from localStorage
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'light') {
-    htmlEl.setAttribute('data-theme', 'light');
-    toggleBtn.textContent = '☀️';
-  } else {
-    htmlEl.setAttribute('data-theme', 'dark');
-    toggleBtn.textContent = '🌙';
-  }
-
-  // Toggle theme on click
-  toggleBtn.addEventListener('click', () => {
-    const currentTheme = htmlEl.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    htmlEl.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    toggleBtn.textContent = newTheme === 'light' ? '☀️' : '🌙';
-  });
-</script>
 
 </body>
 </html>
