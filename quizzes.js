@@ -45,7 +45,6 @@ import {
 
 const container = document.getElementById('quizContainer');
 
-// 🚀 Load quizzes
 async function loadAdminQuizzes() {
   try {
     const q = query(collection(db, 'admin_quizzes'), orderBy('createdAt', 'desc'));
@@ -59,52 +58,49 @@ async function loadAdminQuizzes() {
     querySnapshot.forEach(doc => {
       const data = doc.data();
 
-      // 🎯 Options: A, B, C, D (optional fallback)
-      const options = data.options || ['Option A', 'Option B', 'Option C', 'Option D'];
-      const correctAnswer = data.answer;
-
       const card = document.createElement('div');
       card.className = 'topic-card fade-in';
+
+      // Create options
+      const optionsHTML = ['A', 'B', 'C', 'D'].map(letter => {
+        const optionText = data[`option${letter}`];
+        return `<button class="quiz-option" data-option="${letter}">${optionText}</button>`;
+      }).join('');
 
       card.innerHTML = `
         <h3>📝 ${data.title}</h3>
         <p><strong>Q:</strong> ${data.question}</p>
-        <div class="options"></div>
-        <div class="feedback" style="margin-top:10px; font-weight:bold;"></div>
+        <div class="quiz-options">${optionsHTML}</div>
+        <p class="quiz-result" style="display: none;"></p>
       `;
 
-      const optionsContainer = card.querySelector('.options');
-      const feedback = card.querySelector('.feedback');
+      // Add click events
+      const resultPara = card.querySelector('.quiz-result');
+      const optionButtons = card.querySelectorAll('.quiz-option');
 
-      options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.textContent = opt;
+      optionButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const userAnswer = button.getAttribute('data-option');
+          const correctAnswer = data.answer?.toUpperCase();
 
-        btn.addEventListener('click', () => {
-          // Disable all buttons after selection
-          const allBtns = card.querySelectorAll('.option-btn');
-          allBtns.forEach(b => {
-            b.disabled = true;
-            if (b.textContent === correctAnswer) {
-              b.classList.add('correct');
-            }
-            if (b.textContent === btn.textContent && btn.textContent !== correctAnswer) {
-              b.classList.add('wrong');
-            }
-          });
+          optionButtons.forEach(btn => btn.disabled = true);
 
-          feedback.textContent = btn.textContent === correctAnswer
-            ? '✅ Correct!'
-            : `❌ Wrong! Correct Answer: ${correctAnswer}`;
+          if (userAnswer === correctAnswer) {
+            button.style.backgroundColor = '#28a745'; // Green
+            resultPara.innerHTML = '✅ Correct!';
+            resultPara.style.color = '#28a745';
+          } else {
+            button.style.backgroundColor = '#dc3545'; // Red
+            resultPara.innerHTML = `❌ Wrong! Correct Answer: ${correctAnswer}`;
+            resultPara.style.color = '#dc3545';
+          }
+
+          resultPara.style.display = 'block';
         });
-
-        optionsContainer.appendChild(btn);
       });
 
       container.appendChild(card);
     });
-
   } catch (error) {
     console.error('🔥 Failed to load quizzes:', error);
     container.innerHTML = '<p class="animated-subtext error">Failed to load quizzes.</p>';
