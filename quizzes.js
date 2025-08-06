@@ -1,33 +1,35 @@
-// 🔧 Inject custom styles for quiz options and layout
+// 🔧 Inject custom styles for quiz options and feedback + layout
 const style = document.createElement('style');
 style.textContent = `
-  .quiz-grid {
+  #quizContainer.quiz-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 0px;
+    padding: 0;
+    margin: 0;
     width: 100vw;
-    margin-left: -8px;
-    padding: 20px 0;
   }
 
   @media (max-width: 768px) {
-    .quiz-grid {
+    #quizContainer.quiz-columns {
       grid-template-columns: 1fr;
-      margin-left: 0;
     }
   }
 
-  .quiz-card {
-    background: #1c1c1c;
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.4);
-    transition: transform 0.3s ease;
+  .topic-card {
+    background: linear-gradient(to bottom right, #1f1f1f, #2b2b2b);
+    padding: 18px;
+    margin: 0;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     height: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .quiz-card:hover {
-    transform: scale(1.02);
+  .topic-card:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.12);
   }
 
   .quiz-option {
@@ -65,16 +67,10 @@ style.textContent = `
     margin-top: 10px;
     font-weight: bold;
   }
-
-  .attempted-note {
-    margin-top: 8px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #ccc;
-  }
+`;
 document.head.appendChild(style);
 
-// 📦 Firebase
+// 📦 Firebase imports
 import { db } from './firebase.js';
 import {
   collection,
@@ -84,6 +80,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
 const container = document.getElementById('quizContainer');
+container.classList.add('quiz-columns'); // 🧱 Two-column layout
 
 async function loadAdminQuizzes() {
   try {
@@ -95,18 +92,13 @@ async function loadAdminQuizzes() {
       return;
     }
 
-    // ✅ Container for grid layout
-    const grid = document.createElement('div');
-    grid.className = 'quiz-grid';
-
     querySnapshot.forEach(doc => {
       const data = doc.data();
       const { title, question, answer, optionA, optionB, optionC, optionD } = data;
 
       const card = document.createElement('div');
-      card.className = 'quiz-card fade-in';
+      card.className = 'topic-card fade-in';
 
-      // 🧠 Create options
       const optionsHTML = `
         <button class="quiz-option" data-option="A">A: ${optionA}</button>
         <button class="quiz-option" data-option="B">B: ${optionB}</button>
@@ -115,7 +107,7 @@ async function loadAdminQuizzes() {
       `;
 
       card.innerHTML = `
-        <h3>📝 <strong>${title}</strong></h3>
+        <h3>📝 ${title}</h3>
         <p><strong>Q:</strong> ${question}</p>
         <div class="quiz-options">${optionsHTML}</div>
         <p class="quiz-result" style="display: none;"></p>
@@ -147,15 +139,11 @@ async function loadAdminQuizzes() {
           }
 
           resultPara.style.display = 'block';
-          markAttempted(card, correctAnswer);
-          saveQuizAttempt(doc.id, userAnswer, correctAnswer); // optional
         });
       });
 
-      grid.appendChild(card);
+      container.appendChild(card);
     });
-
-    container.appendChild(grid);
   } catch (error) {
     console.error('🔥 Failed to load quizzes:', error);
     container.innerHTML = '<p class="animated-subtext error">Failed to load quizzes.</p>';
@@ -163,17 +151,3 @@ async function loadAdminQuizzes() {
 }
 
 loadAdminQuizzes();
-
-// ✅ Append attempt note below quiz
-function markAttempted(card, correctAnswer) {
-  const attemptedNote = document.createElement('div');
-  attemptedNote.className = 'attempted-note';
-  attemptedNote.innerHTML = `✅ <strong>Attempted</strong><br>Correct Answer: <span style="color:#2ecc71">${correctAnswer}</span>`;
-  card.appendChild(attemptedNote);
-}
-
-// 🔐 Save attempt placeholder (for future Firestore)
-function saveQuizAttempt(quizId, selected, correct) {
-  // Optional future storage
-  // console.log(`Saved: ${quizId} | Selected: ${selected} | Correct: ${correct}`);
-}
