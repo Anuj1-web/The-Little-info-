@@ -3,18 +3,18 @@ import {
   collection,
   query,
   getDocs,
-  where
+  orderBy
 } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
 
 const container = document.getElementById('quizContainer');
 
-async function loadQuizzes() {
+async function loadAdminQuizzes() {
   try {
-    const q = query(collection(db, 'quizzes'), where('status', '==', 'public'));
+    const q = query(collection(db, 'admin_quizzes'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      container.innerHTML = '<p class="animated-subtext">No quizzes available.</p>';
+      container.innerHTML = '<p class="animated-subtext">No quizzes available yet.</p>';
       return;
     }
 
@@ -22,19 +22,19 @@ async function loadQuizzes() {
       const data = doc.data();
 
       const card = document.createElement('div');
-      card.className = 'topic-card';
+      card.className = 'topic-card fade-in';
       card.innerHTML = `
         <h3>📝 ${data.title}</h3>
-        <p>${data.description || 'Challenge yourself with this quiz.'}</p>
-        <a href="${data.link}" target="_blank" class="btn">Start Quiz</a>
+        <p><strong>Q:</strong> ${data.question}</p>
+        <p><strong>Answer:</strong> ${data.answer}</p>
       `;
 
       container.appendChild(card);
     });
   } catch (error) {
-    console.error('Error loading quizzes:', error);
+    console.error('🔥 Failed to load quizzes:', error);
     container.innerHTML = '<p class="animated-subtext error">Failed to load quizzes.</p>';
   }
 }
 
-loadQuizzes();
+loadAdminQuizzes();
