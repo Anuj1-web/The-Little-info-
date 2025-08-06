@@ -1,77 +1,41 @@
-<script type="module">
-  import { db, auth } from './firebase.js';
-  import {
-    collection, getDocs, query, where,
-    doc, deleteDoc, updateDoc
-  } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-  import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bookmarks - The Little Info</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="theme-toggle.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <img src="logo.png" alt="Site Logo" class="site-logo-small" />
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="profile.html">Profile</a>
+        <a href="bookmark.html">Bookmarks</a>
+        <a href="ai-chatbot.html">AI Chatbot</a>
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>
+        <button id="themeToggle">🌓</button>
+      </nav>
+    </div>
+  </header>
 
-  const bookmarkList = document.getElementById('bookmark-list');
+  <!-- Bookmarks Section -->
+  <main class="section-container">
+    <div class="profile-box">
+      <h2 style="color: var(--primary);">📌 Your Bookmarks</h2>
+      <p style="color: var(--text); margin-bottom: 1.5rem;">Saved videos, texts, and content.</p>
+      <div class="dashboard-grid" id="bookmarkContainer">
+        <!-- Cards will load here -->
+      </div>
+    </div>
+  </main>
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.href = "login.html";
-      return;
-    }
-
-    bookmarkList.innerHTML = '';
-    const q = query(collection(db, 'bookmarks'), where("userId", "==", user.uid));
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
-      bookmarkList.innerHTML = '<p style="color: var(--text);">No bookmarks found.</p>';
-      return;
-    }
-
-    snapshot.forEach(docSnap => {
-      const data = docSnap.data();
-      const id = docSnap.id;
-
-      const card = document.createElement('div');
-      card.className = 'dashboard-card';
-      card.innerHTML = `
-        <h3 contenteditable="false">${data.title}</h3>
-        <p contenteditable="false">${data.description}</p>
-        <div style="margin-top: 10px;">
-          <button class="edit-btn">✏️ Edit</button>
-          <button class="delete-btn">🗑️ Delete</button>
-          <button class="save-btn" style="display:none;">💾 Save</button>
-        </div>
-      `;
-
-      const h3 = card.querySelector('h3');
-      const p = card.querySelector('p');
-      const editBtn = card.querySelector('.edit-btn');
-      const deleteBtn = card.querySelector('.delete-btn');
-      const saveBtn = card.querySelector('.save-btn');
-
-      editBtn.addEventListener('click', () => {
-        h3.contentEditable = true;
-        p.contentEditable = true;
-        h3.focus();
-        saveBtn.style.display = 'inline-block';
-        editBtn.style.display = 'none';
-      });
-
-      saveBtn.addEventListener('click', async () => {
-        h3.contentEditable = false;
-        p.contentEditable = false;
-        await updateDoc(doc(db, 'bookmarks', id), {
-          title: h3.textContent.trim(),
-          description: p.textContent.trim()
-        });
-        saveBtn.style.display = 'none';
-        editBtn.style.display = 'inline-block';
-      });
-
-      deleteBtn.addEventListener('click', async () => {
-        if (confirm('Are you sure you want to delete this bookmark?')) {
-          await deleteDoc(doc(db, 'bookmarks', id));
-          location.reload();
-        }
-      });
-
-      bookmarkList.appendChild(card);
-    });
-  });
-</script>
+  <script type="module" src="bookmark.js"></script>
+</body>
+</html>
