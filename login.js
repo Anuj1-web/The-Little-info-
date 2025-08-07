@@ -48,3 +48,21 @@ googleBtn.addEventListener('click', async () => {
     showToast(`❌ ${error.message}`, true);
   }
 });
+import { sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+const forgotLink = document.getElementById('forgotPasswordLink');
+
+// ✅ Handle Forgot Password
+forgotLink.addEventListener('click', async (e) => {
+  e.preventDefault();
+
+  const email = prompt('Enter your email to reset password:');
+  if (!email) return;
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showToast(`📩 Password reset email sent to ${email}`);
+  } catch (error) {
+    showToast(`❌ ${error.message}`, true);
+  }
+});
