@@ -14,7 +14,7 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import { auth, db } from './firebase.js'; // ✅ Import only what's exported
+import { auth, db } from './firebase.js';
 
 // ✅ DOM References
 const loginForm = document.getElementById("loginForm");
@@ -50,7 +50,7 @@ if (loginForm) {
   });
 }
 
-// ✅ Forgot Password Flow
+// ✅ Forgot Password
 if (forgotPasswordLink) {
   forgotPasswordLink.addEventListener("click", async (e) => {
     e.preventDefault();
@@ -80,13 +80,13 @@ googleBtn.addEventListener("click", async () => {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
-    // ✅ Save user to Firestore if not exists
+    // Save user if new
     const userDoc = doc(db, "users", user.uid);
-    const docSnap = await getDoc(userDoc);
-    if (!docSnap.exists()) {
+    const snap = await getDoc(userDoc);
+    if (!snap.exists()) {
       await setDoc(userDoc, {
-        email: user.email,
         name: user.displayName || "User",
+        email: user.email,
         role: "user"
       });
     }
@@ -94,16 +94,16 @@ googleBtn.addEventListener("click", async () => {
     showToast("✅ Google login successful!");
     checkUserRole(user.uid);
   } catch (error) {
-    console.error("Google Login Error:", error);
+    console.error("Google Sign-in Error:", error);
     showToast("❌ " + error.message, "error");
   }
 });
 
-// ✅ Role Check & Redirect
+// ✅ Check Role
 async function checkUserRole(uid) {
   try {
-    const userDoc = await getDoc(doc(db, "users", uid));
-    const role = userDoc.data()?.role;
+    const snap = await getDoc(doc(db, "users", uid));
+    const role = snap.data()?.role;
 
     if (role === "admin") {
       window.location.href = "admin-dashboard.html";
@@ -111,14 +111,12 @@ async function checkUserRole(uid) {
       window.location.href = "dashboard.html";
     }
   } catch (error) {
-    console.error("Role check failed:", error);
+    console.error("Role Check Error:", error);
     showToast("❌ Failed to verify user role", "error");
   }
 }
 
-// ✅ Optional: Re-check on Auth State Change
+// ✅ Re-check on Auth State
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    checkUserRole(user.uid);
-  }
+  if (user) checkUserRole(user.uid);
 });
