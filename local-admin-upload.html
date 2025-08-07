@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local Admin Upload (Test)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f4f4f4;
+    }
+    h2 {
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+    }
+    button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    pre {
+      background: #333;
+      color: #0f0;
+      padding: 1rem;
+      margin-top: 2rem;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔧 Local Admin Upload (No Firebase)</h2>
+
+  <div class="form-group">
+    <label for="title">Title</label>
+    <input type="text" id="title">
+  </div>
+
+  <div class="form-group">
+    <label for="video">Video URL (e.g. keeladi.mp4)</label>
+    <input type="text" id="video">
+  </div>
+
+  <div class="form-group">
+    <label for="audio">Audio URL (optional)</label>
+    <input type="text" id="audio">
+  </div>
+
+  <div class="form-group">
+    <label for="desc">Description</label>
+    <textarea id="desc" rows="3"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="category">Category</label>
+    <select id="category">
+      <option value="trending">Trending</option>
+      <option value="traditional">Traditional</option>
+      <option value="explore">Explore</option>
+    </select>
+  </div>
+
+  <button onclick="addContent()">Upload Locally</button>
+
+  <h3>📦 Local Storage Preview</h3>
+  <pre id="preview">[Nothing Yet]</pre>
+
+  <script>
+    function addContent() {
+      const content = {
+        title: document.getElementById('title').value.trim(),
+        video: document.getElementById('video').value.trim(),
+        audio: document.getElementById('audio').value.trim(),
+        desc: document.getElementById('desc').value.trim(),
+        category: document.getElementById('category').value,
+        timestamp: Date.now()
+      };
+
+      if (!content.title || !content.video || !content.desc) {
+        alert("Please fill out title, video, and description.");
+        return;
+      }
+
+      const existing = JSON.parse(localStorage.getItem('siteContent') || '[]');
+      existing.push(content);
+      localStorage.setItem('siteContent', JSON.stringify(existing));
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const data = localStorage.getItem('siteContent');
+      document.getElementById('preview').textContent = data || '[]';
+    }
+
+    // Initialize on page load
+    updatePreview();
+  </script>
+</body>
+</html>
