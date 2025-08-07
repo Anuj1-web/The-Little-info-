@@ -1,21 +1,24 @@
 // signup2.js
-import { auth } from './firebase-login.js'; // ✅ Use correct config for login/signup
-
+import { auth } from './firebase-login.js';
 import {
   createUserWithEmailAndPassword,
-  sendEmailVerification
-} from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+  sendEmailVerification,
+  signInWithEmailAndPassword
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("signupForm2");
   const toast = document.getElementById("toastContainer");
   const resendBtn = document.getElementById("resendVerificationBtn");
-  const goToLoginBtn = document.getElementById("goToLoginBtn");
   let cooldown = false;
 
-  if (!form || !resendBtn || !toast) return; // 🛡 Ensure all required DOM exists
+  // ✅ Reusable Toast
+  function showToast(msg, success = true) {
+    toast.innerHTML = `<div class="toast ${success ? 'success' : 'error'}">${msg}</div>`;
+    setTimeout(() => (toast.innerHTML = ""), 4000);
+  }
 
-  // 🧠 Button style consistency
+  // ✅ Button Styling
   function styleButton(btn) {
     btn.style.padding = "10px 20px";
     btn.style.borderRadius = "10px";
@@ -30,11 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.style.color = "var(--btnText)";
   }
 
-  styleButton(resendBtn); // Initial button styling
+  styleButton(resendBtn); // Initial style
 
+  // ✅ Signup Form Submission
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
@@ -43,49 +46,62 @@ document.addEventListener("DOMContentLoaded", () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await sendEmailVerification(userCredential.user);
 
-      showToast(`Verification email sent to ${email}`, true);
+      showToast(`📨 Verification email sent to ${email}`);
       resendBtn.disabled = false;
       resendBtn.textContent = "Resend Verification";
       styleButton(resendBtn);
       form.reset();
     } catch (error) {
-      showToast(error.message, false);
+      showToast("❌ " + error.message, false);
+      console.error("Signup error:", error);
     }
   });
 
+  // ✅ Resend Verification Logic
   resendBtn.addEventListener("click", async () => {
     if (cooldown) return;
 
-    const user = auth.currentUser;
-    if (user) {
-      try {
-        await sendEmailVerification(user);
-        showToast("Verification email resent.", true);
-        startCooldown();
-      } catch (error) {
-        if (error.code === "auth/too-many-requests") {
-          showToast("Too many requests. Please wait before retrying.", false);
-          startCooldown();
-        } else {
-          showToast("Failed to resend email: " + error.message, false);
-        }
+    const email = document.getElementById("email")?.value.trim();
+    const password = document.getElementById("password")?.value;
+
+    let user = auth.currentUser;
+
+    try {
+      if (!user && email && password) {
+        // Try re-signing in silently
+        const credential = await signInWithEmailAndPassword(auth, email, password);
+        user = credential.user;
       }
-    } else {
-      showToast("Please sign up or login first.", false);
+
+      if (user) {
+        await sendEmailVerification(user);
+        showToast("📨 Verification email resent!");
+        startCooldown();
+      } else {
+        showToast("⚠️ Please enter your email & password to resend.", false);
+      }
+    } catch (error) {
+      if (error.code === "auth/too-many-requests") {
+        showToast("⚠️ Too many attempts. Please wait.", false);
+      } else {
+        showToast("❌ Failed to resend: " + error.message, false);
+      }
+      console.error("Resend error:", error);
     }
   });
 
+  // ✅ Cooldown Timer for Resend
   function startCooldown() {
     cooldown = true;
     resendBtn.disabled = true;
-    let timer = 30;
-    resendBtn.textContent = `Wait ${timer}s`;
+    let seconds = 30;
+    resendBtn.textContent = `Wait ${seconds}s`;
     resendBtn.style.background = "gray";
 
     const interval = setInterval(() => {
-      timer--;
-      resendBtn.textContent = `Wait ${timer}s`;
-      if (timer <= 0) {
+      seconds--;
+      resendBtn.textContent = `Wait ${seconds}s`;
+      if (seconds <= 0) {
         clearInterval(interval);
         cooldown = false;
         resendBtn.disabled = false;
@@ -95,12 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   }
 
-  function showToast(msg, success) {
-    toast.innerHTML = `<div class="toast ${success ? 'success' : 'error'}">${msg}</div>`;
-    setTimeout(() => (toast.innerHTML = ""), 4000);
-  }
-
-  // ✅ Safe event binding for login redirect
+  // ✅ Redirect Button to Login
+  const goToLoginBtn = document.getElementById("goToLoginBtn");
   if (goToLoginBtn) {
     goToLoginBtn.addEventListener("click", () => {
       window.location.href = "login.html";
