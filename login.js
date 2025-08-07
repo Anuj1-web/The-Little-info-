@@ -14,10 +14,7 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import { app } from './firebase.js';
-
-const auth = getAuth(app);
-const db = getFirestore(app);
+import { auth, db } from './firebase.js'; // ✅ Import only what's exported
 
 // ✅ DOM References
 const loginForm = document.getElementById("loginForm");
