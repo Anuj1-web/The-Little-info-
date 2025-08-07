@@ -1,16 +1,16 @@
 // search.js
 
 document.addEventListener('DOMContentLoaded', () => {
-  // ✅ DOM Elements
-  const searchInput = document.getElementById('searchInput');
+  const form = document.getElementById('searchForm');
+  const searchInput = document.getElementById('searchQuery');
   const resultsContainer = document.getElementById('resultsContainer');
 
-  if (!searchInput || !resultsContainer) {
-    console.warn("❗ Missing searchInput or resultsContainer in HTML.");
+  if (!form || !searchInput || !resultsContainer) {
+    console.warn("❗ Required DOM elements not found.");
     return;
   }
 
-  // ✅ Sample Data (replace with Firebase later)
+  // ✅ Sample Data (Replace with Firebase later)
   const dummyData = [
     { title: "AI in Healthcare", description: "Exploring the impact of artificial intelligence in modern medical practices." },
     { title: "Climate Change Effects", description: "Understanding the global consequences of a warming planet." },
@@ -19,12 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
     { title: "Machine Learning Basics", description: "Key terms and principles in supervised learning." }
   ];
 
-  // ✅ Handle input
-  searchInput.addEventListener('input', () => {
+  // ✅ Handle search submit
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
     const query = searchInput.value.trim().toLowerCase();
     resultsContainer.innerHTML = '';
 
-    if (query === '') return;
+    if (!query) return;
 
     const filtered = dummyData.filter(item =>
       item.title.toLowerCase().includes(query) ||
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ✅ Inject animation + card styles
+  // ✅ Animation and result styling
   const style = document.createElement('style');
   style.textContent = `
     .fade-in {
@@ -61,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
       background-color: var(--card);
       border-radius: 0.75rem;
       padding: 1rem;
-      margin-top: 1rem;
       box-shadow: var(--shadow);
       transition: transform 0.2s ease;
     }
