@@ -3,40 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Signup 2</title>
+  <title>Signup</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- ✅ Compact Header -->
   <header class="site-header">
     <div class="header-container">
       <img src="logo.png" alt="Site Logo" class="site-logo-small" />
       <nav>
         <a href="index.html">Home</a>
         <a href="dashboard.html">Dashboard</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html" class="active">Signup</a>
         <button id="themeToggle">🌓</button>
       </nav>
     </div>
   </header>
 
+  <!-- ✅ Main Signup Section -->
   <section class="section-container">
-    <div class="auth-form-box">
-      <h2>Signup</h2>
-     <form id="signupForm2">
-  <input type="text" id="name" placeholder="Full Name" required />
-  <input type="email" id="email" placeholder="Email" required />
-  <input type="password" id="password" placeholder="Password" required />
-  <button type="submit">Create Account</button>
-  <button type="button" id="resendVerificationBtn" disabled>Resend Verification</button>
-  <button type="button" id="goToLoginBtn">Already have an account? Login</button>
-</form>
+    <div class="auth-form-box animate-fade-in">
+      <h2>Sign Up</h2>
+      <form id="signupForm2">
+        <input type="text" id="name" placeholder="Full Name" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit" class="btn">Sign Up</button>
+
+        <button type="button" id="resendVerificationBtn" class="btn w-full mt-2" disabled>
+          Resend Verification
+        </button>
+
+        <button type="button" id="goToLoginBtn" class="btn w-full mt-2">
+          Already have an account? Login
+        </button>
+      </form>
+
+      <div class="or-divider">OR</div>
+
+      <!-- ✅ Google Sign-Up -->
+      <button type="button" id="googleSignupBtn" class="btn hoverbox w-full mt-2">
+        Continue with Google
+      </button>
+    </div>
+
+    <!-- ✅ Email-only Verification Section (for unverified users) -->
+    <div class="auth-form-box mt-6 animate-fade-in">
+      <h3>Verify Your Email</h3>
+      <input type="email" id="verifyEmailInput" placeholder="Enter your email" />
+      <button id="verifyEmailBtn" class="btn mt-2">Send Verification Email</button>
     </div>
   </section>
 
-  <div id="toastContainer"></div>
+  <!-- ✅ Toast Notification -->
+  <div id="toastContainer" class="toast-container"></div>
 
-  <script type="module" src="firebase-config.js"></script>
+  <!-- ✅ Scripts -->
+  <script type="module" src="firebase-login.js"></script>
   <script type="module" src="signup2.js"></script>
   <script src="theme-toggle.js"></script>
 </body>
 </html>
-
