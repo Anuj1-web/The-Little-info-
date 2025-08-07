@@ -1,5 +1,4 @@
 import {
-  getAuth,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
@@ -8,7 +7,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-  getFirestore,
   doc,
   getDoc,
   setDoc
@@ -50,7 +48,7 @@ if (loginForm) {
   });
 }
 
-// ✅ Forgot Password
+// ✅ Forgot Password Flow
 if (forgotPasswordLink) {
   forgotPasswordLink.addEventListener("click", async (e) => {
     e.preventDefault();
@@ -68,42 +66,46 @@ if (forgotPasswordLink) {
 }
 
 // ✅ Google Sign-In
-const googleBtn = document.createElement("button");
-googleBtn.textContent = "Continue with Google";
-googleBtn.className = "btn hoverbox w-full mt-4";
-document.querySelector(".auth-form-box").appendChild(googleBtn);
+const existingGoogleBtn = document.querySelector("#googleSignInBtn");
+if (!existingGoogleBtn) {
+  const googleBtn = document.createElement("button");
+  googleBtn.textContent = "Continue with Google";
+  googleBtn.className = "btn hoverbox w-full mt-4";
+  googleBtn.id = "googleSignInBtn";
+  document.querySelector(".auth-form-box").appendChild(googleBtn);
 
-googleBtn.addEventListener("click", async () => {
-  const provider = new GoogleAuthProvider();
+  googleBtn.addEventListener("click", async () => {
+    const provider = new GoogleAuthProvider();
 
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
 
-    // Save user if new
-    const userDoc = doc(db, "users", user.uid);
-    const snap = await getDoc(userDoc);
-    if (!snap.exists()) {
-      await setDoc(userDoc, {
-        name: user.displayName || "User",
-        email: user.email,
-        role: "user"
-      });
+      const userDoc = doc(db, "users", user.uid);
+      const docSnap = await getDoc(userDoc);
+
+      if (!docSnap.exists()) {
+        await setDoc(userDoc, {
+          email: user.email,
+          name: user.displayName || "User",
+          role: "user"
+        });
+      }
+
+      showToast("✅ Google login successful!");
+      checkUserRole(user.uid);
+    } catch (error) {
+      console.error("Google Login Error:", error);
+      showToast("❌ " + error.message, "error");
     }
+  });
+}
 
-    showToast("✅ Google login successful!");
-    checkUserRole(user.uid);
-  } catch (error) {
-    console.error("Google Sign-in Error:", error);
-    showToast("❌ " + error.message, "error");
-  }
-});
-
-// ✅ Check Role
+// ✅ Role Check & Redirect
 async function checkUserRole(uid) {
   try {
-    const snap = await getDoc(doc(db, "users", uid));
-    const role = snap.data()?.role;
+    const userDoc = await getDoc(doc(db, "users", uid));
+    const role = userDoc.data()?.role;
 
     if (role === "admin") {
       window.location.href = "admin-dashboard.html";
@@ -111,12 +113,14 @@ async function checkUserRole(uid) {
       window.location.href = "dashboard.html";
     }
   } catch (error) {
-    console.error("Role Check Error:", error);
+    console.error("Role check failed:", error);
     showToast("❌ Failed to verify user role", "error");
   }
 }
 
-// ✅ Re-check on Auth State
+// ✅ Optional: Re-check on Auth State Change
 onAuthStateChanged(auth, (user) => {
-  if (user) checkUserRole(user.uid);
+  if (user) {
+    checkUserRole(user.uid);
+  }
 });
