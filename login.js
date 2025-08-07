@@ -1,7 +1,5 @@
-// ✅ Firebase Setup (with no 'app' needed)
-import { auth, db } from './firebase.js';
-
 import {
+  getAuth,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
@@ -10,10 +8,14 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
+  getFirestore,
   doc,
   getDoc,
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ✅ Use the separate Firebase config only for login-related features
+import { auth, db } from './firebase-login.js';
 
 // ✅ DOM References
 const loginForm = document.getElementById("loginForm");
@@ -22,7 +24,7 @@ const passwordInput = document.getElementById("loginPassword");
 const forgotPasswordLink = document.getElementById("forgotPasswordLink");
 const toastContainer = document.getElementById("toastContainer");
 
-// ✅ Toast Function
+// ✅ Toast Utility
 function showToast(message, type = "success") {
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
@@ -66,51 +68,47 @@ if (forgotPasswordLink) {
   });
 }
 
-// ✅ Add Google Sign-In Button (Only if not already present)
-const existingGoogleBtn = document.getElementById("googleSignInBtn");
-if (!existingGoogleBtn) {
-  const googleBtn = document.createElement("button");
+// ✅ Google Sign-In
+let googleBtn = document.getElementById("googleLoginBtn");
+if (!googleBtn) {
+  googleBtn = document.createElement("button");
   googleBtn.textContent = "Continue with Google";
   googleBtn.className = "btn hoverbox w-full mt-4";
-  googleBtn.id = "googleSignInBtn";
+  googleBtn.id = "googleLoginBtn";
   document.querySelector(".auth-form-box").appendChild(googleBtn);
-
-  // ✅ Google Login Handler
-  googleBtn.addEventListener("click", async () => {
-    const provider = new GoogleAuthProvider();
-
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      // Save user if new
-      const userDoc = doc(db, "users", user.uid);
-      const docSnap = await getDoc(userDoc);
-      if (!docSnap.exists()) {
-        await setDoc(userDoc, {
-          email: user.email,
-          name: user.displayName || "User",
-          role: "user"
-        });
-      }
-
-      showToast("✅ Google login successful!");
-      checkUserRole(user.uid);
-    } catch (error) {
-      console.error("Google Login Error:", error);
-      showToast("❌ " + error.message, "error");
-    }
-  });
 }
 
-// ✅ Role Checker + Redirect
+googleBtn.addEventListener("click", async () => {
+  const provider = new GoogleAuthProvider();
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    // ✅ Save user to Firestore if not exists
+    const userDoc = doc(db, "users", user.uid);
+    const docSnap = await getDoc(userDoc);
+    if (!docSnap.exists()) {
+      await setDoc(userDoc, {
+        email: user.email,
+        name: user.displayName || "User",
+        role: "user"
+      });
+    }
+
+    showToast("✅ Google login successful!");
+    checkUserRole(user.uid);
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    showToast("❌ " + error.message, "error");
+  }
+});
+
+// ✅ Role Check & Redirect
 async function checkUserRole(uid) {
   try {
-    if (!uid) throw new Error("UID is undefined");
-
     const userDocRef = doc(db, "users", uid);
     const userDoc = await getDoc(userDocRef);
-
     const role = userDoc.data()?.role;
 
     if (role === "admin") {
@@ -124,7 +122,7 @@ async function checkUserRole(uid) {
   }
 }
 
-// ✅ Optional: Re-check if already logged in
+// ✅ Optional Auto-Redirect If Already Logged In
 onAuthStateChanged(auth, (user) => {
   if (user) {
     checkUserRole(user.uid);
