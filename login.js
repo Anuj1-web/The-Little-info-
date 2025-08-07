@@ -1,3 +1,6 @@
+// ✅ Firebase Setup (with no 'app' needed)
+import { auth, db } from './firebase.js';
+
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -12,8 +15,6 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import { auth, db } from './firebase.js';
-
 // ✅ DOM References
 const loginForm = document.getElementById("loginForm");
 const emailInput = document.getElementById("loginEmail");
@@ -21,7 +22,7 @@ const passwordInput = document.getElementById("loginPassword");
 const forgotPasswordLink = document.getElementById("forgotPasswordLink");
 const toastContainer = document.getElementById("toastContainer");
 
-// ✅ Toast Utility
+// ✅ Toast Function
 function showToast(message, type = "success") {
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
@@ -30,7 +31,7 @@ function showToast(message, type = "success") {
   setTimeout(() => toast.remove(), 4000);
 }
 
-// ✅ Login with Email/Password
+// ✅ Email/Password Login
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -48,7 +49,7 @@ if (loginForm) {
   });
 }
 
-// ✅ Forgot Password Flow
+// ✅ Forgot Password
 if (forgotPasswordLink) {
   forgotPasswordLink.addEventListener("click", async (e) => {
     e.preventDefault();
@@ -65,8 +66,8 @@ if (forgotPasswordLink) {
   });
 }
 
-// ✅ Google Sign-In
-const existingGoogleBtn = document.querySelector("#googleSignInBtn");
+// ✅ Add Google Sign-In Button (Only if not already present)
+const existingGoogleBtn = document.getElementById("googleSignInBtn");
 if (!existingGoogleBtn) {
   const googleBtn = document.createElement("button");
   googleBtn.textContent = "Continue with Google";
@@ -74,6 +75,7 @@ if (!existingGoogleBtn) {
   googleBtn.id = "googleSignInBtn";
   document.querySelector(".auth-form-box").appendChild(googleBtn);
 
+  // ✅ Google Login Handler
   googleBtn.addEventListener("click", async () => {
     const provider = new GoogleAuthProvider();
 
@@ -81,9 +83,9 @@ if (!existingGoogleBtn) {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
+      // Save user if new
       const userDoc = doc(db, "users", user.uid);
       const docSnap = await getDoc(userDoc);
-
       if (!docSnap.exists()) {
         await setDoc(userDoc, {
           email: user.email,
@@ -101,10 +103,14 @@ if (!existingGoogleBtn) {
   });
 }
 
-// ✅ Role Check & Redirect
+// ✅ Role Checker + Redirect
 async function checkUserRole(uid) {
   try {
-    const userDoc = await getDoc(doc(db, "users", uid));
+    if (!uid) throw new Error("UID is undefined");
+
+    const userDocRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userDocRef);
+
     const role = userDoc.data()?.role;
 
     if (role === "admin") {
@@ -118,7 +124,7 @@ async function checkUserRole(uid) {
   }
 }
 
-// ✅ Optional: Re-check on Auth State Change
+// ✅ Optional: Re-check if already logged in
 onAuthStateChanged(auth, (user) => {
   if (user) {
     checkUserRole(user.uid);
