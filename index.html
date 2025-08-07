@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Little Info - Home</title>
-  <link rel="stylesheet" href="styles.css" />
   <style>
     :root {
       --primary-bg-dark: #0e0e10;
@@ -90,12 +89,8 @@
     }
 
     @keyframes float {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-15px);
-      }
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
     }
 
     .typewriter {
@@ -149,13 +144,45 @@
       text-decoration: none;
       font-weight: 500;
     }
-  </style>
-<!-- Swiper CSS -->
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-/>
 
+    .search-fab {
+      position: fixed;
+      top: 19px;
+      left: 20px;
+      background-color: var(--accent-color, #4c8bf5);
+      color: white;
+      font-size: 1.6rem;
+      width: 3.2rem;
+      height: 3.2rem;
+      line-height: 3.2rem;
+      text-align: center;
+      border-radius: 50%;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      z-index: 1000;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      animation: floatPulse 3s ease-in-out infinite;
+    }
+
+    .search-fab:hover {
+      background-color: var(--accent-hover-color, #3a6bdc);
+      transform: scale(1.1);
+    }
+
+    [data-theme="light"] .search-fab {
+      color: black;
+      background-color: #dbe7ff;
+    }
+
+    [data-theme="light"] .search-fab:hover {
+      background-color: #c1d7ff;
+    }
+
+    @keyframes floatPulse {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -166,7 +193,7 @@
       <a href="profile.html">Profile</a>
       <a href="ai-chatbot.html">AI Chatbot</a>
       <a href="login.html">Login</a>
-     <a href="signup.html">Signup</a>
+      <a href="signup.html">Signup</a>
       <button id="themeToggle">🌓</button>
     </nav>
   </header>
@@ -174,25 +201,22 @@
   <main class="center-container">
     <img src="logo.png" alt="Main Logo" class="floating-logo" />
     <div class="typewriter" id="typewriterText"></div>
-
     <div class="home-buttons">
-      <a href="explore.html" class="explore-button">🚀 Explore Now</a>
+      <a href="explore.html">🚀 Explore Now</a>
       <a href="trending.html">📚 Trending Topics</a>
       <a href="traditional.html">📖 Traditional Topics</a>
     </div>
 
-    <!-- ✅ Recent Videos Section -->
-<section id="video-slider-section">
-  <h2 class="slider-heading">🎥 Latest Videos</h2>
-  <div class="video-slider swiper mySwiper">
-    <div class="swiper-wrapper" id="videoSliderWrapper">
-      <!-- JS will insert video slides here -->
-    </div>
-    <div class="swiper-pagination"></div>
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-  </div>
-</section>
+    <section id="video-slider-section">
+      <h2 class="slider-heading">🎥 Latest Videos</h2>
+      <div class="video-slider swiper mySwiper">
+        <div class="swiper-wrapper" id="videoSliderWrapper"></div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+    </section>
+  </main>
 
   <footer>
     <a href="about.html">About</a>
@@ -200,309 +224,110 @@
     <a href="ai-chatbot.html">🤖</a>
   </footer>
 
+  <a href="search.html" class="search-fab" title="Search">🔍</a>
+
   <script>
-    // Theme Toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
-
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = html.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-    });
-
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      html.setAttribute('data-theme', savedTheme);
-    }
-
-    // Typewriter effect
-    const messages = [
-      "Welcome to The Little Info",
-      "Your gateway to knowledge",
-      "Explore trending and traditional topics",
-    ];
-    let messageIndex = 0;
-    let charIndex = 0;
-    const typewriterElement = document.getElementById('typewriterText');
-
-    function typeMessage() {
-      if (charIndex < messages[messageIndex].length) {
-        typewriterElement.textContent += messages[messageIndex].charAt(charIndex);
-        charIndex++;
-        setTimeout(typeMessage, 80);
-      } else {
-        setTimeout(eraseMessage, 1800);
-      }
-    }
-
-    function eraseMessage() {
-      if (charIndex > 0) {
-        typewriterElement.textContent = messages[messageIndex].substring(0, charIndex - 1);
-        charIndex--;
-        setTimeout(eraseMessage, 50);
-      } else {
-        messageIndex = (messageIndex + 1) % messages.length;
-        setTimeout(typeMessage, 500);
-      }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
+      const themeToggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+      });
+
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) html.setAttribute('data-theme', savedTheme);
+
+      const messages = [
+        "Welcome to The Little Info",
+        "Your gateway to knowledge",
+        "Explore trending and traditional topics"
+      ];
+      let messageIndex = 0;
+      let charIndex = 0;
+      const typewriterElement = document.getElementById('typewriterText');
+
+      function typeMessage() {
+        if (charIndex < messages[messageIndex].length) {
+          typewriterElement.textContent += messages[messageIndex].charAt(charIndex++);
+          setTimeout(typeMessage, 80);
+        } else setTimeout(eraseMessage, 1800);
+      }
+
+      function eraseMessage() {
+        if (charIndex > 0) {
+          typewriterElement.textContent = messages[messageIndex].substring(0, --charIndex);
+          setTimeout(eraseMessage, 50);
+        } else {
+          messageIndex = (messageIndex + 1) % messages.length;
+          setTimeout(typeMessage, 500);
+        }
+      }
+
       setTimeout(typeMessage, 800);
     });
   </script>
-<!-- Floating Search Icon -->
-<a href="search.html" class="search-fab" title="Search">
-  🔍
-</a>
 
-<!-- Styles (can be inlined or moved to bottom of style.css if preferred) -->
-<style>
-  .search-fab {
-    position: fixed;
-    top: 19px;
-    left: 20px;
-    background-color: var(--accent-color, #4c8bf5);
-    color: white;
-    font-size: 1.6rem;
-    width: 3.2rem;
-    height: 3.2rem;
-    line-height: 3.2rem;
-    text-align: center;
-    border-radius: 50%;
-    text-decoration: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    z-index: 1000;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    animation: floatPulse 3s ease-in-out infinite;
-  }
+  <!-- Swiper JS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-  .search-fab:hover {
-    background-color: var(--accent-hover-color, #3a6bdc);
-    transform: scale(1.1);
-  }
+  <!-- Firebase Logic (Single Instance) -->
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-  [data-theme="dark"] .search-fab {
-    color: white;
-    background-color: #4c8bf5;
-  }
+    const firebaseConfig = {
+      apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
+      authDomain: "the-little-info.firebaseapp.com",
+      projectId: "the-little-info",
+      storageBucket: "the-little-info.appspot.com",
+      messagingSenderId: "165711417682",
+      appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
+    };
 
-  [data-theme="light"] .search-fab {
-    color: black;
-    background-color: #dbe7ff;
-  }
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  [data-theme="light"] .search-fab:hover {
-    background-color: #c1d7ff;
-  }
+    const videoWrapper = document.getElementById("videoSliderWrapper");
 
-  @keyframes floatPulse {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-6px);
-    }
-  }
-</style>
-<script src="recent-videos.js" type="module"></script>
-<script>
-  const slides = document.querySelectorAll('.slide');
-  const prevBtn = document.querySelector('.slider-btn.prev');
-  const nextBtn = document.querySelector('.slider-btn.next');
-  const dotsContainer = document.querySelector('.slider-dots');
-  let currentIndex = 0;
-  let autoSlide;
+    async function loadLatestVideos() {
+      const q = query(collection(db, "videos"), orderBy("timestamp", "desc"), limit(5));
+      const snapshot = await getDocs(q);
 
-  function updateSlider(index) {
-    slides.forEach((slide, i) => {
-      slide.classList.toggle('active', i === index);
-    });
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const videoUrl = data.url;
+        const title = data.title || "Untitled";
 
-    const dots = document.querySelectorAll('.dot');
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === index);
-    });
-
-    currentIndex = index;
-  }
-
-  function createDots() {
-    slides.forEach((_, index) => {
-      const dot = document.createElement('span');
-      dot.classList.add('dot');
-      if (index === 0) dot.classList.add('active');
-      dot.addEventListener('click', () => {
-        stopAutoSlide();
-        updateSlider(index);
-        startAutoSlide();
+        const slide = document.createElement("div");
+        slide.className = "swiper-slide";
+        slide.innerHTML = `
+          <div class="video-card fullscreen">
+            <video controls autoplay muted loop>
+              <source src="${videoUrl}" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>`;
+        videoWrapper.appendChild(slide);
       });
-      dotsContainer.appendChild(dot);
-    });
-  }
 
-  function nextSlide() {
-    let next = (currentIndex + 1) % slides.length;
-    updateSlider(next);
-  }
+      new Swiper(".mySwiper", {
+        slidesPerView: 1,
+        spaceBetween: 20,
+        loop: true,
+        autoplay: { delay: 5000, disableOnInteraction: false },
+        pagination: { el: ".swiper-pagination", clickable: true },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev"
+        }
+      });
+    }
 
-  function prevSlide() {
-    let prev = (currentIndex - 1 + slides.length) % slides.length;
-    updateSlider(prev);
-  }
-
-  function startAutoSlide() {
-    autoSlide = setInterval(nextSlide, 5000);
-  }
-
-  function stopAutoSlide() {
-    clearInterval(autoSlide);
-  }
-
-  prevBtn.addEventListener('click', () => {
-    stopAutoSlide();
-    prevSlide();
-    startAutoSlide();
-  });
-
-  nextBtn.addEventListener('click', () => {
-    stopAutoSlide();
-    nextSlide();
-    startAutoSlide();
-  });
-
-  createDots();
-  updateSlider(currentIndex);
-  startAutoSlide();
-</script>
-
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    getDocs,
-    query,
-    orderBy,
-    limit
-  } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    // 🔁 YOUR EXISTING FIREBASE CONFIG GOES HERE
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  const videoWrapper = document.getElementById("videoSliderWrapper");
-
-  async function loadLatestVideos() {
-    const q = query(collection(db, "videos"), orderBy("timestamp", "desc"), limit(5));
-    const snapshot = await getDocs(q);
-
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      const videoUrl = data.url;         // 🔁 Must match your Firestore field
-      const title = data.title || "Untitled Video";
-
-      const slide = document.createElement("div");
-      slide.className = "swiper-slide";
-     slide.innerHTML = `
-  <div class="video-card fullscreen">
-    <video controls autoplay muted loop>
-      <source src="${videoUrl}" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
-  </div>
-`;
-
-
-      videoWrapper.appendChild(slide);
-    });
-
-    // ✅ Initialize Swiper after content is loaded
-    new Swiper(".mySwiper", {
-      slidesPerView: 1,
-      spaceBetween: 20,
-      loop: true,
-      autoplay: {
-        delay: 5000,
-        disableOnInteraction: false,
-      },
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-    });
-  }
-
-  loadLatestVideos();
-</script>
-
-
-<!-- SwiperJS CDN -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
-<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-
-<!-- Video slider logic -->
-<script type="module" src="video-slider.js"></script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    getDocs,
-    query,
-    where
-  } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
-    authDomain: "the-little-info.firebaseapp.com",
-    projectId: "the-little-info",
-    storageBucket: "the-little-info.appspot.com",
-    messagingSenderId: "165711417682",
-    appId: "1:165711417682:web:cebb205d7d5c1f18802a8b"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Helper: create a card
-  function createCard(data) {
-    return `
-      <div class="content-card">
-        <img src="${data.thumbnailUrl}" alt="${data.title}" class="card-thumbnail" />
-        <h3>${data.title}</h3>
-        <p>${data.description}</p>
-      </div>
-    `;
-  }
-
-  // Load for one tag
-  async function loadContentByTag(tag, containerId) {
-    const q = query(collection(db, "contents"), where("tag", "==", tag));
-    const snapshot = await getDocs(q);
-
-    const container = document.getElementById(containerId);
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      container.innerHTML += createCard(data);
-    });
-  }
-
-  // Call both
-  loadContentByTag("Trending", "trending-content");
-  loadContentByTag("Traditional", "traditional-content");
-</script>
-
+    loadLatestVideos();
+  </script>
 </body>
 </html>
