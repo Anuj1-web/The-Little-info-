@@ -1,5 +1,6 @@
 // signup2.js
-import { auth } from './firebase-config.js';
+import { auth } from './firebase-login.js'; // ✅ Use correct config for login/signup
+
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification
@@ -9,9 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("signupForm2");
   const toast = document.getElementById("toastContainer");
   const resendBtn = document.getElementById("resendVerificationBtn");
+  const goToLoginBtn = document.getElementById("goToLoginBtn");
   let cooldown = false;
 
-  // Apply consistent site-wide button style
+  if (!form || !resendBtn || !toast) return; // 🛡 Ensure all required DOM exists
+
+  // 🧠 Button style consistency
   function styleButton(btn) {
     btn.style.padding = "10px 20px";
     btn.style.borderRadius = "10px";
@@ -26,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.style.color = "var(--btnText)";
   }
 
-  styleButton(resendBtn); // initial styling
+  styleButton(resendBtn); // Initial button styling
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -95,7 +99,11 @@ document.addEventListener("DOMContentLoaded", () => {
     toast.innerHTML = `<div class="toast ${success ? 'success' : 'error'}">${msg}</div>`;
     setTimeout(() => (toast.innerHTML = ""), 4000);
   }
-});
-document.getElementById("goToLoginBtn").addEventListener("click", () => {
-  window.location.href = "login.html"; // Make sure this is the correct login page URL
+
+  // ✅ Safe event binding for login redirect
+  if (goToLoginBtn) {
+    goToLoginBtn.addEventListener("click", () => {
+      window.location.href = "login.html";
+    });
+  }
 });
