@@ -1,8 +1,9 @@
 // firebase-login.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ✅ Define Firebase config properly before using
+// ✅ Correct Firebase config (replace placeholders with your actual values)
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCpoq_sjH_XLdJ1ZRc0ECFaglvXh3FIS5Q",
@@ -14,8 +15,13 @@ const firebaseConfig = {
   measurementId: "G-8KTFTYZBSL"
 };
 
+// ✅ Initialize Firebase App
 const app = initializeApp(firebaseLoginConfig);
+
+// ✅ Initialize Auth, Firestore, and Google Provider
 const auth = getAuth(app);
+const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-export { auth, db, provider };
+// ✅ Export required instances
+export { auth, provider, db };
