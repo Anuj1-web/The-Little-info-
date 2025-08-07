@@ -62,8 +62,10 @@ form?.addEventListener("submit", async (e) => {
 
   try {
     const userCred = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(userCred.user);
-    await setDoc(doc(db, "users", userCred.user.uid), {
+    const user = userCred.user;
+
+    await sendEmailVerification(user); // ✅ FIX: use user directly here
+    await setDoc(doc(db, "users", user.uid), {
       email,
       name,
       role: "user"
